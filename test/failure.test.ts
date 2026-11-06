@@ -100,6 +100,29 @@ describe('Failure (v1, hand-written)', () => {
 			});
 			expect(items[0].json.id).toBe('99');
 		});
+
+		it('sends a non-numeric locator value unchanged instead of null', async () => {
+			let body: unknown;
+			api()
+				.post('/v3/failures', (b) => {
+					body = b;
+					return true;
+				})
+				.reply(200, { data: record(99) });
+
+			const { error } = await runNode({
+				resource: 'failure',
+				operation: 'create',
+				clientId: { __rl: true, mode: 'list', value: 'not-an-id' },
+				locationId: { __rl: true, mode: 'id', value: '34' },
+				problemId: { __rl: true, mode: 'id', value: '56' },
+				priority: 1,
+				simplify: true,
+			});
+
+			expect(error).toBeUndefined();
+			expect(body).toEqual({ client_id: 'not-an-id', local_id: 34, problem_id: 56, priority: 1 });
+		});
 	});
 
 	describe('Update', () => {

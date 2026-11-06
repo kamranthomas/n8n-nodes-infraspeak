@@ -83,6 +83,10 @@ Checks:
    - Base URL: `http://127.0.0.1:4010`. Use the IP, not `localhost`: Prism listens on IPv4 only, and n8n resolves `localhost` to IPv6 `::1`, so the connection is refused.
 4. Use the node as normal.
 
-Responses are random data in the spec's shape: IDs and names are filler text. Prism's terminal flags any request that doesn't match the spec, but the request still goes through.
+Responses come from the spec's examples, so each list usually has a single record, and the IDs look real (e.g. client `10959`). The mock doesn't store anything: Get returns the same example record whatever you created.
+
+`npm run mock:random` generates random data instead. It gives more variety, but IDs are filler text such as `"ipsum"`, which Create and Update reject because they expect integer IDs.
+
+Prism's terminal flags any request that doesn't match the spec with a red `Violation` line.
 
 The mock agrees with the spec by construction. It can't show where the live API differs, for example in the filter prefix or the date format. That still needs a real account.

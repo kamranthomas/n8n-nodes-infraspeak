@@ -31,10 +31,12 @@ export const toInfraspeakDateExpression =
 
 /**
  * Value of a resourceLocator parameter as an integer. Handles both the raw
- * locator object and an already-extracted value.
+ * locator object and an already-extracted value. A non-numeric value is sent
+ * unchanged, so the API rejects it with the bad ID visible instead of the node
+ * silently sending `null` (what JSON makes of `Number("abc")`).
  */
 export const resourceLocatorIdExpression =
-	'={{ Number(typeof $value === "object" && $value !== null ? $value.value : $value) }}';
+	'={{ (id => /^\\d+$/.test(String(id)) ? Number(id) : id)(typeof $value === "object" && $value !== null ? $value.value : $value) }}';
 
 /**
  * Integer-array body value from a comma-separated string (or an array passed via
