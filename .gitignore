@@ -1,0 +1,4 @@
+dist
+node_modules
+.memsearch/
+docs/api/openapi-full.yaml

@@ -1,0 +1,1157 @@
+openapi: 3.0.3
+info:
+  title: Infraspeak Public REST API
+  description: Infraspeak public REST API documentation.
+  version: 3.0.0
+  contact:
+    name: Infraspeak
+    url: https://infraspeak.com
+servers:
+  - url: https://api.infraspeak.com/v3
+    description: Production
+paths:
+  /clients:
+    get:
+      operationId: getClients
+      tags:
+        - Clients
+      summary: List all Clients
+      description: >
+        This endpoint allows you to get all Clients.
+
+
+        The query parameters described below are to be used with the
+        [JQL](../../../../../../../docs/api/.markdown/1.introduction/4-parameters.md).
+      parameters:
+        - name: code
+          in: query
+          description: Filter results by given property value
+          schema:
+            type: string
+        - name: name
+          in: query
+          description: Filter results by given property value
+          schema:
+            type: string
+        - name: client_id
+          in: query
+          description: Filter results by given property value
+          schema:
+            type: integer
+        - name: nif
+          in: query
+          description: Filter results by given property value
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: |
+            Field to sort by. Add `-` to sort descending.
+
+            Supported values:
+            - `name`
+            - `code`
+            - `nif`
+            - `location` (sorts by city if present, else by country)
+
+            Examples:
+            - `order=name` (ascending)
+            - `order=location-` (descending)
+          required: false
+          schema:
+            type: string
+            pattern: ^(name|code|nif|location)(-)?$
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '429':
+          description: >-
+        '500':
+          description: >-
+    post:
+      operationId: createClient
+      tags:
+        - Clients
+      summary: Create a Client
+      description: |
+        This endpoint allows you to create a Client.
+
+        A Client can be associated to one or more buildings.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Clients payload
+              type: object
+              properties:
+                name:
+                  description: Client name
+                  type: string
+                  examples:
+                    - John Doe
+                code:
+                  description: Client code
+                  type:
+                    - string
+                    - 'null'
+                  examples:
+                    - CH0001
+                nif:
+                  description: NIF/ VAT number of the Client
+                  type:
+                    - string
+                    - 'null'
+                  examples:
+                    - '123456789'
+                address:
+                  description: Address of the Client
+                  type:
+                    - string
+                    - 'null'
+                  examples:
+                    - abc
+                post_code:
+                  description: Postal Code of the Client
+                  type:
+                    - string
+                    - 'null'
+                  examples:
+                    - 1234-567
+                city:
+                  description: City of the Client
+                  type:
+                    - string
+                    - 'null'
+                  examples:
+                    - Lisbon
+                latitude:
+                  description: Latitude of the Client
+                  type:
+                    - number
+                    - 'null'
+                  examples:
+                    - -8.189341
+                longitude:
+                  description: Longitude of the Client
+                  type:
+                    - number
+                    - 'null'
+                  examples:
+                    - 5.1893312
+                observations:
+                  description: Additional information
+                  type:
+                    - string
+                    - 'null'
+                  examples:
+                    - abc
+                country:
+                  description: >-
+                    Country of the Client. The value of this field must be compliant with the `ISO 3166-1 Alpha 2`
+                    standard, for country codes.
+                  type:
+                    - string
+                    - 'null'
+                  examples:
+                    - PT
+                create_building:
+                  description: Indicates if it should create a new building for the Client
+                  type:
+                    - boolean
+                    - 'null'
+                  examples:
+                    - false
+                local_id:
+                  description: >-
+                    Indicates the ID of the Building to replicate information from, when the 'create_building' field is
+                    set to true (Optional).
+                  type:
+                    - integer
+                    - 'null'
+                  examples:
+                    - 123
+                contacts:
+                  description: A list of Contact IDs to associate with this Client.
+                  type: array
+                  items:
+                    description: The ID of the Contact
+                    type: integer
+                    examples:
+                      - 123
+                operators:
+                  description: A list of Operator IDs to associate with this Client.
+                  type: array
+                  items:
+                    description: The ID of the Operator
+                    type: integer
+                    examples:
+                      - 123
+              required:
+                - name
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: >-
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '429':
+          description: >-
+        '500':
+          description: >-
+      x-toolbox: true
+  /failures:
+    get:
+      operationId: getFailures
+      tags:
+        - Failures
+      summary: List all Failures
+      description: >
+        This endpoint allows you to list all Failures registered in the system.
+
+
+        The query parameters described below are to be used with the
+        [JQL](../../../../../../../docs/api/.markdown/1.introduction/4-parameters.md).
+      parameters:
+        - name: approved_date
+          in: query
+          description: Filter results by the approval date of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: completed_date
+          in: query
+          description: Filter results by the completion date of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: expanded
+          in: query
+          description: >
+            Comma-separated list of relations to include in the response, for example `failure_elements` or
+            `failure_elements.element`.
+
+
+            `failure_elements` are returned with archived equipment last; the others keep the order in which they were
+            added to the Failure.
+          required: false
+          schema:
+            type: string
+            examples:
+              - failure_elements.element
+        - name: failure_id
+          in: query
+          description: Filter results by the ID of the Failure
+          schema:
+            type: integer
+        - name: last_status_change_date
+          in: query
+          description: Filter results by the last status change date of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: local_id
+          in: query
+          description: Filter results by the local of the Failure.
+          schema:
+            type: integer
+        - name: problem_id
+          in: query
+          description: Filter results by the problem of the Failure.
+          schema:
+            type: integer
+        - name: start_date
+          in: query
+          description: Filter results by the date of report of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: status
+          in: query
+          description: Filter results by the status of the Failure.
+          schema:
+            type: string
+            enum:
+              - WAITING_APPROVAL
+              - WAITING_RESOLUTION
+              - IN_RESOLUTION
+              - PAUSED
+              - COMPLETED
+              - ARCHIVED
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: >-
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '429':
+          description: >-
+        '500':
+          description: >-
+    post:
+      operationId: createFailure
+      tags:
+        - Failures
+      summary: Create a Failure
+      description: >
+        This endpoint allows you to create a Failure.
+
+
+        - `problem_id`: refers to the type of problem. First, you need to retrieve the **problem areas** (GET
+        `/problems`). Then, list the sub-problems from the desired area (GET `/problems/{problem_id}/subproblems`) and,
+        from the response, use the respective `problem_id`.
+
+        - `local_id`: refers to the location (GET `/locations`) related to the Failure. It can't be of type "building"
+        neither "location-folder", this is, only of type "location".
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Failure payload
+              type: object
+              properties:
+                problem_id:
+                  description: >
+                    ID of the associated problem. Refers to the type of Problem and need to be a Problem Type, not a
+                    Problem Area. To get the Problem Types, first, you need to retrieve the Problem Areas (GET
+                    `/problems`). Then, list the Problem Types from the desired area (GET
+                    `/problems/{problem_id}/subproblems`) and, from the response, use the respective `problem_id`.
+                  type: integer
+                description:
+                  description: A more detailed description of the reported incident.
+                  type: string
+                  examples:
+                    - The bathroom light needs replacement
+                observations:
+                  description: A longer description or anything with longer text that needs to be reported.
+                  type: string
+                priority:
+                  description: Failure priority number, being 1 the lowest priority and 4 the highest priority.
+                  type: integer
+                  enum:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                client_id:
+                  description: ID of the client associated to the Failure
+                  type: integer
+                local_id:
+                  description: ID of the location associated to the Failure
+                  type: integer
+                operator_id:
+                  description: >-
+                    ID of the operator that owns the Failure. By default, uses the ID of the Operator associated to the
+                    API token.
+                  type: integer
+                  writeOnly: true
+                report_type:
+                  description: Type of the Failure's reporter. The failure can be reported by an Operator or by a Contact.
+                  type: string
+                  enum:
+                    - contact
+                    - operator
+                report_id:
+                  description: ID of the operator or contact who reported the Failure
+                  type: integer
+                  writeOnly: true
+                supplier_id:
+                  description: ID of the supplier associated to the Failure
+                  type: integer
+                gatekeeper_id:
+                  description: ID for the associated Gatekeeper
+                  type: integer
+                cost_center_id:
+                  description: ID of the associated CostCenter
+                  type: integer
+                include_automatic_assignees:
+                  description: If is to append automatic assignees when a user select a custom list of assignees
+                  type: boolean
+                enforce_nfc:
+                  description: >
+                    Whether the asset's NFC tag must be scanned to execute the tasks of this work order.
+
+                    Only administrators and managers decide this field. A value sent by any other role is ignored rather
+                    than rejected.
+
+                    What is stored depends on the entity's `enforce-nfc` extension. With it configured as required, a
+                    value sent by an administrator or a manager is honoured and omitting the field stores `true`.
+                    Otherwise the field is ignored and the work order is created with `false`.
+                  type: boolean
+              required:
+                - client_id
+                - problem_id
+                - priority
+                - local_id
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: >-
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '403':
+          description: Forbidden. The action can not be fulfilled.
+        '429':
+          description: >-
+        '500':
+          description: >-
+  /failures/{failure}:
+    get:
+      operationId: getFailure
+      tags:
+        - Failures
+      summary: Get a Failure
+      description: This endpoint allows you to get a specific Failure.
+      parameters:
+        - name: failure
+          in: path
+          description: The Failure ID or UUID
+          required: true
+          schema:
+            oneOf:
+              - type: string
+                pattern: ^[0-9]+$
+                examples:
+                  - '234562'
+              - type: string
+                format: uuid
+        - name: expanded
+          in: query
+          description: >
+            Comma-separated list of relations to include in the response, for example `failure_elements` or
+            `failure_elements.element`.
+
+
+            `failure_elements` are returned with archived equipment last; the others keep the order in which they were
+            added to the Failure.
+          required: false
+          schema:
+            type: string
+            examples:
+              - failure_elements.element
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: >-
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '404':
+          description: Resource Not Found. Requests to resources that don't exist or are malformed.
+        '429':
+          description: >-
+        '500':
+          description: >-
+    delete:
+      operationId: deleteFailure
+      tags:
+        - Failures
+      summary: Delete Failure
+      description: This endpoint allows you to delete a Failure
+      parameters:
+        - name: failure
+          in: path
+          description: The Failure ID or UUID
+          required: true
+          schema:
+            oneOf:
+              - type: string
+                pattern: ^[0-9]+$
+                examples:
+                  - '234562'
+              - type: string
+                format: uuid
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: >-
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '429':
+          description: >-
+        '500':
+          description: >-
+      x-toolbox: true
+    patch:
+      operationId: updateFailure
+      tags:
+        - Failures
+      summary: Update Failure
+      description: This endpoint allows you to update a Failure
+      parameters:
+        - name: failure
+          in: path
+          description: The Failure ID or UUID
+          required: true
+          schema:
+            oneOf:
+              - type: string
+                pattern: ^[0-9]+$
+                examples:
+                  - '234562'
+              - type: string
+                format: uuid
+        - name: expanded
+          in: query
+          description: >
+            Comma-separated list of relations to include in the response, for example `failure_elements` or
+            `failure_elements.element`.
+
+
+            `failure_elements` are returned with archived equipment last; the others keep the order in which they were
+            added to the Failure.
+          required: false
+          schema:
+            type: string
+            examples:
+              - failure_elements.element
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Failure payload
+              type: object
+              properties:
+                problem_id:
+                  description: >
+                    ID of the associated problem. Refers to the type of Problem and need to be a Problem Type, not a
+                    Problem Area. To get the Problem Types, first, you need to retrieve the Problem Areas (GET
+                    `/problems`). Then, list the Problem Types from the desired area (GET
+                    `/problems/{problem_id}/subproblems`) and, from the response, use the respective `problem_id`.
+                  type: integer
+                description:
+                  description: A more detailed description of the reported incident.
+                  type: string
+                  examples:
+                    - The bathroom light needs replacement
+                observations:
+                  description: A longer description or anything with longer text that needs to be reported.
+                  type: string
+                priority:
+                  description: Failure priority number, being 1 the lowest priority and 4 the highest priority.
+                  type: integer
+                  enum:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                client_id:
+                  description: ID of the client associated to the Failure
+                  type: integer
+                local_id:
+                  description: ID of the location associated to the Failure
+                  type: integer
+                supplier_id:
+                  description: ID of the supplier associated to the Failure
+                  type: integer
+                cost_center_id:
+                  description: ID of the associated CostCenter
+                  type: integer
+                gatekeeper_id:
+                  description: ID for the associated Gatekeeper
+                  type: integer
+                gatekeeper_notification:
+                  description: A set of notifications IDs to be dispatched under Gatekeeper.
+                  type: array
+                  items:
+                    type: integer
+                last_status_description:
+                  description: Observation for closing Failure action
+                  type: string
+                external_id:
+                  description: Id of the failure in the external system
+                  type: string
+                enforce_nfc:
+                  description: >
+                    Whether the asset's NFC tag must be scanned to execute the tasks of this work order. Omitting it
+                    keeps the stored value.
+
+                    Only admins and managers may change it, and only while the work order is not closed.
+                  type: boolean
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: >-
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '429':
+          description: >-
+        '500':
+          description: >-
+      x-toolbox: true
+  /failures/closed:
+    get:
+      operationId: getClosedFailures
+      tags:
+        - Failures
+      summary: List closed Failures
+      description: >
+        This endpoint allows you to list all closed Failures (those **in** state `COMPLETED`).
+
+
+        The query parameters described below are to be used with the
+        [JQL](../../../../../../../docs/api/.markdown/1.introduction/4-parameters.md).
+      parameters:
+        - name: approved_date
+          in: query
+          description: Filter results by the approval date of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: completed_date
+          in: query
+          description: Filter results by the completion date of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: expanded
+          in: query
+          description: >
+            Comma-separated list of relations to include in the response, for example `failure_elements` or
+            `failure_elements.element`.
+
+
+            `failure_elements` are returned with archived equipment last; the others keep the order in which they were
+            added to the Failure.
+          required: false
+          schema:
+            type: string
+            examples:
+              - failure_elements.element
+        - name: failure_id
+          in: query
+          description: Filter results by the ID of the Failure
+          schema:
+            type: integer
+        - name: last_status_change_date
+          in: query
+          description: Filter results by the last status change date of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: local_id
+          in: query
+          description: Filter results by the local of the Failure.
+          schema:
+            type: integer
+        - name: problem_id
+          in: query
+          description: Filter results by the problem of the Failure.
+          schema:
+            type: integer
+        - name: start_date
+          in: query
+          description: Filter results by the date of report of the Failure.
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: >-
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '429':
+          description: >-
+        '500':
+          description: >-
+  /failures/open:
+    get:
+      operationId: getOpenFailures
+      tags:
+        - Failures
+      summary: List open Failures
+      description: >
+        This endpoint allows you to list all currently open Failures (**not** in states `COMPLETED` and `ARCHIVED`).
+
+        Although you can filter the results by status, keep in mind that if you use the `COMPLETED` or `ARCHIVED`
+        status, this endpoint will always return an empty list.
+
+
+        The query parameters described below are to be used with the
+        [JQL](../../../../../../../docs/api/.markdown/1.introduction/4-parameters.md).
+      parameters:
+        - name: approved_date
+          in: query
+          description: Filter results by the approval date of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: completed_date
+          in: query
+          description: Filter results by the completion date of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: expanded
+          in: query
+          description: >
+            Comma-separated list of relations to include in the response, for example `failure_elements` or
+            `failure_elements.element`.
+
+
+            `failure_elements` are returned with archived equipment last; the others keep the order in which they were
+            added to the Failure.
+          required: false
+          schema:
+            type: string
+            examples:
+              - failure_elements.element
+        - name: failure_id
+          in: query
+          description: Filter results by the ID of the Failure
+          schema:
+            type: integer
+        - name: last_status_change_date
+          in: query
+          description: Filter results by the last status change date of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: local_id
+          in: query
+          description: Filter results by the local of the Failure.
+          schema:
+            type: integer
+        - name: problem_id
+          in: query
+          description: Filter results by the problem of the Failure.
+          schema:
+            type: integer
+        - name: start_date
+          in: query
+          description: Filter results by the date of report of the Failure.
+          schema:
+            type: string
+            format: date-time
+        - name: status
+          in: query
+          description: Filter results by the status of the Failure.
+          schema:
+            type: string
+            enum:
+              - WAITING_APPROVAL
+              - WAITING_RESOLUTION
+              - IN_RESOLUTION
+              - PAUSED
+              - COMPLETED
+              - ARCHIVED
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '429':
+          description: >-
+        '500':
+          description: >-
+  /locations:
+    get:
+      operationId: getLocations
+      tags:
+        - Locations
+      summary: List all Locations
+      description: >
+        This endpoint allows you to list all Locations, including types `building`, `location-folder` and `location`.
+
+
+        The query parameters described below are to be used with the
+        [JQL](../../../../../../../docs/api/.markdown/1.introduction/4-parameters.md).
+      parameters:
+        - name: sc_search
+          in: query
+          description: |
+            Unified search term applied against location `name` and `full_code`.
+          required: false
+          schema:
+            type: string
+          examples:
+            basic:
+              summary: Find locations whose name or full_code contains "floor"
+              value: floor
+        - name: code
+          in: query
+          description: Filter results by given property value
+          schema:
+            type: string
+        - name: full_code
+          in: query
+          description: Filter results by given property value
+          schema:
+            type: string
+        - name: is_real
+          in: query
+          description: Filter results by given property value
+          schema:
+            type: boolean
+        - name: local_id
+          in: query
+          description: Filter results by given property value
+          schema:
+            type: string
+        - name: parent_id
+          in: query
+          description: Filter results by given property value
+          schema:
+            type: string
+        - name: root_parent_id
+          in: query
+          description: Filter results by given property value
+          schema:
+            type: string
+        - name: s_with_assets_count
+          in: query
+          description: Include cumulative assets count for each location (includes all descendant locations)
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: sort
+          in: query
+          description: |
+            Sorts the results by the specified field and direction.
+
+            The format is `{field}{direction}` where direction is `+` for ascending and `-` for descending.
+            If no direction symbol is provided, ascending order is used by default.
+          required: false
+          schema:
+            type: string
+            example: code-
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: >-
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '404':
+          description: Resource Not Found. Requests to resources that don't exist or are malformed.
+        '429':
+          description: >-
+        '500':
+          description: >-
+    post:
+      operationId: createLocation
+      tags:
+        - Locations
+      summary: Create a Location
+      description: >
+        This endpoint allows you to create a Location. The locations are structured as a "directory". There are 3 types
+        of locations:
+
+
+        - `building`: are the "root folders", the main buildings, which contain "folders" or "real locations".
+
+        - `location-folder`: are the "folders" and "subfolders" inside the buildings, which contain "real locations".
+
+        - `location`: are the "real locations" inside the buildings, folders or sub-folders.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - description: Location payload to create a `building`
+                  type: object
+                  properties:
+                    _type:
+                      description: Location type
+                      type: string
+                      enum:
+                        - building
+                      writeOnly: true
+                    name:
+                      type: string
+                      examples:
+                        - Main Building
+                    code:
+                      description: Building code. Must be unique across its level.
+                      type: string
+                      examples:
+                        - MB
+                    client_id:
+                      description: ID of the associated client.
+                      type: integer
+                    observation:
+                      description: Additional information
+                      type:
+                        - string
+                        - 'null'
+                    address:
+                      description: Building address
+                      type:
+                        - string
+                        - 'null'
+                      writeOnly: true
+                    postal_code:
+                      description: Building postal code
+                      type:
+                        - string
+                        - 'null'
+                      writeOnly: true
+                    city:
+                      description: Building city
+                      type:
+                        - string
+                        - 'null'
+                      writeOnly: true
+                    latitude:
+                      description: Building latitude
+                      type:
+                        - string
+                        - 'null'
+                      writeOnly: true
+                    longitude:
+                      description: Building longitude
+                      type:
+                        - string
+                        - 'null'
+                      writeOnly: true
+                    operators:
+                      description: A list of IDs of the operators responsible for the building.
+                      type: array
+                      items:
+                        type: integer
+                      writeOnly: true
+                    teams:
+                      description: A list of IDs of the teams to associate to the location.
+                      type: array
+                      items:
+                        type: integer
+                      writeOnly: true
+                    suppliers:
+                      description: A list of IDs of the suppliers associated to the building.
+                      type: array
+                      items:
+                        type: integer
+                      writeOnly: true
+                  required:
+                    - _type
+                    - name
+                    - code
+                    - client_id
+                - description: Location payload to create a `location-folder`
+                  type: object
+                  properties:
+                    _type:
+                      description: Location type
+                      type: string
+                      enum:
+                        - location-folder
+                      writeOnly: true
+                    name:
+                      type: string
+                      examples:
+                        - 1st Floor
+                    code:
+                      description: Folder code. Must be unique across its level.
+                      type: string
+                      examples:
+                        - 1F
+                    parent_id:
+                      description: ID of the folder parent (upper level folder or building)
+                      type: integer
+                    observation:
+                      description: Additional information
+                      type:
+                        - string
+                        - 'null'
+                  required:
+                    - _type
+                    - name
+                    - code
+                    - parent_id
+                - description: Location payload for create a `location`
+                  type: object
+                  properties:
+                    _type:
+                      description: Location type
+                      type: string
+                      enum:
+                        - location
+                      writeOnly: true
+                    name:
+                      type: string
+                      examples:
+                        - Room 101
+                    code:
+                      description: Location code. Must be unique across its level.
+                      type: string
+                      examples:
+                        - R101
+                    parent_id:
+                      description: ID of the folder parent (upper level folder or building)
+                      type: integer
+                    location_type_id:
+                      description: ID of the location type (GET `/location-types`)
+                      type: integer
+                    observation:
+                      description: Additional information
+                      type:
+                        - string
+                        - 'null'
+                    latitude:
+                      description: Element Location latitude
+                      type:
+                        - string
+                        - 'null'
+                    longitude:
+                      description: Element Location longitude
+                      type:
+                        - string
+                        - 'null'
+                    area:
+                      description: Location area
+                      type:
+                        - number
+                        - 'null'
+                    glass_area:
+                      description: Location glass area
+                      type:
+                        - number
+                        - 'null'
+                    volume:
+                      description: Location volume
+                      type:
+                        - number
+                        - 'null'
+                    operators:
+                      description: A list of IDs of the operators responsible for the location.
+                      type: array
+                      items:
+                        type: integer
+                      writeOnly: true
+                    orientation:
+                      description: Solar orientation (North, South, West, East)
+                      type: string
+                  required:
+                    - _type
+                    - name
+                    - code
+                    - parent_id
+                    - location_type_id
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: >-
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '429':
+          description: >-
+        '500':
+          description: >-
+    patch:
+      operationId: updateMultipleLocations
+      tags:
+        - Locations
+      summary: Update Multiple Locations
+      description: |
+        This endpoint allows you to update several Locations base parameters (no relationship changes allowed).
+        Have in mind that there is a max limit of 50 locations per request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Location payload for update multiple locations
+              type: object
+              properties:
+                locations:
+                  description: An array of locations to update
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      location_id:
+                        description: Id of Location to be updated
+                        type: integer
+                        readOnly: true
+                      name:
+                        type:
+                          - string
+                          - 'null'
+                        examples:
+                          - Room 101
+                      code:
+                        description: Location code. Must be unique across its level.
+                        type:
+                          - string
+                          - 'null'
+                        examples:
+                          - R101
+                      observation:
+                        description: Additional information
+                        type:
+                          - string
+                          - 'null'
+                      latitude:
+                        description: Element Location latitude
+                        type:
+                          - number
+                          - 'null'
+                      longitude:
+                        description: Element Location longitude
+                        type:
+                          - number
+                          - 'null'
+                      area:
+                        description: Location area
+                        type:
+                          - number
+                          - 'null'
+                      glass_area:
+                        description: Location glass area
+                        type:
+                          - number
+                          - 'null'
+                      volume:
+                        description: Location volume
+                        type:
+                          - number
+                          - 'null'
+                      orientation:
+                        description: Solar orientation (North, South, West, East)
+                        type:
+                          - string
+                          - 'null'
+                    required:
+                      - location_id
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: >-
+        '401':
+          description: 'Unauthorized. Authentication or permission error. E.g.: missing, incorrect or invalid Access Token.'
+        '429':
+          description: >-
+        '500':
+          description: >-
+components:
+  securitySchemes:
+    BearerAuth:
+      description: Bearer token to be sent in "Authorization" request header.
+      type: http
+      bearerFormat: JWT
+      scheme: bearer
+  schemas:
+    BaseDateTime:
+      type:
+        - string
+        - 'null'
+      pattern: ^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$
+      examples:
+        - '2021-07-21 18:38:00'
+security:
+  - BearerAuth:
+      - ''
