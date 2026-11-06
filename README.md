@@ -1,18 +1,16 @@
 # n8n-nodes-infraspeak
 
-This is an n8n community node. It lets you use _app/service name_ in your n8n workflows.
+This is an n8n community node. It lets you use [Infraspeak](https://infraspeak.com) in your n8n workflows.
 
-_App/service name_ is _one or two sentences describing the service this node integrates with_.
+Infraspeak is a maintenance management platform (CMMS). This node manages **failures**, which are Infraspeak's corrective work orders.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
 [Installation](#installation)
 [Operations](#operations)
 [Credentials](#credentials)
-[Compatibility](#compatibility)
 [Usage](#usage)
 [Resources](#resources)
-[Version history](#version-history)
 
 ## Installation
 
@@ -20,27 +18,32 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
-_List the operations supported by your node._
+**Failure**
+
+- **Create**: create a failure for a client and location, with a problem type and priority
+- **Get**: get a failure by numeric ID or UUID
+- **Get Many**: list all, open, or closed failures. You can filter by status, location, problem type, and reported/completed date ranges. Return All pages through the API 200 records at a time.
+- **Update**: update a failure's fields, such as priority, description, location, and closing note
+
+The Client and Location fields are searchable dropdowns, or you can enter an ID directly. The Location list only shows real locations, because failures can't be attached to buildings or folders.
 
 ## Credentials
 
-_If users need to authenticate with the app/service, provide details here. You should include prerequisites (such as signing up with the service), available authentication methods, and how to set them up._
+The node authenticates with a bearer token.
 
-## Compatibility
+1. In Infraspeak, create a Personal Access Token (see [Using the token](https://developer.infraspeak.com/documentation/authentication/using-the-token)).
+2. In n8n, create an **Infraspeak API** credential and paste the token into **Access Token**.
 
-_State the minimum n8n version, as well as which versions you test against. You can also include any known version incompatibility issues._
+The credential test calls `GET /locations?limit=1`.
 
 ## Usage
 
-_This is an optional section. Use it to help users with any difficult or confusing aspects of the node._
-
-_By the time users are looking for community nodes, they probably already know n8n basics. But if you expect new users, you can link to the [Try it out](https://docs.n8n.io/try-it-out/) documentation to help them get started._
+- **Simplify** (on by default) flattens each JSON:API record to `{ id, ...attributes }`. Turn it off to get the raw record, including `type` and `relationships`.
+- **Problem ID** must be a problem _type_, not a problem area. You can find it with `GET /problems/{problem_id}/subproblems`.
+- The API allows 60 requests per minute. Return All over a large account makes one request per 200 failures.
+- Date filters are sent in Infraspeak's `YYYY-MM-DD HH:MM:SS` format.
 
 ## Resources
 
-* [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
-* _Link to app/service documentation._
-
-## Version history
-
-_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
+- [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
+- [Infraspeak developer documentation](https://developer.infraspeak.com/documentation)

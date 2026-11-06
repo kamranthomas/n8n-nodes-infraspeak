@@ -1,14 +1,14 @@
 {
   "name": "n8n-nodes-infraspeak",
   "version": "0.1.0",
-  "description": "",
+  "description": "n8n community node for Infraspeak: create, get, list and update failures (work orders)",
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/kamranthomas/n8n-nodes-infraspeak",
   "keywords": ["n8n-community-node-package"],
   "author": { "name": "kamranthomas", "email": "kamran.alimagham@gmail.com" },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/kamranthomas/n8n-nodes-infraspeak.git"
   },
   "scripts": {
     "build": "n8n-node build",

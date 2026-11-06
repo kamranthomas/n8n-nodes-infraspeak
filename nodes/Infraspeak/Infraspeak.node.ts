@@ -1,16 +1,19 @@
 import { NodeConnectionTypes, type INodeType, type INodeTypeDescription } from 'n8n-workflow';
-import { userDescription } from './resources/user';
-import { companyDescription } from './resources/company';
+import { getClients } from './listSearch/getClients';
+import { getLocations } from './listSearch/getLocations';
+import { failureDescription } from './resources/failure';
+import { INFRASPEAK_BASE_URL } from './shared/transport';
 
 export class Infraspeak implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Infraspeak',
 		name: 'infraspeak',
-		icon: { light: 'file:infraspeak.svg', dark: 'file:infraspeak.dark.svg' },
+		// The logo is a solid badge that reads on both themes, so one file serves both.
+		icon: { light: 'file:infraspeak.svg', dark: 'file:infraspeak.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Interact with the Infraspeak API',
+		description: 'Manage failures (work orders) in Infraspeak',
 		defaults: {
 			name: 'Infraspeak',
 		},
@@ -19,7 +22,7 @@ export class Infraspeak implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		credentials: [{ name: 'infraspeakApi', required: true }],
 		requestDefaults: {
-			baseURL: 'https://api.infraspeak.com/v3',
+			baseURL: INFRASPEAK_BASE_URL,
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
@@ -33,18 +36,20 @@ export class Infraspeak implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'User',
-						value: 'user',
-					},
-					{
-						name: 'Company',
-						value: 'company',
+						name: 'Failure',
+						value: 'failure',
 					},
 				],
-				default: 'user',
+				default: 'failure',
 			},
-			...userDescription,
-			...companyDescription,
+			...failureDescription,
 		],
+	};
+
+	methods = {
+		listSearch: {
+			getClients,
+			getLocations,
+		},
 	};
 }

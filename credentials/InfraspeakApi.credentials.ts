@@ -2,6 +2,7 @@ import type {
 	IAuthenticateGeneric,
 	ICredentialTestRequest,
 	ICredentialType,
+	Icon,
 	INodeProperties,
 } from 'n8n-workflow';
 
@@ -10,8 +11,13 @@ export class InfraspeakApi implements ICredentialType {
 
 	displayName = 'Infraspeak API';
 
-	// Link to your community node's README
-	documentationUrl = 'https://github.com/org/-infraspeak?tab=readme-ov-file#credentials';
+	icon: Icon = {
+		light: 'file:../nodes/Infraspeak/infraspeak.svg',
+		dark: 'file:../nodes/Infraspeak/infraspeak.svg',
+	};
+
+	documentationUrl =
+		'https://github.com/kamranthomas/n8n-nodes-infraspeak?tab=readme-ov-file#credentials';
 
 	properties: INodeProperties[] = [
 		{
@@ -21,6 +27,7 @@ export class InfraspeakApi implements ICredentialType {
 			typeOptions: { password: true },
 			required: true,
 			default: '',
+			description: 'Personal Access Token (or JWT) from your Infraspeak account',
 		},
 	];
 
@@ -33,10 +40,14 @@ export class InfraspeakApi implements ICredentialType {
 		},
 	};
 
+	// The API has no /me endpoint; a one-record location list is the check the Infraspeak docs recommend.
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: 'https://api.infraspeak.com/v3',
-			url: '/v1/user',
+			url: '/locations',
+			method: 'GET',
+			qs: { limit: 1 },
+			headers: { Accept: 'application/json' },
 		},
 	};
 }
