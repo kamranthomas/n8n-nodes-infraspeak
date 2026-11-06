@@ -11,117 +11,19 @@
  * This proves the node sends what the spec describes. It cannot prove the live API
  * behaves like the spec. That's the live suite's job.
  */
+
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import nock from 'nock';
-import type { IDataObject, INodeParameters } from 'n8n-workflow';
-import manifestJson from './generated/manifest.json';
+import type { IDataObject } from 'n8n-workflow';
 import { BASE_URL, runNode, useNock } from './harness';
-
-type Kind = 'string' | 'number' | 'boolean' | 'options' | 'date' | 'intArray' | 'locator';
-
-interface Field {
-	container: string;
-	name: string;
-	kind: Kind;
-	target: 'body' | 'query' | 'path' | 'none';
-	property?: string;
-	required: boolean;
-	options?: Array<string | number>;
-	format?: string;
-}
-
-interface Operation {
-	resource: string;
-	operation: string;
-	operationId: string;
-	method: string;
-	path: string;
-	output: 'records' | 'deleted' | 'success';
-	list: boolean;
-	selector?: { name: string; value: string };
-	fields: Field[];
-	allowedQuery: string[];
-	bodySchema?: object;
-}
-
-const operations = (manifestJson as { operations: Operation[] }).operations;
+import { build, label, operations, type Operation } from './manifest';
 
 const ajv = new Ajv({ strict: false, allErrors: true });
 addFormats(ajv, ['uuid', 'date']);
 // The spec declares date-time fields, but the API takes `YYYY-MM-DD HH:MM:SS`
 // (docs/api/README.md), which is what the node sends.
 ajv.addFormat('date-time', /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
-
-const SAMPLE_DATE_INPUT = '2026-01-02T03:04:05';
-const SAMPLE_DATE_SENT = '2026-01-02 03:04:05';
-const SAMPLE_ID = '42';
-
-/** Value to put in the n8n parameter, and the value expected on the wire. */
-function sample(field: Field): { input: unknown; sent: unknown } {
-	switch (field.kind) {
-		case 'string': {
-			if (field.target === 'path') return { input: SAMPLE_ID, sent: SAMPLE_ID };
-			const value =
-				field.format === 'uuid' ? '0b5f2c1e-8d1a-4c5e-9f4b-1a2b3c4d5e6f' : `sample ${field.name}`;
-			return { input: value, sent: value };
-		}
-		case 'number':
-			return { input: 7, sent: 7 };
-		case 'boolean':
-			return { input: true, sent: true };
-		case 'options':
-			return { input: field.options![0], sent: field.options![0] };
-		case 'date':
-			return { input: SAMPLE_DATE_INPUT, sent: SAMPLE_DATE_SENT };
-		case 'intArray':
-			return { input: '1, 2', sent: [1, 2] };
-		case 'locator':
-			return {
-				input: { __rl: true, mode: 'id', value: SAMPLE_ID },
-				sent: field.target === 'path' ? SAMPLE_ID : Number(SAMPLE_ID),
-			};
-	}
-}
-
-interface Expected {
-	parameters: INodeParameters;
-	path: string;
-	query: Record<string, string>;
-	body: IDataObject;
-}
-
-function build(op: Operation, mode: 'all' | 'required'): Expected {
-	const parameters: INodeParameters = { resource: op.resource, operation: op.operation };
-	const query: Record<string, string> = {};
-	const body: IDataObject = {};
-	let path = op.path;
-
-	if (op.selector) parameters[op.selector.name] = op.selector.value;
-	if (op.output === 'records') parameters.simplify = true;
-	if (op.list) {
-		parameters.returnAll = false;
-		parameters.limit = 3;
-		query.limit = '3';
-		query.page = '1';
-	}
-
-	for (const field of op.fields) {
-		if (mode === 'required' && !field.required) continue;
-		const { input, sent } = sample(field);
-		if (field.container) {
-			const collection = (parameters[field.container] ?? {}) as IDataObject;
-			collection[field.name] = input as IDataObject[string];
-			parameters[field.container] = collection as INodeParameters[string];
-		} else {
-			parameters[field.name] = input as INodeParameters[string];
-		}
-		if (field.target === 'body') body[field.property!] = sent as IDataObject[string];
-		if (field.target === 'query') query[field.property!] = String(sent);
-		if (field.target === 'path') path = path.replace(`{${field.property}}`, String(sent));
-	}
-	return { parameters, path, query, body };
-}
 
 const record = (id: number) => ({
 	id: String(id),
@@ -162,9 +64,6 @@ function intercept(op: Operation, response: object): Captured[] {
 		});
 	return captured;
 }
-
-const label = (op: Operation) =>
-	`${op.resource} → ${op.operation}${op.selector ? ` (${op.selector.value})` : ''} [${op.method} ${op.path}]`;
 
 describe('spec conformance', () => {
 	useNock();

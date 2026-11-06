@@ -3,10 +3,20 @@
 // All enabled resources.
 
 import type { INodeProperties } from 'n8n-workflow';
+import { categoryDescription } from './category';
 import { clientDescription } from './client';
+import { contactDescription } from './contact';
+import { costCenterDescription } from './costCenter';
 import { elementDescription } from './element';
 import { failureDescription } from './failure';
+import { fileDescription } from './file';
+import { operatorDescription } from './operator';
+import { otherCostDescription } from './otherCost';
 import { problemDescription } from './problem';
+import { requestDescription } from './request';
+import { scheduledWorkDescription } from './scheduledWork';
+import { supplierDescription } from './supplier';
+import { workDescription } from './work';
 
 export const resourceProperties: INodeProperties[] = [
 	{
@@ -15,15 +25,35 @@ export const resourceProperties: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		options: [
+			{ name: 'Category', value: 'category' },
 			{ name: 'Client', value: 'client' },
+			{ name: 'Contact', value: 'contact' },
+			{ name: 'Cost Center', value: 'costCenter' },
 			{ name: 'Element (Asset)', value: 'element' },
 			{ name: 'Failure', value: 'failure' },
+			{ name: 'File', value: 'file' },
+			{ name: 'Operator', value: 'operator' },
+			{ name: 'Other Cost', value: 'otherCost' },
 			{ name: 'Problem', value: 'problem' },
+			{ name: 'Request', value: 'request' },
+			{ name: 'Scheduled Work', value: 'scheduledWork' },
+			{ name: 'Supplier', value: 'supplier' },
+			{ name: 'Work', value: 'work' },
 		],
 		default: 'failure',
 	},
+	...categoryDescription,
 	...clientDescription,
+	...contactDescription,
+	...costCenterDescription,
 	...elementDescription,
 	...failureDescription,
+	...fileDescription,
+	...operatorDescription,
+	...otherCostDescription,
 	...problemDescription,
+	...requestDescription,
+	...scheduledWorkDescription,
+	...supplierDescription,
+	...workDescription,
 ];

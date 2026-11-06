@@ -495,12 +495,34 @@ export const failureDescription: INodeProperties[] = [
 		displayOptions: { show: { resource: ['failure'], operation: ['create'] } },
 		options: [
 			{
-				displayName: 'Cost Center ID',
+				displayName: 'Cost Center',
 				name: 'costCenterId',
-				description: 'ID of the associated cost center',
-				type: 'number',
-				default: 0,
-				routing: { send: { type: 'body', property: 'cost_center_id' } },
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
+				description: 'The associated cost center',
+				modes: [
+					{
+						displayName: 'From List',
+						name: 'list',
+						type: 'list',
+						typeOptions: { searchListMethod: 'getCostCenters', searchable: true },
+					},
+					{
+						displayName: 'By ID',
+						name: 'id',
+						type: 'string',
+						placeholder: 'e.g. 123',
+						validation: [
+							{
+								type: 'regex',
+								properties: { regex: '^[0-9]+$', errorMessage: 'Not a valid ID: must be a number' },
+							},
+						],
+					},
+				],
+				routing: {
+					send: { type: 'body', property: 'cost_center_id', value: resourceLocatorIdExpression },
+				},
 			},
 			{
 				displayName: 'Description',
@@ -545,13 +567,35 @@ export const failureDescription: INodeProperties[] = [
 				routing: { send: { type: 'body', property: 'observations' } },
 			},
 			{
-				displayName: 'Operator ID',
+				displayName: 'Operator',
 				name: 'operatorId',
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
 				description:
-					'ID of the operator who owns the failure. Defaults to the operator of the API token.',
-				type: 'number',
-				default: 0,
-				routing: { send: { type: 'body', property: 'operator_id' } },
+					'The operator who owns the failure. Defaults to the operator of the API token.',
+				modes: [
+					{
+						displayName: 'From List',
+						name: 'list',
+						type: 'list',
+						typeOptions: { searchListMethod: 'getOperators', searchable: true },
+					},
+					{
+						displayName: 'By ID',
+						name: 'id',
+						type: 'string',
+						placeholder: 'e.g. 123',
+						validation: [
+							{
+								type: 'regex',
+								properties: { regex: '^[0-9]+$', errorMessage: 'Not a valid ID: must be a number' },
+							},
+						],
+					},
+				],
+				routing: {
+					send: { type: 'body', property: 'operator_id', value: resourceLocatorIdExpression },
+				},
 			},
 			{
 				displayName: 'Report Type',
@@ -574,12 +618,34 @@ export const failureDescription: INodeProperties[] = [
 				routing: { send: { type: 'body', property: 'report_id' } },
 			},
 			{
-				displayName: 'Supplier ID',
+				displayName: 'Supplier',
 				name: 'supplierId',
-				description: 'ID of the associated supplier',
-				type: 'number',
-				default: 0,
-				routing: { send: { type: 'body', property: 'supplier_id' } },
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
+				description: 'The associated supplier',
+				modes: [
+					{
+						displayName: 'From List',
+						name: 'list',
+						type: 'list',
+						typeOptions: { searchListMethod: 'getSuppliers', searchable: true },
+					},
+					{
+						displayName: 'By ID',
+						name: 'id',
+						type: 'string',
+						placeholder: 'e.g. 123',
+						validation: [
+							{
+								type: 'regex',
+								properties: { regex: '^[0-9]+$', errorMessage: 'Not a valid ID: must be a number' },
+							},
+						],
+					},
+				],
+				routing: {
+					send: { type: 'body', property: 'supplier_id', value: resourceLocatorIdExpression },
+				},
 			},
 		],
 	},
@@ -704,12 +770,34 @@ export const failureDescription: INodeProperties[] = [
 				routing: { send: { type: 'body', property: 'last_status_description' } },
 			},
 			{
-				displayName: 'Cost Center ID',
+				displayName: 'Cost Center',
 				name: 'costCenterId',
-				description: 'ID of the associated cost center',
-				type: 'number',
-				default: 0,
-				routing: { send: { type: 'body', property: 'cost_center_id' } },
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
+				description: 'The associated cost center',
+				modes: [
+					{
+						displayName: 'From List',
+						name: 'list',
+						type: 'list',
+						typeOptions: { searchListMethod: 'getCostCenters', searchable: true },
+					},
+					{
+						displayName: 'By ID',
+						name: 'id',
+						type: 'string',
+						placeholder: 'e.g. 123',
+						validation: [
+							{
+								type: 'regex',
+								properties: { regex: '^[0-9]+$', errorMessage: 'Not a valid ID: must be a number' },
+							},
+						],
+					},
+				],
+				routing: {
+					send: { type: 'body', property: 'cost_center_id', value: resourceLocatorIdExpression },
+				},
 			},
 			{
 				displayName: 'Description',
@@ -867,12 +955,34 @@ export const failureDescription: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Supplier ID',
+				displayName: 'Supplier',
 				name: 'supplierId',
-				description: 'ID of the associated supplier',
-				type: 'number',
-				default: 0,
-				routing: { send: { type: 'body', property: 'supplier_id' } },
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
+				description: 'The associated supplier',
+				modes: [
+					{
+						displayName: 'From List',
+						name: 'list',
+						type: 'list',
+						typeOptions: { searchListMethod: 'getSuppliers', searchable: true },
+					},
+					{
+						displayName: 'By ID',
+						name: 'id',
+						type: 'string',
+						placeholder: 'e.g. 123',
+						validation: [
+							{
+								type: 'regex',
+								properties: { regex: '^[0-9]+$', errorMessage: 'Not a valid ID: must be a number' },
+							},
+						],
+					},
+				],
+				routing: {
+					send: { type: 'body', property: 'supplier_id', value: resourceLocatorIdExpression },
+				},
 			},
 		],
 	},

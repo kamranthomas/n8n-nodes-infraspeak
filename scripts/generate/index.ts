@@ -46,6 +46,9 @@ const ACRONYMS: Record<string, string> = {
 	uuid: 'UUID',
 	nif: 'NIF',
 	url: 'URL',
+	sla: 'SLA',
+	iban: 'IBAN',
+	vat: 'VAT',
 };
 
 function words(name: string): string[] {
@@ -61,6 +64,26 @@ function titleCase(name: string): string {
 	return words(name)
 		.map((w) => ACRONYMS[w] ?? w.charAt(0).toUpperCase() + w.slice(1))
 		.join(' ');
+}
+
+/**
+ * Label for a query param written in Infraspeak's filter syntax (developer docs,
+ * "Parameters"): s_<field> equals, s_<field>_like contains, s_<field>_in / _notin
+ * any / none of, sc_<scope> a named scope. Plain names fall back to title case.
+ */
+function filterLabel(name: string): string {
+	const bound = /^date_(min|max)_(.+)$/.exec(name);
+	if (bound) return `${titleCase(bound[2].replace(/_date$/, ''))} ${bound[1] === 'min' ? 'After' : 'Before'}`;
+	const match = /^(s|sc)_(.+?)(_like|_in|_notin)?$/.exec(name);
+	if (!match) return titleCase(name);
+	const [, , field, op] = match;
+	const suffix = { _like: ' Contains', _in: ' (Any Of)', _notin: ' (None Of)' }[op ?? ''] ?? '';
+	return `${titleCase(field)}${suffix}`;
+}
+
+/** n8n parameter name for a query param: the label's words, so it reads like the UI. */
+function filterName(name: string): string {
+	return camelCase(filterLabel(name).replace(/[()]/g, ''));
 }
 
 function camelCase(name: string): string {
@@ -79,7 +102,8 @@ function cleanDescription(text: string | undefined): string | undefined {
 		.replace(/\s+/g, ' ')
 		.trim();
 	const sentence = plain.match(/^.*?[.!?](\s|$)/)?.[0] ?? plain;
-	return sentence.trim().replace(/\.$/, '') || undefined;
+	// n8n lint wants "ID", never "id", in descriptions.
+	return sentence.trim().replace(/\.$/, '').replace(/\bid(s?)\b/g, 'ID$1') || undefined;
 }
 
 const normalize = (text: string) =>
@@ -110,14 +134,32 @@ function dropRedundantDescriptions(value: unknown): unknown {
 const article = (word: string) => (/^[aeiou]/i.test(word) ? 'an' : 'a');
 
 class GeneratorError extends Error {}
+/** Unrecoverable: stop immediately. */
 const fail = (message: string): never => {
 	throw new GeneratorError(message);
+};
+/**
+ * Recoverable: record it and keep going, so one run reports every override that's
+ * missing. Nothing is written if any were recorded.
+ */
+const problems: string[] = [];
+const problem = (message: string) => {
+	problems.push(message);
 };
 
 // ─── Manifest (what the conformance tests check) ─────────────────────────────
 
 /** How a field's value is turned into the request. Mirrors the runtime expressions. */
-type ValueKind = 'string' | 'number' | 'boolean' | 'options' | 'date' | 'intArray' | 'locator';
+type ValueKind =
+	| 'string'
+	| 'number'
+	| 'boolean'
+	| 'options'
+	| 'date'
+	| 'intArray'
+	| 'stringArray'
+	| 'json'
+	| 'locator';
 
 interface ManifestField {
 	/** Container: top level, or the collection's parameter name. */
@@ -134,6 +176,10 @@ interface ManifestField {
 	format?: string;
 	/** Shown only for these selector values (merged list variants). */
 	showFor?: string[];
+	/** JSON fields: the property's schema, so tests can build a valid sample. */
+	schema?: Schema;
+	/** Query arrays sent as typed text: the item type, so tests can send a valid sample. */
+	arrayItems?: string;
 }
 
 interface ManifestOperation {
@@ -204,6 +250,30 @@ function locatorProperty(
 }
 
 /**
+ * Nested objects and arrays of objects (recurrence rules, SLA rules, ...) have no
+ * sensible flat form, so they're a JSON field the user fills with the spec's structure.
+ */
+function jsonField(
+	base: Record<string, unknown>,
+	schema: Schema,
+	defaultValue: string,
+	routing: Record<string, unknown>,
+	manifest: (kind: ValueKind, extra?: Partial<ManifestField>) => ManifestField,
+): { property: Record<string, unknown>; manifest: ManifestField } {
+	const description = base.description ? `${String(base.description)}. ` : '';
+	return {
+		property: {
+			...base,
+			type: 'json',
+			default: defaultValue,
+			description: `${description}JSON in the structure the Infraspeak API documents for this field.`,
+			routing,
+		},
+		manifest: manifest('json', { schema }),
+	};
+}
+
+/**
  * Builds the n8n properties (one, or two for date ranges / dependent locators) for
  * a body property or query param, plus their manifest entries.
  */
@@ -224,8 +294,11 @@ function buildValueFields(
 	const where = `${ctx.resource.value}.${ctx.operation}.${prop}`;
 
 	// Resource locator
+	// Name-based locators only fit single IDs: `local_id` is an array on some bodies.
 	const locatorKey =
-		override.locator === null ? undefined : (override.locator ?? propertyLocators[prop]);
+		override.locator === null
+			? undefined
+			: (override.locator ?? (type === 'array' ? undefined : propertyLocators[prop]));
 	if (locatorKey) {
 		const locator = locators[locatorKey];
 		const fields: Array<{ property: Record<string, unknown>; manifest: ManifestField }> = [];
@@ -268,8 +341,22 @@ function buildValueFields(
 		return fields;
 	}
 
-	const name = override.name ?? camelCase(prop);
-	const displayName = override.displayName ?? titleCase(prop);
+	// `_type` and `type` can coexist in one body, so a leading underscore must survive in the name.
+	// `_type` and `type` can coexist in one body, so a leading underscore must survive in the name.
+	const name =
+		override.name ??
+		(target === 'query'
+			? filterName(prop)
+			: prop.startsWith('_')
+				? camelCase(`object${prop}`)
+				: camelCase(prop));
+	const displayName =
+		override.displayName ??
+		(target === 'query'
+			? filterLabel(prop)
+			: prop.startsWith('_')
+				? titleCase(`object${prop}`)
+				: titleCase(prop));
 	const base = { displayName, name, ...(description ? { description } : {}) };
 	const manifest = (kind: ValueKind, extra: Partial<ManifestField> = {}): ManifestField => ({
 		container,
@@ -280,6 +367,28 @@ function buildValueFields(
 		required,
 		...extra,
 	});
+
+	// Date-time query param that is already one bound of a range (date_min_x / date_max_x)
+	const bound = /^date_(min|max)_(.+)$/.exec(prop);
+	// The spec doesn't always type these as date-time, but the prefix says what they are.
+	if (type === 'string' && target === 'query' && bound) {
+		const edge = bound[1] === 'min' ? 'After' : 'Before';
+		const stem = override.dateLabel ?? titleCase(bound[2].replace(/_date$/, ''));
+		const fieldName = override.name ?? camelCase(`${stem} ${edge}`);
+		return [
+			{
+				property: {
+					displayName: override.displayName ?? `${stem} ${edge}`,
+					name: fieldName,
+					type: 'dateTime',
+					default: '',
+					description: `Only ${ctx.resource.plural} with ${stem.toLowerCase()} ${edge === 'After' ? 'on or after' : 'on or before'} this date`,
+					routing: send(prop, '={{ INFRASPEAK_DATE }}'),
+				},
+				manifest: { container, name: fieldName, kind: 'date', target, property: prop, required: false },
+			},
+		];
+	}
 
 	// Date-time query param → After/Before range pair
 	if (type === 'string' && schema.format === 'date-time' && target === 'query') {
@@ -300,6 +409,35 @@ function buildValueFields(
 				manifest: { container, name: fieldName, kind: 'date', target, property, required: false },
 			};
 		});
+	}
+
+	// A body property that allows exactly one value is a constant: send it, don't ask for it.
+	if (target === 'body' && schema.enum?.length === 1 && !override.options) {
+		const value = schema.enum[0];
+		return [
+			{
+				property: { ...base, type: 'hidden', default: value, routing: send(prop) },
+				manifest: manifest('options', { options: [value] }),
+			},
+		];
+	}
+
+	// sort with a pattern listing its fields, e.g. ^(name|code)(-)?$ → ascending/descending options
+	const sortFields = /^\^\(([\w|]+)\)\(-\)\?\$$/.exec(String(schema.pattern ?? ''));
+	if (target === 'query' && sortFields && !override.options) {
+		const options = sortFields[1]
+			.split('|')
+			.flatMap((field) => [
+				{ name: `${titleCase(field)} (Ascending)`, value: field },
+				{ name: `${titleCase(field)} (Descending)`, value: `${field}-` },
+			])
+			.sort((a, b) => a.name.localeCompare(b.name));
+		return [
+			{
+				property: { ...base, type: 'options', options, default: options[0].value, routing: send(prop) },
+				manifest: manifest('options', { options: options.map((o) => o.value) }),
+			},
+		];
 	}
 
 	if (schema.enum || override.options) {
@@ -337,12 +475,17 @@ function buildValueFields(
 				];
 			}
 			const multiline = override.multiline ?? false;
+			// n8n lint: email fields carry an example address, password fields are masked.
+			const isEmail = /(^|_)email$/.test(prop);
+			const isPassword = /(^|_)password$/.test(prop);
 			return [
 				{
 					property: {
 						...base,
 						type: 'string',
 						default: '',
+						...(isEmail ? { placeholder: 'name@email.com' } : {}),
+						...(isPassword ? { typeOptions: { password: true } } : {}),
 						...(multiline ? { typeOptions: { rows: 4 } } : {}),
 						routing: send(prop),
 					},
@@ -360,7 +503,7 @@ function buildValueFields(
 			];
 		case 'boolean': {
 			if (!description?.startsWith('Whether')) {
-				fail(
+				problem(
 					`${where}: boolean needs a description starting with "Whether" (add a field override)`,
 				);
 			}
@@ -373,26 +516,43 @@ function buildValueFields(
 		}
 		case 'array': {
 			const itemType = schema.items ? primaryType(schema.items) : undefined;
-			if (itemType !== 'integer') {
-				fail(
-					`${where}: arrays of ${itemType} aren't supported yet (add support or skip the field)`,
-				);
-			}
-			return [
-				{
-					property: {
-						...base,
-						type: 'string',
-						default: '',
-						placeholder: 'e.g. 1, 2, 3',
-						routing: send(prop, '={{ INT_ARRAY }}'),
+			// Query arrays: the encoding the API expects is undocumented, so send the text as typed.
+			if (target === 'query') {
+				return [
+					{
+						property: {
+							...base,
+							type: 'string',
+							default: '',
+							placeholder: 'e.g. A1,B2',
+							routing: send(prop),
+						},
+						manifest: manifest('string', { arrayItems: itemType }),
 					},
-					manifest: manifest('intArray'),
-				},
-			];
+				];
+			}
+			if (itemType === 'integer' || itemType === 'string') {
+				const isInt = itemType === 'integer';
+				return [
+					{
+						property: {
+							...base,
+							type: 'string',
+							default: '',
+							placeholder: isInt ? 'e.g. 1, 2, 3' : 'e.g. first, second',
+							routing: send(prop, isInt ? '={{ INT_ARRAY }}' : '={{ STRING_ARRAY }}'),
+						},
+						manifest: manifest(isInt ? 'intArray' : 'stringArray'),
+					},
+				];
+			}
+			return [jsonField(base, schema, '[]', send(prop, '={{ JSON_VALUE }}'), manifest)];
 		}
+		case 'object':
+			return [jsonField(base, schema, '{}', send(prop, '={{ JSON_VALUE }}'), manifest)];
 		default:
-			return fail(`${where}: unsupported schema type ${JSON.stringify(schema.type)}`);
+			problem(`${where}: unsupported schema type ${JSON.stringify(schema.type)}`);
+			return [];
 	}
 }
 
@@ -417,7 +577,7 @@ function classify(
 	const s = resource.singular;
 	const crud = (() => {
 		const hasTrailingParam = /\}$/.test(op.path);
-		if (op.method === 'get' && op.returns === 'records' && !hasTrailingParam)
+		if (override?.list || (op.method === 'get' && op.returns === 'records' && !hasTrailingParam))
 			return { value: 'getAll', name: 'Get Many', action: `Get many ${resource.plural}` };
 		if (op.method === 'get' && hasTrailingParam)
 			return { value: 'get', name: 'Get', action: `Get ${article(s)} ${s}` };
@@ -434,9 +594,10 @@ function classify(
 	const name = override?.name ?? crud?.name;
 	const action = override?.action ?? crud?.action;
 	if (!value || !name || !action) {
-		return fail(
+		problem(
 			`${resource.tag} ${op.operationId} (${op.method.toUpperCase()} ${op.path}) isn't plain CRUD: add value/name/action overrides`,
 		);
+		return { value: op.operationId, name: op.operationId, action: op.operationId, description: '' };
 	}
 	return { value, name, action, description: override?.description ?? action };
 }
@@ -530,24 +691,54 @@ function buildOperation(
 					? `${titleCase(resource.singular)} ID`
 					: titleCase(param.name));
 			pathParamNames[param.name] = { field, locator: false };
-			topLevel.push({
-				displayName,
-				name: field,
-				type: 'string',
-				required: true,
-				default: '',
-				placeholder: 'e.g. 123',
-				description: cleanDescription(param.description) ?? `ID of the ${resource.singular}`,
-				displayOptions: { show },
-			});
-			manifestFields.push({
-				container: '',
-				name: field,
-				kind: 'string',
-				target: 'path',
-				property: param.name,
-				required: true,
-			});
+			const description = cleanDescription(param.description) ?? `ID of the ${resource.singular}`;
+			if (param.schema.enum) {
+				// Some enums repeat a value in another case (FAILURE / failure): keep the first.
+				const seen = new Set<string>();
+				const options = param.schema.enum
+					.map(String)
+					.filter((v) => !seen.has(v.toLowerCase()) && seen.add(v.toLowerCase()))
+					.map((v) => ({ name: titleCase(v), value: v }))
+					.sort((a, b) => a.name.localeCompare(b.name));
+				topLevel.push({
+					displayName,
+					name: field,
+					type: 'options',
+					required: true,
+					options,
+					default: options[0].value,
+					description,
+					displayOptions: { show },
+				});
+				manifestFields.push({
+					container: '',
+					name: field,
+					kind: 'options',
+					target: 'path',
+					property: param.name,
+					required: true,
+					options: options.map((o) => o.value),
+				});
+			} else {
+				topLevel.push({
+					displayName,
+					name: field,
+					type: 'string',
+					required: true,
+					default: '',
+					placeholder: 'e.g. 123',
+					description,
+					displayOptions: { show },
+				});
+				manifestFields.push({
+					container: '',
+					name: field,
+					kind: 'string',
+					target: 'path',
+					property: param.name,
+					required: true,
+				});
+			}
 		}
 	}
 
@@ -561,7 +752,10 @@ function buildOperation(
 			if (schema.readOnly) continue;
 			const fo = fieldOverride(resource, override, prop);
 			if (fo.skip) continue;
-			const isRequired = !isUpdate && required.has(prop);
+			// Constants (single-value enums) are always sent, so they never sit in a collection.
+			const isConstant = schema.enum?.length === 1 && !fo.options;
+			// The spec's `required` is honoured on Update too: some PATCH schemas demand fields.
+			const isRequired = isConstant || required.has(prop);
 			const built = buildValueFields(
 				prop,
 				schema,
@@ -586,7 +780,7 @@ function buildOperation(
 			}
 		}
 	} else if (primary.body && primary.method !== 'post') {
-		fail(`${resource.tag} ${primary.operationId}: body without properties isn't supported`);
+		problem(`${resource.tag} ${primary.operationId}: body without properties isn't supported`);
 	}
 
 	// Query params (union across merged variants)
@@ -599,16 +793,30 @@ function buildOperation(
 		}
 	}
 	const allowedQuery = new Set<string>();
+	const isListOp =
+		override?.list === true ||
+		(primary.method === 'get' && primary.returns === 'records' && !/\}$/.test(primary.path));
 	for (const { param, operationIds } of queryByName.values()) {
 		const fo = fieldOverride(resource, override, param.name);
-		if (fo.skip) continue;
+		if (fo.skip || param.deprecated) continue;
+		// Return All / Limit already send these.
+		if (isListOp && (param.name === 'limit' || param.name === 'page')) continue;
+		// Some endpoints document a filter both bare (`code`) and in filter syntax (`s_code`).
+		// Keep the documented syntax; the bare form would be a second "Code" field.
+		if (queryByName.has(`s_${param.name}`)) continue;
 		const isOption = apiRules.optionParams.includes(param.name);
 		const container = isOption ? 'options' : 'filters';
 		// Plain equality filters get the API-wide prefix; date ranges, options and
 		// bracketed names (filter[...]) are sent as-is.
 		const isPlainFilter =
-			!isOption && /^[a-z_]+$/.test(param.name) && param.schema.format !== 'date-time';
+			!isOption &&
+			/^[a-z_]+$/.test(param.name) &&
+			!/^(s|sc)_|^date_(min|max)_/.test(param.name) &&
+			param.schema.format !== 'date-time';
 		const sentName = isPlainFilter ? `${apiRules.filterPrefix}${param.name}` : param.name;
+		const isLocator =
+			fo.locator !== null &&
+			Boolean(fo.locator ?? (primaryType(param.schema) === 'array' ? undefined : propertyLocators[param.name]));
 		const schema = { ...param.schema, description: param.schema.description ?? param.description };
 		const built = buildValueFields(
 			sentName,
@@ -618,9 +826,14 @@ function buildOperation(
 			false,
 			{
 				...fo,
-				displayName:
-					fo.displayName ?? (sentName === param.name ? undefined : titleCase(param.name)),
-				name: fo.name ?? (sentName === param.name ? undefined : camelCase(param.name)),
+				// Label and name follow the spec's param, not the prefixed name actually sent.
+				// Locators keep their own label and name.
+				...(isLocator
+					? {}
+					: {
+							displayName: fo.displayName ?? filterLabel(param.name),
+							name: fo.name ?? filterName(param.name),
+						}),
 			},
 			ctx,
 		);
@@ -643,11 +856,22 @@ function buildOperation(
 	}
 
 	// Pagination for list operations
-	const isList =
-		primary.method === 'get' && primary.returns === 'records' && !/\}$/.test(primary.path);
+	const isList = isListOp;
 	if (isList) {
 		topLevel.push(raw(`...returnAllAndLimitFields(${JSON.stringify(show)})`));
 		allowedQuery.add('limit').add('page');
+	}
+
+	// Two spec properties mapping to one n8n name would silently overwrite each other.
+	const namesByContainer = new Map<string, string[]>();
+	for (const f of manifestFields) {
+		const list = namesByContainer.get(f.container) ?? [];
+		if (list.includes(f.name)) {
+			problem(
+				`${resource.value}.${meta.value}: two fields named "${f.name}" in ${f.container || 'top level'} (add a name override)`,
+			);
+		}
+		namesByContainer.set(f.container, [...list, f.name]);
 	}
 
 	// Collections
@@ -667,7 +891,11 @@ function buildOperation(
 
 	// Output
 	const output: ManifestOperation['output'] =
-		primary.method === 'delete' ? 'deleted' : primary.returns === 'other' ? 'success' : 'records';
+		primary.method === 'delete'
+			? 'deleted'
+			: primary.returns === 'other' && !isList && !override?.returnsRecords
+				? 'success'
+				: 'records';
 	const postReceive =
 		output === 'records'
 			? [raw('unwrapJsonApi')]
@@ -748,6 +976,8 @@ function serialize(value: unknown): string {
 			'={{ RESOURCE_LOCATOR_ID }}': 'resourceLocatorIdExpression',
 			'={{ INFRASPEAK_DATE }}': 'toInfraspeakDateExpression',
 			'={{ INT_ARRAY }}': 'intArrayExpression',
+			'={{ STRING_ARRAY }}': 'stringArrayExpression',
+			'={{ JSON_VALUE }}': 'jsonValueExpression',
 		};
 		return placeholders[value] ?? JSON.stringify(value);
 	}
@@ -788,8 +1018,10 @@ function buildResource(resource: ResourceConfig, all: SpecOperation[]) {
 
 	const values = built.map((b) => b.value);
 	const duplicate = values.find((v, i) => values.indexOf(v) !== i);
-	if (duplicate)
-		fail(`${resource.tag}: two operations map to "${duplicate}" (add a value override)`);
+	if (duplicate) {
+		const ids = built.filter((b) => b.value === duplicate).map((b) => b.manifests[0].operationId);
+		problem(`${resource.tag}: ${ids.join(' and ')} both map to "${duplicate}" (add a value override)`);
+	}
 
 	const options = [...built].sort((a, b) =>
 		String(a.option.name).localeCompare(String(b.option.name)),
@@ -810,7 +1042,9 @@ function buildResource(resource: ResourceConfig, all: SpecOperation[]) {
 	const body = serialize(dropRedundantDescriptions(properties));
 	const utils = [
 		'intArrayExpression',
+		'jsonValueExpression',
 		'resourceLocatorIdExpression',
+		'stringArrayExpression',
 		'toInfraspeakDateExpression',
 		'unwrapJsonApi',
 	].filter((name) => new RegExp(`\\b${name}\\b`).test(body));
@@ -833,22 +1067,29 @@ async function main() {
 	const header = (what: string) =>
 		`// Generated by scripts/generate from the Infraspeak OpenAPI spec (sha256 ${sha256.slice(0, 12)}).\n// Do not edit: change scripts/generate/overrides.ts and run \`npm run generate\`.\n// ${what}\n`;
 
+	const manifest: ManifestOperation[] = [];
+	const sorted = [...resources].sort((a, b) => a.displayName.localeCompare(b.displayName));
+	const files: Array<{ name: string; source: string }> = [];
+	for (const resource of sorted) {
+		const { source, manifests } = buildResource(resource, operations);
+		files.push({ name: `${resource.value}.ts`, source: header(`Resource: ${resource.displayName}`) + source });
+		manifest.push(...manifests);
+	}
+
+	if (problems.length > 0) {
+		fail(`${problems.length} problem(s), nothing written:\n  - ${problems.join('\n  - ')}`);
+	}
+
 	// Clean previously generated resource files (hand-written files don't carry the header).
 	mkdirSync(RESOURCES_DIR, { recursive: true });
 	for (const entry of readdirSync(RESOURCES_DIR, { withFileTypes: true })) {
 		rmSync(join(RESOURCES_DIR, entry.name), { recursive: true, force: true });
 	}
-
-	const manifest: ManifestOperation[] = [];
-	const sorted = [...resources].sort((a, b) => a.displayName.localeCompare(b.displayName));
-	for (const resource of sorted) {
-		const { source, manifests } = buildResource(resource, operations);
-		const formatted = await format(header(`Resource: ${resource.displayName}`) + source, {
-			...prettierConfig,
-			parser: 'typescript',
-		});
-		writeFileSync(join(RESOURCES_DIR, `${resource.value}.ts`), formatted);
-		manifest.push(...manifests);
+	for (const file of files) {
+		writeFileSync(
+			join(RESOURCES_DIR, file.name),
+			await format(file.source, { ...prettierConfig, parser: 'typescript' }),
+		);
 	}
 
 	const index = [

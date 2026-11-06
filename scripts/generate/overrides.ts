@@ -25,7 +25,15 @@ export const apiRules = {
 
 // ─── Resource locators (searchable dropdowns) ────────────────────────────────
 
-export type LocatorKey = 'client' | 'location' | 'problemArea' | 'problemType';
+export type LocatorKey =
+	| 'client'
+	| 'location'
+	| 'problemArea'
+	| 'problemType'
+	| 'supplier'
+	| 'operator'
+	| 'costCenter'
+	| 'category';
 
 export interface LocatorConfig {
 	displayName: string;
@@ -65,6 +73,30 @@ export const locators: Record<LocatorKey, LocatorConfig> = {
 			'The problem type. To pick from the list, choose a Problem Area first, or switch to By ID.',
 		dependsOn: 'problemArea',
 	},
+	supplier: {
+		displayName: 'Supplier',
+		fieldName: 'supplierId',
+		listSearch: 'getSuppliers',
+		description: 'The supplier',
+	},
+	operator: {
+		displayName: 'Operator',
+		fieldName: 'operatorId',
+		listSearch: 'getOperators',
+		description: 'The operator (technician or user)',
+	},
+	costCenter: {
+		displayName: 'Cost Center',
+		fieldName: 'costCenterId',
+		listSearch: 'getCostCenters',
+		description: 'The cost center',
+	},
+	category: {
+		displayName: 'Category',
+		fieldName: 'categoryId',
+		listSearch: 'getCategories',
+		description: 'The category',
+	},
 };
 
 /** Body/query property → locator, applied in every resource. */
@@ -73,6 +105,11 @@ export const propertyLocators: Record<string, LocatorKey> = {
 	local_id: 'location',
 	problem_id: 'problemType',
 	'filter[client_id]': 'client',
+	supplier_id: 'supplier',
+	operator_id: 'operator',
+	cost_center_id: 'costCenter',
+	category_id: 'category',
+	s_category_id: 'category',
 };
 
 // ─── Field overrides ─────────────────────────────────────────────────────────
@@ -111,11 +148,8 @@ export const globalFields: Record<string, FieldOverride> = {
 	description: { multiline: false },
 	observations: { multiline: true },
 	observation: { multiline: true },
-	cost_center_id: {
-		displayName: 'Cost Center ID',
-		description: 'ID of the associated cost center',
-	},
-	supplier_id: { displayName: 'Supplier ID', description: 'ID of the associated supplier' },
+	cost_center_id: { description: 'The associated cost center' },
+	supplier_id: { description: 'The associated supplier' },
 	gatekeeper_id: { displayName: 'Gatekeeper ID', description: 'ID of the associated gatekeeper' },
 	expanded: {
 		displayName: 'Expand Relations',
@@ -140,6 +174,10 @@ export interface OperationOverride {
 	pathLocators?: Record<string, LocatorKey>;
 	/** Display name for a plain path-param ID field. */
 	pathDisplayNames?: Record<string, string>;
+	/** Treat as a list (Get Many with Return All/Limit) even if the spec's shape doesn't say so. */
+	list?: boolean;
+	/** Output the response records even though the spec's response shape isn't a JSON:API record. */
+	returnsRecords?: boolean;
 	fields?: Record<string, FieldOverride>;
 }
 
@@ -167,6 +205,184 @@ export interface ResourceConfig {
 
 /** Resources enabled in the node. Add a tag here and regenerate to widen coverage. */
 export const resources: ResourceConfig[] = [
+	{
+		tag: 'Categories',
+		value: 'category',
+		displayName: 'Category',
+		singular: 'category',
+		plural: 'categories',
+		operations: {
+			getCategories: {
+				description: "Get many top-level ('folder') categories",
+			},
+			getAllCategories: {
+				value: 'getAllFlat',
+				name: 'Get Many (All Levels)',
+				action: 'Get many categories at all levels',
+				description: 'Get many categories at every level, not only the top-level folders',
+			},
+			getCategoryChildren: {
+				value: 'getChildren',
+				name: 'Get Children',
+				action: 'Get the children of a category',
+				description: 'Get the categories one level below a category',
+				list: true,
+				pathLocators: { category: 'category' },
+			},
+			getCategory: { pathLocators: { category: 'category' } },
+			updateCategory: { pathLocators: { category: 'category' } },
+			deleteCategory: { pathLocators: { category: 'category' } },
+		},
+		fields: {
+			filteredByTechnicalSkills: {
+				displayName: 'Assignable to Technical Skills Only',
+				description:
+					'Whether to return only categories assignable to technical skills, with their ancestors',
+			},
+			s_is_real: { displayName: 'Is Real', description: 'Whether the category is real' },
+			sc_type_equipment: {
+				displayName: 'Equipment Only',
+				description: 'Whether to return only equipment-type categories',
+			},
+			empty_folders: {
+				displayName: 'Include Empty Folders',
+				description: 'Whether to include categories that have no children',
+			},
+		},
+	},
+	{
+		tag: 'Contacts',
+		value: 'contact',
+		displayName: 'Contact',
+		singular: 'contact',
+		plural: 'contacts',
+	},
+	{
+		tag: 'Cost Centers',
+		value: 'costCenter',
+		displayName: 'Cost Center',
+		singular: 'cost center',
+		plural: 'cost centers',
+		operations: {
+			getCostCenter: { pathLocators: { costCenterId: 'costCenter' } },
+			updateCostCenter: { pathLocators: { costCenterId: 'costCenter' } },
+			deleteCostCenter: { pathLocators: { costCenterId: 'costCenter' } },
+		},
+	},
+	{
+		tag: 'Files',
+		value: 'file',
+		displayName: 'File',
+		singular: 'file',
+		plural: 'files',
+		operations: {
+			getFiles: {
+				value: 'getAll',
+				name: 'Get Many',
+				action: 'Get many files',
+				description: 'Get the files attached to an Infraspeak object',
+				list: true,
+				pathDisplayNames: { relatedTo: 'Related To', relatedToId: 'Related To ID' },
+			},
+		},
+	},
+	{
+		tag: 'Operators',
+		value: 'operator',
+		displayName: 'Operator',
+		singular: 'operator',
+		plural: 'operators',
+		operations: {
+			getOperator: { pathLocators: { operator: 'operator' } },
+		},
+	},
+	{
+		tag: 'Other Costs',
+		value: 'otherCost',
+		displayName: 'Other Cost',
+		singular: 'other cost',
+		plural: 'other costs',
+		fields: {
+			failure: {
+				displayName: 'Usable in Work Orders',
+				description: 'Whether the cost can be included in corrective maintenance (work order) costs',
+			},
+			schedule_work: {
+				displayName: 'Usable in Planned Jobs',
+				description:
+					'Whether the cost can be included in preventive maintenance (planned job order) costs',
+			},
+			operator: {
+				displayName: 'Usable for Operators',
+				description: 'Whether the cost can be included in individual operator costs',
+			},
+			element: {
+				displayName: 'Usable for Assets',
+				description: 'Whether the cost can be included in asset costs',
+			},
+		},
+	},
+	{
+		tag: 'Requests',
+		value: 'request',
+		displayName: 'Request',
+		singular: 'request',
+		plural: 'requests',
+	},
+	{
+		tag: 'Scheduled Works',
+		value: 'scheduledWork',
+		displayName: 'Scheduled Work',
+		singular: 'scheduled work',
+		plural: 'scheduled works',
+	},
+	{
+		tag: 'Suppliers',
+		value: 'supplier',
+		displayName: 'Supplier',
+		singular: 'supplier',
+		plural: 'suppliers',
+		operations: {
+			getSupplier: { pathLocators: { supplier: 'supplier' } },
+			updateSupplier: { pathLocators: { supplier: 'supplier' } },
+			deleteSupplier: { pathLocators: { supplier: 'supplier' } },
+		},
+		fields: {
+			add_to_market: {
+				description:
+					'Whether to list the supplier on the Infraspeak Market, where other Infraspeak Network users can find and request their services',
+			},
+		},
+	},
+	{
+		tag: 'Works',
+		value: 'work',
+		displayName: 'Work',
+		singular: 'work',
+		plural: 'works',
+		fields: {
+			any_responsible: {
+				displayName: 'Anyone Can Start',
+				description:
+					'Whether anyone can start the planned job. If off, Operator ID or Technical Skill ID must be set.',
+			},
+			auto_close: {
+				description:
+					'Whether the planned job order closes automatically when all tasks are completed. Only for Cyclic or Plan types.',
+			},
+			auto_pilot: {
+				description: 'Whether any user can start this planned job. Only for Cyclic or Plan types.',
+			},
+			is_protected: {
+				description: 'Whether the planned job is protected from being edited or deleted by managers',
+			},
+			local_id: { displayName: 'Location IDs', description: 'Comma-separated location IDs' },
+			gatekeeper_notification: {
+				displayName: 'Gatekeeper Notification IDs',
+				description: 'Comma-separated notification IDs to dispatch under the gatekeeper',
+			},
+		},
+	},
 	{
 		tag: 'Clients',
 		value: 'client',
@@ -243,7 +459,7 @@ export const resources: ResourceConfig[] = [
 			},
 		},
 		fields: {
-			category_id: { displayName: 'Category ID', description: 'ID of the asset category' },
+			category_id: { description: 'The asset category' },
 			maintenance_policy_id: {
 				displayName: 'Maintenance Policy ID',
 				description: 'ID of the maintenance policy',
@@ -304,9 +520,7 @@ export const resources: ResourceConfig[] = [
 			description: { description: 'A more detailed description of the reported incident' },
 			observations: { description: 'Longer text with anything else that needs to be reported' },
 			operator_id: {
-				displayName: 'Operator ID',
-				description:
-					'ID of the operator who owns the failure. Defaults to the operator of the API token.',
+				description: 'The operator who owns the failure. Defaults to the operator of the API token.',
 			},
 			report_type: {
 				description: 'Whether the failure was reported by an operator or a contact',

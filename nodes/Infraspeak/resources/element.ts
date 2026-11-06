@@ -122,12 +122,34 @@ export const elementDescription: INodeProperties[] = [
 		displayOptions: { show: { resource: ['element'], operation: ['getAll'] } },
 	},
 	{
-		displayName: 'Category ID',
+		displayName: 'Category',
 		name: 'categoryId',
-		description: 'ID of the asset category',
-		type: 'number',
-		default: 0,
-		routing: { send: { type: 'body', property: 'category_id' } },
+		type: 'resourceLocator',
+		default: { mode: 'list', value: '' },
+		description: 'The asset category',
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: { searchListMethod: 'getCategories', searchable: true },
+			},
+			{
+				displayName: 'By ID',
+				name: 'id',
+				type: 'string',
+				placeholder: 'e.g. 123',
+				validation: [
+					{
+						type: 'regex',
+						properties: { regex: '^[0-9]+$', errorMessage: 'Not a valid ID: must be a number' },
+					},
+				],
+			},
+		],
+		routing: {
+			send: { type: 'body', property: 'category_id', value: resourceLocatorIdExpression },
+		},
 		required: true,
 		displayOptions: { show: { resource: ['element'], operation: ['create'] } },
 	},
@@ -360,12 +382,34 @@ export const elementDescription: INodeProperties[] = [
 				routing: { send: { type: 'body', property: 'code' } },
 			},
 			{
-				displayName: 'Cost Center ID',
+				displayName: 'Cost Center',
 				name: 'costCenterId',
-				description: 'ID of the associated cost center',
-				type: 'number',
-				default: 0,
-				routing: { send: { type: 'body', property: 'cost_center_id' } },
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
+				description: 'The associated cost center',
+				modes: [
+					{
+						displayName: 'From List',
+						name: 'list',
+						type: 'list',
+						typeOptions: { searchListMethod: 'getCostCenters', searchable: true },
+					},
+					{
+						displayName: 'By ID',
+						name: 'id',
+						type: 'string',
+						placeholder: 'e.g. 123',
+						validation: [
+							{
+								type: 'regex',
+								properties: { regex: '^[0-9]+$', errorMessage: 'Not a valid ID: must be a number' },
+							},
+						],
+					},
+				],
+				routing: {
+					send: { type: 'body', property: 'cost_center_id', value: resourceLocatorIdExpression },
+				},
 			},
 			{
 				displayName: 'Latitude',

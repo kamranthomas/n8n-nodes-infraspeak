@@ -33,4 +33,27 @@ export const listSearch = {
 		},
 		label: (a) => String(a.full_name ?? a.name),
 	}),
+
+	/** The API has no search param for these three, so the factory filters by label. */
+	getSuppliers: makeListSearch({
+		endpoint: '/suppliers',
+		label: (a) => withCode(a.name, a.code),
+	}),
+
+	getOperators: makeListSearch({
+		endpoint: '/operators',
+		label: (a) => String(a.full_name),
+	}),
+
+	getCostCenters: makeListSearch({
+		endpoint: '/cost-centers',
+		label: (a) => withCode(a.name, a.code),
+	}),
+
+	/** All levels, not just the top-level folders that /categories returns. */
+	getCategories: makeListSearch({
+		endpoint: '/categories/all',
+		searchParam: 'sc_search',
+		label: (a) => withCode(a.name, a.full_code ?? a.code),
+	}),
 };

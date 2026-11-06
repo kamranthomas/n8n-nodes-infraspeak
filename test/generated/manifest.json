@@ -2,6 +2,642 @@
 	"specSha256": "985973cf011a9a9e2461bddd63d1bc1875c02e5b2c0b7c33d71708a154722c69",
 	"operations": [
 		{
+			"resource": "category",
+			"operation": "getAll",
+			"operationId": "getCategories",
+			"method": "GET",
+			"path": "/categories",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "string",
+					"target": "query",
+					"property": "expanded",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "fullCode",
+					"kind": "string",
+					"target": "query",
+					"property": "s_full_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "fullCodeContains",
+					"kind": "string",
+					"target": "query",
+					"property": "s_full_code_like",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "name",
+					"kind": "string",
+					"target": "query",
+					"property": "s_name",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "nameContains",
+					"kind": "string",
+					"target": "query",
+					"property": "s_name_like",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "type",
+					"kind": "string",
+					"target": "query",
+					"property": "s_type",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "categoryId",
+					"kind": "locator",
+					"target": "query",
+					"property": "s_category_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "s_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "codeContains",
+					"kind": "string",
+					"target": "query",
+					"property": "s_code_like",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "characteristicsCharacteristicId",
+					"kind": "string",
+					"target": "query",
+					"property": "s_characteristics-characteristic_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "characteristicsName",
+					"kind": "string",
+					"target": "query",
+					"property": "s_characteristics-name",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"expanded",
+				"limit",
+				"page",
+				"s_category_id",
+				"s_characteristics-characteristic_id",
+				"s_characteristics-name",
+				"s_code",
+				"s_code_like",
+				"s_full_code",
+				"s_full_code_like",
+				"s_name",
+				"s_name_like",
+				"s_type",
+				"sort"
+			]
+		},
+		{
+			"resource": "category",
+			"operation": "create",
+			"operationId": "createCategory",
+			"method": "POST",
+			"path": "/categories",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "type",
+					"kind": "options",
+					"target": "body",
+					"property": "type",
+					"required": true,
+					"options": ["SOFT_MAINTENANCE", "TYPE_OF_EQUIPMENT"]
+				},
+				{
+					"container": "",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "isReal",
+					"kind": "boolean",
+					"target": "body",
+					"property": "is_real",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "parentId",
+					"kind": "number",
+					"target": "body",
+					"property": "parent_id",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Create Category payload",
+				"type": "object",
+				"properties": {
+					"type": {
+						"description": "The Category type. A \"TYPE_OF_EQUIPMENT\" Category is directly related to equipments (e.g. a fridge) and a Category \"SOFT_MAINTENANCE\" is related to Locations (E.g. hotel rooms).",
+						"type": "string",
+						"enum": ["TYPE_OF_EQUIPMENT", "SOFT_MAINTENANCE"],
+						"examples": ["TYPE_OF_EQUIPMENT"]
+					},
+					"code": {
+						"description": "Category code. Must be unique across the same \"level\".",
+						"type": "string",
+						"examples": ["VENT"]
+					},
+					"is_real": {
+						"description": "Whether the Category is \"folder-like\" (false) or a final category (true). Required if `type` is \"TYPE_OF_EQUIPMENT\".",
+						"type": "boolean",
+						"examples": [true]
+					},
+					"name": {
+						"description": "Category name. Must be unique across the same \"level\".",
+						"type": "string",
+						"examples": ["Ventilation"]
+					},
+					"parent_id": {
+						"description": "Parent ID of Category. Required if `is_real` is \"true\".",
+						"type": ["integer", "null"],
+						"examples": [123]
+					}
+				},
+				"required": ["type", "name", "code", "is_real"]
+			}
+		},
+		{
+			"resource": "category",
+			"operation": "getAllFlat",
+			"operationId": "getAllCategories",
+			"method": "GET",
+			"path": "/categories/all",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "string",
+					"target": "query",
+					"property": "expanded",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "isReal",
+					"kind": "boolean",
+					"target": "query",
+					"property": "s_is_real",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "name",
+					"kind": "string",
+					"target": "query",
+					"property": "s_name",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "nameContains",
+					"kind": "string",
+					"target": "query",
+					"property": "s_name_like",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "type",
+					"kind": "string",
+					"target": "query",
+					"property": "s_type",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "s_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "codeContains",
+					"kind": "string",
+					"target": "query",
+					"property": "s_code_like",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "codeAnyOf",
+					"kind": "string",
+					"target": "query",
+					"property": "s_code_in",
+					"required": false,
+					"arrayItems": "string"
+				},
+				{
+					"container": "filters",
+					"name": "fullCode",
+					"kind": "string",
+					"target": "query",
+					"property": "s_full_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "fullCodeContains",
+					"kind": "string",
+					"target": "query",
+					"property": "s_full_code_like",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "fullCodeAnyOf",
+					"kind": "string",
+					"target": "query",
+					"property": "s_full_code_in",
+					"required": false,
+					"arrayItems": "string"
+				},
+				{
+					"container": "filters",
+					"name": "categoryId",
+					"kind": "locator",
+					"target": "query",
+					"property": "s_category_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "categoryIdAnyOf",
+					"kind": "string",
+					"target": "query",
+					"property": "s_category_id_in",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "parentId",
+					"kind": "number",
+					"target": "query",
+					"property": "s_parent_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "parentIdAnyOf",
+					"kind": "string",
+					"target": "query",
+					"property": "s_parent_id_in",
+					"required": false,
+					"arrayItems": "integer"
+				},
+				{
+					"container": "filters",
+					"name": "problemsProblemId",
+					"kind": "number",
+					"target": "query",
+					"property": "s_problems-problem_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "minId",
+					"kind": "number",
+					"target": "query",
+					"property": "sc_min_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "search",
+					"kind": "string",
+					"target": "query",
+					"property": "sc_search",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "typeEquipment",
+					"kind": "boolean",
+					"target": "query",
+					"property": "sc_type_equipment",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"date_max_updated_at",
+				"date_min_updated_at",
+				"expanded",
+				"limit",
+				"page",
+				"s_category_id",
+				"s_category_id_in",
+				"s_code",
+				"s_code_in",
+				"s_code_like",
+				"s_full_code",
+				"s_full_code_in",
+				"s_full_code_like",
+				"s_is_real",
+				"s_name",
+				"s_name_like",
+				"s_parent_id",
+				"s_parent_id_in",
+				"s_problems-problem_id",
+				"s_type",
+				"sc_min_id",
+				"sc_search",
+				"sc_type_equipment",
+				"sort"
+			]
+		},
+		{
+			"resource": "category",
+			"operation": "get",
+			"operationId": "getCategory",
+			"method": "GET",
+			"path": "/categories/{category}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "categoryId",
+					"kind": "locator",
+					"target": "path",
+					"property": "category",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "string",
+					"target": "query",
+					"property": "expanded",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				}
+			],
+			"allowedQuery": ["expanded", "sort"]
+		},
+		{
+			"resource": "category",
+			"operation": "update",
+			"operationId": "updateCategory",
+			"method": "PATCH",
+			"path": "/categories/{category}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "categoryId",
+					"kind": "locator",
+					"target": "path",
+					"property": "category",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "parentId",
+					"kind": "number",
+					"target": "body",
+					"property": "parent_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "allTechnicalSkills",
+					"kind": "boolean",
+					"target": "body",
+					"property": "all_technical_skills",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Patch Category payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "Category name. Must be unique across the same \"level\".",
+						"type": "string",
+						"examples": ["Ventilation"]
+					},
+					"code": {
+						"description": "Category code. Must be unique across the same \"level\".",
+						"type": "string",
+						"examples": ["VENT"]
+					},
+					"parent_id": {
+						"description": "Parent ID of Category",
+						"type": ["integer", "null"],
+						"examples": [123]
+					},
+					"all_technical_skills": {
+						"description": "Whether the category accepts operators with any technical skill. Only admin operators may change this field; any other operator receives a `403` response.",
+						"type": "boolean",
+						"examples": [true]
+					}
+				}
+			}
+		},
+		{
+			"resource": "category",
+			"operation": "delete",
+			"operationId": "deleteCategory",
+			"method": "DELETE",
+			"path": "/categories/{category}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "categoryId",
+					"kind": "locator",
+					"target": "path",
+					"property": "category",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "category",
+			"operation": "getChildren",
+			"operationId": "getCategoryChildren",
+			"method": "GET",
+			"path": "/categories/{category}/children",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "",
+					"name": "categoryId",
+					"kind": "locator",
+					"target": "path",
+					"property": "category",
+					"required": true
+				},
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "string",
+					"target": "query",
+					"property": "expanded",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "type",
+					"kind": "string",
+					"target": "query",
+					"property": "s_type",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "isReal",
+					"kind": "boolean",
+					"target": "query",
+					"property": "s_is_real",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "emptyFolders",
+					"kind": "boolean",
+					"target": "query",
+					"property": "empty_folders",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"code",
+				"empty_folders",
+				"expanded",
+				"limit",
+				"page",
+				"s_is_real",
+				"s_type",
+				"sort"
+			]
+		},
+		{
 			"resource": "client",
 			"operation": "getAll",
 			"operationId": "getClients",
@@ -45,10 +681,11 @@
 				{
 					"container": "options",
 					"name": "sort",
-					"kind": "string",
+					"kind": "options",
 					"target": "query",
 					"property": "sort",
-					"required": false
+					"required": false,
+					"options": ["code", "code-", "location", "location-", "name", "name-", "nif", "nif-"]
 				}
 			],
 			"allowedQuery": ["client_id", "code", "limit", "name", "nif", "page", "sort"]
@@ -484,6 +1121,482 @@
 			}
 		},
 		{
+			"resource": "contact",
+			"operation": "getAll",
+			"operationId": "getContacts",
+			"method": "GET",
+			"path": "/contacts",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "string",
+					"target": "query",
+					"property": "expanded",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "contactId",
+					"kind": "number",
+					"target": "query",
+					"property": "s_contact_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "contactIdAnyOf",
+					"kind": "string",
+					"target": "query",
+					"property": "s_contact_id_in",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "contactIdNoneOf",
+					"kind": "string",
+					"target": "query",
+					"property": "s_contact_id_notin",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "email",
+					"kind": "string",
+					"target": "query",
+					"property": "s_email",
+					"required": false,
+					"format": "email"
+				},
+				{
+					"container": "filters",
+					"name": "emailContains",
+					"kind": "string",
+					"target": "query",
+					"property": "s_email_like",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "emailNoneOf",
+					"kind": "string",
+					"target": "query",
+					"property": "s_email_notin",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "name",
+					"kind": "string",
+					"target": "query",
+					"property": "s_name",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "nameContains",
+					"kind": "string",
+					"target": "query",
+					"property": "s_name_like",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "phone",
+					"kind": "string",
+					"target": "query",
+					"property": "s_phone",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "hasAccess",
+					"kind": "string",
+					"target": "query",
+					"property": "s_has_access",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "isDirectUser",
+					"kind": "string",
+					"target": "query",
+					"property": "s_is_direct_user",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "clientsClientId",
+					"kind": "number",
+					"target": "query",
+					"property": "s_clients-client_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "hasEmail",
+					"kind": "string",
+					"target": "query",
+					"property": "sc_has_email",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"expanded",
+				"limit",
+				"page",
+				"s_clients-client_id",
+				"s_contact_id",
+				"s_contact_id_in",
+				"s_contact_id_notin",
+				"s_email",
+				"s_email_like",
+				"s_email_notin",
+				"s_has_access",
+				"s_is_direct_user",
+				"s_name",
+				"s_name_like",
+				"s_phone",
+				"sc_has_email",
+				"sort"
+			]
+		},
+		{
+			"resource": "costCenter",
+			"operation": "getAll",
+			"operationId": "getCostCenters",
+			"method": "GET",
+			"path": "/cost-centers",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["file"]
+				}
+			],
+			"allowedQuery": ["expanded", "limit", "page"]
+		},
+		{
+			"resource": "costCenter",
+			"operation": "create",
+			"operationId": "createCostCenter",
+			"method": "POST",
+			"path": "/cost-centers",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "responsibleName",
+					"kind": "string",
+					"target": "body",
+					"property": "responsible_name",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "responsibleEmail",
+					"kind": "string",
+					"target": "body",
+					"property": "responsible_email",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "responsiblePhone",
+					"kind": "string",
+					"target": "body",
+					"property": "responsible_phone",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "responsibleCellphone",
+					"kind": "string",
+					"target": "body",
+					"property": "responsible_cellphone",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "file",
+					"kind": "string",
+					"target": "body",
+					"property": "file",
+					"required": false,
+					"format": "byte"
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Cost Center payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "Name for the Cost Center.",
+						"type": "string",
+						"examples": ["AVAC Corretiva"]
+					},
+					"code": {
+						"description": "Code for the Cost Center",
+						"type": "string",
+						"examples": ["C.AVAC"]
+					},
+					"responsible_name": {
+						"description": "Name for the person responsible for the Cost Center",
+						"type": ["string", "null"],
+						"examples": ["Luis"]
+					},
+					"responsible_email": {
+						"description": "Email for the person responsible for the Cost Center",
+						"type": ["string", "null"],
+						"examples": ["luis@example.com"]
+					},
+					"responsible_phone": {
+						"description": "Phone Number for the person responsible for the Cost Center",
+						"type": ["string", "null"],
+						"examples": ["+351912345678"]
+					},
+					"responsible_cellphone": {
+						"description": "Cellphone Number for the person responsible for the Cost Center",
+						"type": ["string", "null"],
+						"examples": ["+351912345678"]
+					},
+					"observation": {
+						"description": "User defined Observations for the Cost Center",
+						"type": ["string", "null"],
+						"examples": ["An observation regarding my cost center."]
+					},
+					"file": {
+						"description": "Image File to be attached to the Cost Center.\n\nAccepted extensions are:\n  - `jpeg`\n  - `bmp`\n  - `png`\n  - `jpg`\n  - `gif`\n\nMaximum file size allowed:\n  - `200.000 KB`\n",
+						"type": ["string", "null"],
+						"format": "byte"
+					}
+				},
+				"required": ["name", "code"]
+			}
+		},
+		{
+			"resource": "costCenter",
+			"operation": "get",
+			"operationId": "getCostCenter",
+			"method": "GET",
+			"path": "/cost-centers/{costCenterId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "costCenterId",
+					"kind": "locator",
+					"target": "path",
+					"property": "costCenterId",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["file"]
+				}
+			],
+			"allowedQuery": ["expanded"]
+		},
+		{
+			"resource": "costCenter",
+			"operation": "update",
+			"operationId": "updateCostCenter",
+			"method": "PATCH",
+			"path": "/cost-centers/{costCenterId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "costCenterId",
+					"kind": "locator",
+					"target": "path",
+					"property": "costCenterId",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "responsibleName",
+					"kind": "string",
+					"target": "body",
+					"property": "responsible_name",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "responsibleEmail",
+					"kind": "string",
+					"target": "body",
+					"property": "responsible_email",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "responsiblePhone",
+					"kind": "string",
+					"target": "body",
+					"property": "responsible_phone",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "responsibleCellphone",
+					"kind": "string",
+					"target": "body",
+					"property": "responsible_cellphone",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "file",
+					"kind": "string",
+					"target": "body",
+					"property": "file",
+					"required": false,
+					"format": "byte"
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Cost Center Patch payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "Name for the Cost Center.",
+						"type": "string",
+						"examples": ["AVAC Corretiva"]
+					},
+					"code": {
+						"description": "Code for the Cost Center",
+						"type": "string",
+						"examples": ["C.AVAC"]
+					},
+					"responsible_name": {
+						"description": "Name for the person responsible for the Cost Center",
+						"type": ["string", "null"],
+						"examples": ["Luis"]
+					},
+					"responsible_email": {
+						"description": "Email for the person responsible for the Cost Center",
+						"type": ["string", "null"],
+						"examples": ["luis@example.com"]
+					},
+					"responsible_phone": {
+						"description": "Phone Number for the person responsible for the Cost Center",
+						"type": ["string", "null"],
+						"examples": ["+351912345678"]
+					},
+					"responsible_cellphone": {
+						"description": "Cellphone Number for the person responsible for the Cost Center",
+						"type": ["string", "null"],
+						"examples": ["+351912345678"]
+					},
+					"observation": {
+						"description": "User defined Observations for the Cost Center",
+						"type": ["string", "null"],
+						"examples": ["An observation regarding my cost center."]
+					},
+					"file": {
+						"description": "Image File to be attached to the Cost Center.\n\nAccepted extensions are:\n  - `jpeg`\n  - `bmp`\n  - `png`\n  - `jpg`\n  - `gif`\n\nMaximum file size allowed:\n  - `200.000 KB`\n",
+						"type": ["string", "null"],
+						"format": "byte"
+					}
+				}
+			}
+		},
+		{
+			"resource": "costCenter",
+			"operation": "delete",
+			"operationId": "deleteCostCenter",
+			"method": "DELETE",
+			"path": "/cost-centers/{costCenterId}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "costCenterId",
+					"kind": "locator",
+					"target": "path",
+					"property": "costCenterId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
 			"resource": "element",
 			"operation": "getAll",
 			"operationId": "getElements",
@@ -554,7 +1667,7 @@
 				{
 					"container": "",
 					"name": "categoryId",
-					"kind": "number",
+					"kind": "locator",
 					"target": "body",
 					"property": "category_id",
 					"required": true
@@ -828,7 +1941,7 @@
 				{
 					"container": "updateFields",
 					"name": "costCenterId",
-					"kind": "number",
+					"kind": "locator",
 					"target": "body",
 					"property": "cost_center_id",
 					"required": false
@@ -1527,7 +2640,7 @@
 				{
 					"container": "additionalFields",
 					"name": "operatorId",
-					"kind": "number",
+					"kind": "locator",
 					"target": "body",
 					"property": "operator_id",
 					"required": false
@@ -1552,7 +2665,7 @@
 				{
 					"container": "additionalFields",
 					"name": "supplierId",
-					"kind": "number",
+					"kind": "locator",
 					"target": "body",
 					"property": "supplier_id",
 					"required": false
@@ -1568,7 +2681,7 @@
 				{
 					"container": "additionalFields",
 					"name": "costCenterId",
-					"kind": "number",
+					"kind": "locator",
 					"target": "body",
 					"property": "cost_center_id",
 					"required": false
@@ -1758,7 +2871,7 @@
 				{
 					"container": "updateFields",
 					"name": "supplierId",
-					"kind": "number",
+					"kind": "locator",
 					"target": "body",
 					"property": "supplier_id",
 					"required": false
@@ -1766,7 +2879,7 @@
 				{
 					"container": "updateFields",
 					"name": "costCenterId",
-					"kind": "number",
+					"kind": "locator",
 					"target": "body",
 					"property": "cost_center_id",
 					"required": false
@@ -1878,6 +2991,692 @@
 			}
 		},
 		{
+			"resource": "file",
+			"operation": "getAll",
+			"operationId": "getFiles",
+			"method": "GET",
+			"path": "/files/{relatedTo}/{relatedToId}",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "",
+					"name": "relatedTo",
+					"kind": "options",
+					"target": "path",
+					"property": "relatedTo",
+					"required": true,
+					"options": [
+						"BUILDING",
+						"CATEGORY",
+						"CLIENT",
+						"ELEMENT",
+						"ELEMENT_REGISTRY",
+						"FAILURE",
+						"METERING_REGISTRY",
+						"OPERATOR",
+						"ORDER",
+						"QUOTE",
+						"QUOTE_REQUEST",
+						"RECEIVED_QUOTE",
+						"RECEIVED_QUOTE_REQUEST",
+						"REQUEST",
+						"SCHEDULE_WORK",
+						"SELL_ORDER",
+						"SUPPLIER",
+						"WORK"
+					]
+				},
+				{
+					"container": "",
+					"name": "relatedToId",
+					"kind": "string",
+					"target": "path",
+					"property": "relatedToId",
+					"required": true
+				}
+			],
+			"allowedQuery": ["limit", "page"]
+		},
+		{
+			"resource": "operator",
+			"operation": "getAll",
+			"operationId": "getOperators",
+			"method": "GET",
+			"path": "/operators",
+			"output": "records",
+			"list": true,
+			"fields": [],
+			"allowedQuery": ["limit", "page"]
+		},
+		{
+			"resource": "operator",
+			"operation": "create",
+			"operationId": "createOperator",
+			"method": "POST",
+			"path": "/operators",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "fullName",
+					"kind": "string",
+					"target": "body",
+					"property": "full_name",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "email",
+					"kind": "string",
+					"target": "body",
+					"property": "email",
+					"required": true,
+					"format": "email"
+				},
+				{
+					"container": "",
+					"name": "password",
+					"kind": "string",
+					"target": "body",
+					"property": "password",
+					"required": true,
+					"format": "password"
+				},
+				{
+					"container": "",
+					"name": "account",
+					"kind": "options",
+					"target": "body",
+					"property": "account",
+					"required": true,
+					"options": ["admin", "manager", "operator", "reporter", "technician"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "language",
+					"kind": "options",
+					"target": "body",
+					"property": "language",
+					"required": false,
+					"options": [
+						"ar",
+						"ca",
+						"da_dk",
+						"de_de",
+						"en",
+						"es",
+						"fr_fr",
+						"ko",
+						"nl_nl",
+						"pl_pl",
+						"pt_br",
+						"pt_pt",
+						"zh_cn"
+					]
+				},
+				{
+					"container": "additionalFields",
+					"name": "timezone",
+					"kind": "string",
+					"target": "body",
+					"property": "timezone",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "costPerHour",
+					"kind": "number",
+					"target": "body",
+					"property": "cost_per_hour",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "warehouseId",
+					"kind": "number",
+					"target": "body",
+					"property": "warehouse_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "phone",
+					"kind": "string",
+					"target": "body",
+					"property": "phone",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "cellphone",
+					"kind": "string",
+					"target": "body",
+					"property": "cellphone",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "technicalSkills",
+					"kind": "intArray",
+					"target": "body",
+					"property": "technical_skills",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Operator payload",
+				"type": "object",
+				"properties": {
+					"full_name": { "type": "string" },
+					"email": { "type": "string", "format": "email" },
+					"password": {
+						"description": "Must have at least one uppercase letter and one digit or special character.",
+						"type": "string",
+						"format": "password",
+						"minLength": 8,
+						"writeOnly": true
+					},
+					"account": {
+						"description": "Type of account which determines the access permission level.",
+						"type": "string",
+						"enum": ["admin", "manager", "technician", "operator", "reporter"]
+					},
+					"language": {
+						"description": "If no language is provided, the default Entity language will be used.",
+						"type": "string",
+						"enum": [
+							"ar",
+							"ca",
+							"da_dk",
+							"en",
+							"es",
+							"fr_fr",
+							"pl_pl",
+							"pt_br",
+							"pt_pt",
+							"ko",
+							"zh_cn",
+							"nl_nl",
+							"de_de"
+						]
+					},
+					"timezone": {
+						"description": "Valid PHP timezone identifier. See the full list here: https://www.php.net/manual/en/timezones.php. If no timezone is provided, the default Entity timezone will be used.\n",
+						"type": "string",
+						"examples": ["Europe/Lisbon"]
+					},
+					"cost_per_hour": { "type": "number", "minimum": 0, "examples": [10] },
+					"warehouse_id": {
+						"description": "ID of the warehouse associated to the Operator by default.",
+						"type": ["integer", "null"]
+					},
+					"phone": { "type": ["string", "null"] },
+					"cellphone": { "type": ["string", "null"] },
+					"technical_skills": {
+						"description": "An array with the IDs of the TechnicalSkills we want to associate the Operator.",
+						"type": ["array", "null"],
+						"items": { "type": "integer" }
+					}
+				},
+				"required": ["account", "email", "full_name", "password"]
+			}
+		},
+		{
+			"resource": "operator",
+			"operation": "get",
+			"operationId": "getOperator",
+			"method": "GET",
+			"path": "/operators/{operator}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "operatorId",
+					"kind": "locator",
+					"target": "path",
+					"property": "operator",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "otherCost",
+			"operation": "getAll",
+			"operationId": "getOtherCosts",
+			"method": "GET",
+			"path": "/other-costs",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["customClientPrices", "entity"]
+				}
+			],
+			"allowedQuery": ["expanded", "limit", "page"]
+		},
+		{
+			"resource": "otherCost",
+			"operation": "create",
+			"operationId": "createOtherCost",
+			"method": "POST",
+			"path": "/other-costs",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "inputType",
+					"kind": "options",
+					"target": "body",
+					"property": "input_type",
+					"required": true,
+					"options": [
+						"currency",
+						"custom_unit_of_measurement",
+						"distance",
+						"interval",
+						"resource",
+						"time_range"
+					]
+				},
+				{
+					"container": "",
+					"name": "icon",
+					"kind": "options",
+					"target": "body",
+					"property": "icon",
+					"required": true,
+					"options": ["bed", "car", "clock-o", "cutlery", "truck", "usd", "user", "wrench"]
+				},
+				{
+					"container": "",
+					"name": "failure",
+					"kind": "boolean",
+					"target": "body",
+					"property": "failure",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "scheduleWork",
+					"kind": "boolean",
+					"target": "body",
+					"property": "schedule_work",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "operator",
+					"kind": "boolean",
+					"target": "body",
+					"property": "operator",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "element",
+					"kind": "boolean",
+					"target": "body",
+					"property": "element",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "costPerUnit",
+					"kind": "number",
+					"target": "body",
+					"property": "cost_per_unit",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "defaultSellPrice",
+					"kind": "number",
+					"target": "body",
+					"property": "default_sell_price",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "defaultSellVat",
+					"kind": "number",
+					"target": "body",
+					"property": "default_sell_vat",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "unit",
+					"kind": "string",
+					"target": "body",
+					"property": "unit",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Other Cost payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "The name (or description) of the Other Cost",
+						"type": "string",
+						"examples": ["Contractual Labor"]
+					},
+					"input_type": {
+						"description": "The type of Other Cost. Different types of Other Costs have different associated fields. Other Costs of type resource will measure its total cost based on how long (e.g. hours, minutes) the resource is occupied. Other Costs of type distance will measure its total cost based on how many units (e.g. meters, kilometers) are needed. Other Costs of type interval and time_range will measure its total cost based on duration. Other Costs of type currency will have a fixed cost manually defined for each operation. Other Costs of type custom_unit_of_measurement will measure its total cost based on how many units (e.g. m3, liters) are needed.",
+						"type": "string",
+						"enum": [
+							"currency",
+							"distance",
+							"interval",
+							"time_range",
+							"resource",
+							"custom_unit_of_measurement"
+						],
+						"examples": ["currency"]
+					},
+					"icon": {
+						"description": "The icon to be presented for the Other Cost in Infraspeak platform.",
+						"type": "string",
+						"enum": ["truck", "car", "clock-o", "bed", "user", "usd", "cutlery", "wrench"],
+						"examples": ["truck"]
+					},
+					"failure": {
+						"description": "Indicates if the Other Cost can be included in costs for Corrective Maintenance (Work Orders).",
+						"type": "boolean",
+						"examples": [true]
+					},
+					"schedule_work": {
+						"description": "Indicates if the Other Cost can be included in costs for Preventive Maintenance (Planned Job Orders).",
+						"type": ["boolean", "null"],
+						"default": true,
+						"examples": [true]
+					},
+					"operator": {
+						"description": "Indicates if the Other Cost can be included in individual costs for operators (technicians)",
+						"type": ["boolean", "null"],
+						"default": true,
+						"examples": [true]
+					},
+					"element": {
+						"description": "Indicates if the Other Cost can be included in costs for Assets",
+						"type": ["boolean", "null"],
+						"default": true,
+						"examples": [true]
+					},
+					"cost_per_unit": {
+						"description": "Cost per unit of the Other Cost. Only applicable if input_type is \"resource\", \"distance\" or \"custom_unit_of_measurement\"",
+						"type": ["number", "null"]
+					},
+					"default_sell_price": {
+						"description": "Default sell price of the Other Cost.  Only applicable if input_type is \"resource\", \"distance\" or \"custom_unit_of_measurement\"",
+						"type": ["number", "null"]
+					},
+					"default_sell_vat": {
+						"description": "Default sale VAT/IVA percentage of the Other Cost. Only applicable if input_type is \"resource\", \"distance\" or \"custom_unit_of_measurement\"",
+						"type": ["number", "null"]
+					},
+					"unit": {
+						"description": "Unit of the Other Cost. Only applicable if input_type is \"resource\", \"distance\" or \"custom_unit_of_measurement\"",
+						"type": ["string", "null"]
+					}
+				},
+				"required": ["name", "input_type", "failure", "icon"]
+			}
+		},
+		{
+			"resource": "otherCost",
+			"operation": "get",
+			"operationId": "getOtherCost",
+			"method": "GET",
+			"path": "/other-costs/{otherCostId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "otherCostId",
+					"kind": "string",
+					"target": "path",
+					"property": "otherCostId",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["customClientPrices", "entity"]
+				}
+			],
+			"allowedQuery": ["expanded"]
+		},
+		{
+			"resource": "otherCost",
+			"operation": "update",
+			"operationId": "updateOtherCost",
+			"method": "PATCH",
+			"path": "/other-costs/{otherCostId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "otherCostId",
+					"kind": "string",
+					"target": "path",
+					"property": "otherCostId",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "inputType",
+					"kind": "options",
+					"target": "body",
+					"property": "input_type",
+					"required": false,
+					"options": [
+						"currency",
+						"custom_unit_of_measurement",
+						"distance",
+						"interval",
+						"resource",
+						"time_range"
+					]
+				},
+				{
+					"container": "updateFields",
+					"name": "failure",
+					"kind": "boolean",
+					"target": "body",
+					"property": "failure",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "scheduleWork",
+					"kind": "boolean",
+					"target": "body",
+					"property": "schedule_work",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "operator",
+					"kind": "boolean",
+					"target": "body",
+					"property": "operator",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "element",
+					"kind": "boolean",
+					"target": "body",
+					"property": "element",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "icon",
+					"kind": "options",
+					"target": "body",
+					"property": "icon",
+					"required": false,
+					"options": ["bed", "car", "clock-o", "cutlery", "truck", "usd", "user", "wrench"]
+				},
+				{
+					"container": "updateFields",
+					"name": "costPerUnit",
+					"kind": "number",
+					"target": "body",
+					"property": "cost_per_unit",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "defaultSellPrice",
+					"kind": "number",
+					"target": "body",
+					"property": "default_sell_price",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "defaultSellVat",
+					"kind": "number",
+					"target": "body",
+					"property": "default_sell_vat",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "unit",
+					"kind": "string",
+					"target": "body",
+					"property": "unit",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Other Cost Patch payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "The name (or description) of the Other Cost",
+						"type": "string",
+						"examples": ["Contractual Labor"]
+					},
+					"input_type": {
+						"description": "The type of Other Cost. Different types of Other Costs have different associated fields. Other Costs of type resource will measure its total cost based on how long (e.g. hours, minutes) the resource is occupied. Other Costs of type distance will measure its total cost based on how many units (e.g. meters, kilometers) are needed. Other Costs of type interval and time_range will measure its total cost based on duration. Other Costs of type currency will have a fixed cost manually defined for each operation. Other Costs of type custom_unit_of_measurement will measure its total cost based on how many units (e.g. m3, liters) are needed.",
+						"type": "string",
+						"enum": [
+							"currency",
+							"distance",
+							"interval",
+							"time_range",
+							"resource",
+							"custom_unit_of_measurement"
+						],
+						"examples": ["currency"]
+					},
+					"failure": {
+						"description": "Indicates if the Other Cost can be included in costs for Corrective Maintenance (Work Orders)",
+						"type": "boolean",
+						"examples": [true]
+					},
+					"schedule_work": {
+						"description": "Indicates if the Other Cost can be included in costs for Preventive Maintenance (Planned Job Orders)",
+						"type": ["boolean", "null"],
+						"examples": [true]
+					},
+					"operator": {
+						"description": "Indicates if the Other Cost can be included in individual costs for operators (technicians)",
+						"type": ["boolean", "null"],
+						"examples": [true]
+					},
+					"element": {
+						"description": "Indicates if the Other Cost can be included in costs for Assets",
+						"type": ["boolean", "null"],
+						"examples": [true]
+					},
+					"icon": {
+						"description": "The icon to be presented for the Other Cost in Infraspeak platform.",
+						"type": "string",
+						"enum": ["truck", "car", "clock-o", "bed", "user", "usd", "cutlery", "wrench"],
+						"examples": ["truck"]
+					},
+					"cost_per_unit": {
+						"description": "Cost per unit of the Other Cost. Only applicable if input_type is \"resource\", \"distance\" or \"custom_unit_of_measurement\"",
+						"type": ["number", "null"]
+					},
+					"default_sell_price": {
+						"description": "Default sell price of the Other Cost. Only applicable if input_type is \"resource\", \"distance\" or \"custom_unit_of_measurement\"",
+						"type": ["number", "null"]
+					},
+					"default_sell_vat": {
+						"description": "Default sale VAT/IVA percentage of the Other Cost. Only applicable if input_type is \"resource\", \"distance\" or \"custom_unit_of_measurement\"",
+						"type": ["number", "null"]
+					},
+					"unit": {
+						"description": "Unit of the Other Cost. Only applicable if input_type is \"resource\", \"distance\" or \"custom_unit_of_measurement\"",
+						"type": ["string", "null"]
+					}
+				}
+			}
+		},
+		{
+			"resource": "otherCost",
+			"operation": "delete",
+			"operationId": "deleteOtherCost",
+			"method": "DELETE",
+			"path": "/other-costs/{otherCostId}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "otherCostId",
+					"kind": "string",
+					"target": "path",
+					"property": "otherCostId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
 			"resource": "problem",
 			"operation": "getManyAreas",
 			"operationId": "getProblemAreas",
@@ -1944,6 +3743,2045 @@
 				}
 			],
 			"allowedQuery": ["limit", "page"]
+		},
+		{
+			"resource": "request",
+			"operation": "get",
+			"operationId": "getRequest",
+			"method": "GET",
+			"path": "/requests/{requestId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "requestId",
+					"kind": "string",
+					"target": "path",
+					"property": "requestId",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["files", "operator", "relatedTo", "requestMaterials", "responsibles"]
+				}
+			],
+			"allowedQuery": ["expanded"]
+		},
+		{
+			"resource": "scheduledWork",
+			"operation": "getAll",
+			"operationId": "getScheduledWorks",
+			"method": "GET",
+			"path": "/works/scheduled",
+			"output": "records",
+			"list": true,
+			"fields": [],
+			"allowedQuery": ["limit", "page"]
+		},
+		{
+			"resource": "scheduledWork",
+			"operation": "get",
+			"operationId": "getScheduledWork",
+			"method": "GET",
+			"path": "/works/scheduled/{scheduledWorkId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "scheduledWorkId",
+					"kind": "string",
+					"target": "path",
+					"property": "scheduledWorkId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "scheduledWork",
+			"operation": "update",
+			"operationId": "updateScheduledWork",
+			"method": "PATCH",
+			"path": "/works/scheduled/{scheduledWorkId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "scheduledWorkId",
+					"kind": "string",
+					"target": "path",
+					"property": "scheduledWorkId",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "date",
+					"kind": "date",
+					"target": "body",
+					"property": "date",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "assignees",
+					"kind": "json",
+					"target": "body",
+					"property": "assignees",
+					"required": false,
+					"schema": {
+						"description": "Operators to assign to the Scheduled Work / Planned Job Order",
+						"type": "object",
+						"properties": {
+							"force_replace": {
+								"description": "When true, replaces the current assignees with the provided ones instead of merging",
+								"type": "boolean",
+								"examples": [false]
+							},
+							"operators": {
+								"description": "Operator assignees to attach and/or detach",
+								"type": "object",
+								"properties": {
+									"attach_ids": {
+										"description": "IDs of the operators to assign to the Scheduled Work",
+										"type": "array",
+										"items": { "type": "integer" },
+										"examples": [[1, 2]]
+									},
+									"detach_ids": {
+										"description": "IDs of the operators to unassign from the Scheduled Work",
+										"type": "array",
+										"items": { "type": "integer" },
+										"examples": [[3]]
+									}
+								}
+							}
+						}
+					}
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "ScheduleWork PATCH payload",
+				"type": "object",
+				"properties": {
+					"date": {
+						"description": "Date planned for the Scheduled Work / Planned Job Order to start (in Y-m-d\\TH:i:s format)",
+						"type": "string",
+						"format": "date-time",
+						"examples": ["2022-12-12T12:12:12"]
+					},
+					"description": {
+						"description": "Brief description of the Scheduled Work / Planned Job Order",
+						"type": ["string", "null"],
+						"examples": ["abc"]
+					},
+					"assignees": {
+						"description": "Operators to assign to the Scheduled Work / Planned Job Order",
+						"type": "object",
+						"properties": {
+							"force_replace": {
+								"description": "When true, replaces the current assignees with the provided ones instead of merging",
+								"type": "boolean",
+								"examples": [false]
+							},
+							"operators": {
+								"description": "Operator assignees to attach and/or detach",
+								"type": "object",
+								"properties": {
+									"attach_ids": {
+										"description": "IDs of the operators to assign to the Scheduled Work",
+										"type": "array",
+										"items": { "type": "integer" },
+										"examples": [[1, 2]]
+									},
+									"detach_ids": {
+										"description": "IDs of the operators to unassign from the Scheduled Work",
+										"type": "array",
+										"items": { "type": "integer" },
+										"examples": [[3]]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"resource": "supplier",
+			"operation": "getAll",
+			"operationId": "getSuppliers",
+			"method": "GET",
+			"path": "/suppliers",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["categories", "contacts", "files", "handshake", "invite", "services"]
+				}
+			],
+			"allowedQuery": ["expanded", "limit", "page"]
+		},
+		{
+			"resource": "supplier",
+			"operation": "create",
+			"operationId": "createSupplier",
+			"method": "POST",
+			"path": "/suppliers",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "vat",
+					"kind": "string",
+					"target": "body",
+					"property": "vat",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "address",
+					"kind": "string",
+					"target": "body",
+					"property": "address",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "postCode",
+					"kind": "string",
+					"target": "body",
+					"property": "post_code",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "city",
+					"kind": "string",
+					"target": "body",
+					"property": "city",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "area",
+					"kind": "string",
+					"target": "body",
+					"property": "area",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "latitude",
+					"kind": "number",
+					"target": "body",
+					"property": "latitude",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "longitude",
+					"kind": "number",
+					"target": "body",
+					"property": "longitude",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "iban",
+					"kind": "string",
+					"target": "body",
+					"property": "iban",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "addToMarket",
+					"kind": "boolean",
+					"target": "body",
+					"property": "add_to_market",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "contacts",
+					"kind": "intArray",
+					"target": "body",
+					"property": "contacts",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Supplier Create Payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "The name of the Supplier.",
+						"type": "string",
+						"examples": ["John Doe"]
+					},
+					"code": {
+						"description": "The code for the Supplier. Must be unique in the Entity.",
+						"type": "string",
+						"examples": ["BA02"]
+					},
+					"vat": {
+						"description": "The NIF/VAT number of the Supplier.",
+						"type": ["string", "null"],
+						"examples": ["123456789"]
+					},
+					"address": {
+						"description": "The address of the Supplier.",
+						"type": ["string", "null"],
+						"examples": ["5221 Brook Rd"]
+					},
+					"post_code": {
+						"description": "The postal code of the Supplier.",
+						"type": ["string", "null"],
+						"examples": ["4321-123"]
+					},
+					"city": {
+						"description": "The city of the Supplier.",
+						"type": ["string", "null"],
+						"examples": ["Richmond"]
+					},
+					"area": {
+						"description": "The district, region or state where the Supplier is from",
+						"type": ["string", "null"],
+						"examples": ["Madrid"]
+					},
+					"latitude": {
+						"description": "The latitude of the Supplier's Address",
+						"type": ["number", "null"],
+						"examples": [13.4134995]
+					},
+					"longitude": {
+						"description": "The longitude of the Supplier's Address",
+						"type": ["number", "null"],
+						"examples": [26.826999]
+					},
+					"iban": {
+						"description": "The IBAN of the Supplier",
+						"type": ["string", "null"],
+						"examples": ["1234 4321 5678 8765 9999 1"]
+					},
+					"add_to_market": {
+						"description": "Indicates if this Supplier should be added to the Infraspeak Market, where other Infraspeak Network users will be able to find and request their services. This field will default to false when not sent in the request.",
+						"type": ["boolean", "null"],
+						"examples": [true]
+					},
+					"contacts": {
+						"description": "A list of Contact IDs to associate with the Supplier.",
+						"type": ["array", "null"],
+						"items": {
+							"description": "The ID of the contact.",
+							"type": "integer",
+							"examples": [123]
+						}
+					}
+				},
+				"required": ["name"]
+			}
+		},
+		{
+			"resource": "supplier",
+			"operation": "get",
+			"operationId": "getSupplier",
+			"method": "GET",
+			"path": "/suppliers/{supplier}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "supplierId",
+					"kind": "locator",
+					"target": "path",
+					"property": "supplier",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["categories", "contacts", "files", "handshake", "invite", "services"]
+				}
+			],
+			"allowedQuery": ["expanded"]
+		},
+		{
+			"resource": "supplier",
+			"operation": "update",
+			"operationId": "updateSupplier",
+			"method": "PATCH",
+			"path": "/suppliers/{supplier}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "supplierId",
+					"kind": "locator",
+					"target": "path",
+					"property": "supplier",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "vat",
+					"kind": "string",
+					"target": "body",
+					"property": "vat",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "address",
+					"kind": "string",
+					"target": "body",
+					"property": "address",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "postCode",
+					"kind": "string",
+					"target": "body",
+					"property": "post_code",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "city",
+					"kind": "string",
+					"target": "body",
+					"property": "city",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "area",
+					"kind": "string",
+					"target": "body",
+					"property": "area",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "latitude",
+					"kind": "number",
+					"target": "body",
+					"property": "latitude",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "longitude",
+					"kind": "number",
+					"target": "body",
+					"property": "longitude",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "iban",
+					"kind": "string",
+					"target": "body",
+					"property": "iban",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "addToMarket",
+					"kind": "boolean",
+					"target": "body",
+					"property": "add_to_market",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "contacts",
+					"kind": "intArray",
+					"target": "body",
+					"property": "contacts",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Supplier Update Payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "The name of the Supplier.",
+						"type": "string",
+						"examples": ["John Doe"]
+					},
+					"code": {
+						"description": "The code for the Supplier. Must be unique in the Entity.",
+						"type": "string",
+						"examples": ["BA02"]
+					},
+					"vat": {
+						"description": "The NIF/VAT number of the Supplier.",
+						"type": ["string", "null"],
+						"examples": ["123456789"]
+					},
+					"address": {
+						"description": "The address of the Supplier.",
+						"type": ["string", "null"],
+						"examples": ["5221 Brook Rd"]
+					},
+					"post_code": {
+						"description": "The postal code of the Supplier.",
+						"type": ["string", "null"],
+						"examples": ["4321-123"]
+					},
+					"city": {
+						"description": "The city of the Supplier.",
+						"type": ["string", "null"],
+						"examples": ["Richmond"]
+					},
+					"area": {
+						"description": "The district, region or state where the Supplier is from",
+						"type": ["string", "null"],
+						"examples": ["Madrid"]
+					},
+					"latitude": {
+						"description": "The latitude of the Supplier's Address",
+						"type": ["number", "null"],
+						"examples": [13.4134995]
+					},
+					"longitude": {
+						"description": "The longitude of the Supplier's Address",
+						"type": ["number", "null"],
+						"examples": [26.826999]
+					},
+					"iban": {
+						"description": "The IBAN of the Supplier",
+						"type": ["string", "null"],
+						"examples": ["1234 4321 5678 8765 9999 1"]
+					},
+					"add_to_market": {
+						"description": "Indicates if this Supplier should be added to the Infraspeak Market, where other Infraspeak Network users will be able to find and request their services. This field will default to false when not sent in the request. If the Supplier was already added to the Infraspeak Market, it won't be added again.",
+						"type": ["boolean", "null"],
+						"examples": [true]
+					},
+					"contacts": {
+						"description": "A list of Contact IDs to associate with the Supplier. If sent in the request, this list will replace any list of contacts previously associated with the Supplier.",
+						"type": ["array", "null"],
+						"items": {
+							"description": "The ID of the contact.",
+							"type": "integer",
+							"examples": [123]
+						}
+					}
+				}
+			}
+		},
+		{
+			"resource": "supplier",
+			"operation": "delete",
+			"operationId": "deleteSupplier",
+			"method": "DELETE",
+			"path": "/suppliers/{supplier}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "supplierId",
+					"kind": "locator",
+					"target": "path",
+					"property": "supplier",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "work",
+			"operation": "getAll",
+			"operationId": "getWorks",
+			"method": "GET",
+			"path": "/works",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": [
+						"client",
+						"costCenter",
+						"entity",
+						"events",
+						"eventsPlanned",
+						"failure",
+						"files",
+						"firstWorkScheduled",
+						"gatekeeper",
+						"gatekeeperNotifications",
+						"interventions",
+						"lastWorkScheduled",
+						"locals",
+						"locations",
+						"nextWorkScheduled",
+						"ongoingWorkScheduled",
+						"operators",
+						"previousWorkScheduled",
+						"responsibles",
+						"supplier",
+						"technicalSkills",
+						"template",
+						"workAutoSchedule",
+						"workInterventions",
+						"workMaintenanceProcedures",
+						"workNetwork",
+						"workNotifications",
+						"workPeriodicity",
+						"workReminderRules",
+						"workSchedules",
+						"workSlaRules",
+						"workType",
+						"workUsageTrigger"
+					]
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				}
+			],
+			"allowedQuery": ["expanded", "limit", "page", "sort"]
+		},
+		{
+			"resource": "work",
+			"operation": "create",
+			"operationId": "createWork",
+			"method": "POST",
+			"path": "/works",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "additionalFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "type",
+					"kind": "options",
+					"target": "body",
+					"property": "type",
+					"required": true,
+					"options": ["CYCLIC", "PLAN", "SPECIAL"]
+				},
+				{
+					"container": "",
+					"name": "objectType",
+					"kind": "options",
+					"target": "body",
+					"property": "_type",
+					"required": true,
+					"options": ["works"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "anyResponsible",
+					"kind": "boolean",
+					"target": "body",
+					"property": "any_responsible",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "autoClose",
+					"kind": "boolean",
+					"target": "body",
+					"property": "auto_close",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "autoPilot",
+					"kind": "boolean",
+					"target": "body",
+					"property": "auto_pilot",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "autoSchedule",
+					"kind": "json",
+					"target": "body",
+					"property": "auto_schedule",
+					"required": false,
+					"schema": {
+						"description": "Information for automatically scheduling events for the Planned Job",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"is_enabled": { "description": "Enables auto schedule", "type": "boolean" },
+								"start_time": {
+									"description": "The start time for scheduling Events in 24-hour format (HH:mm)",
+									"type": "string",
+									"examples": ["10:00"]
+								},
+								"end_time": {
+									"description": "The end time for scheduling Events in 24-hour format (HH:mm)",
+									"type": "string",
+									"examples": ["11:00"]
+								},
+								"operators": {
+									"description": "IDs of the operators assigned to the events",
+									"type": "array",
+									"items": { "type": "integer" }
+								}
+							},
+							"required": ["start_time", "end_time", "operators"]
+						}
+					}
+				},
+				{
+					"container": "additionalFields",
+					"name": "calendarId",
+					"kind": "number",
+					"target": "body",
+					"property": "calendar_id",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "body",
+					"property": "client_id",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "costCenterId",
+					"kind": "locator",
+					"target": "body",
+					"property": "cost_center_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "enforceNfc",
+					"kind": "boolean",
+					"target": "body",
+					"property": "enforce_nfc",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "failureId",
+					"kind": "number",
+					"target": "body",
+					"property": "failure_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "gatekeeperId",
+					"kind": "number",
+					"target": "body",
+					"property": "gatekeeper_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "gatekeeperNotification",
+					"kind": "intArray",
+					"target": "body",
+					"property": "gatekeeper_notification",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "interventions",
+					"kind": "json",
+					"target": "body",
+					"property": "interventions",
+					"required": false,
+					"schema": {
+						"description": "List of interventions to be performed. Required when `type` is \"CYCLIC\" or \"PLAN\".",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": { "type": "integer" },
+								"elements": {
+									"type": "array",
+									"items": { "type": "object", "properties": { "id": { "type": "string" } } }
+								}
+							}
+						}
+					}
+				},
+				{
+					"container": "additionalFields",
+					"name": "isProtected",
+					"kind": "boolean",
+					"target": "body",
+					"property": "is_protected",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "localId",
+					"kind": "intArray",
+					"target": "body",
+					"property": "local_id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "operatorId",
+					"kind": "intArray",
+					"target": "body",
+					"property": "operator_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "procedures",
+					"kind": "json",
+					"target": "body",
+					"property": "procedures",
+					"required": false,
+					"schema": {
+						"description": "List with Procedure objects. Only used when `type` is \"SPECIAL\".",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"task": { "description": "Name of the task to be performed", "type": "string" },
+								"quantity": { "type": "number", "minimum": 1 },
+								"unit": { "description": "The measure unit of the `quantity`", "type": "string" }
+							}
+						}
+					}
+				},
+				{
+					"container": "additionalFields",
+					"name": "recurrence",
+					"kind": "json",
+					"target": "body",
+					"property": "recurrence",
+					"required": false,
+					"schema": {
+						"description": "Information about the recurrence",
+						"type": "object",
+						"properties": {
+							"DTSTART": {
+								"description": "Start date and time for the Planned Job",
+								"type": "string",
+								"format": "date-time",
+								"examples": ["2022-05-29T17:32:28"]
+							},
+							"UNTIL": {
+								"description": "End date and time for the Planned Job",
+								"type": "string",
+								"format": "date-time",
+								"examples": ["2022-05-30T17:32:28"]
+							},
+							"FREQ": {
+								"description": "Type of frequency of the recurrence.",
+								"type": "string",
+								"enum": ["HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "UBM"]
+							},
+							"INTERVAL": {
+								"description": "Interval unit of the recurrence, greater or equal than 0. Required if type is \"CYCLIC\" and FREQ is HOURLY.",
+								"type": "number",
+								"minimum": 0
+							}
+						}
+					}
+				},
+				{
+					"container": "additionalFields",
+					"name": "reminderRules",
+					"kind": "json",
+					"target": "body",
+					"property": "reminder_rules",
+					"required": false,
+					"schema": {
+						"description": "List with reminder rules objects",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"calendar_id": { "type": "integer" },
+								"notes": { "type": "string" },
+								"notify_hours": { "type": "integer" },
+								"notify_client_contacts": { "type": "boolean" },
+								"notify_building_contacts": { "type": "boolean" },
+								"notify_contacts": { "type": "array", "items": { "type": "integer" } }
+							}
+						}
+					}
+				},
+				{
+					"container": "additionalFields",
+					"name": "slaRules",
+					"kind": "json",
+					"target": "body",
+					"property": "sla_rules",
+					"required": false,
+					"schema": {
+						"description": "List of SLA rules associated to the planned job",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"calendar_id": { "type": "string" },
+								"notify_hours": { "type": ["integer", "null"] },
+								"pausable": { "type": "boolean" },
+								"start_status": { "type": "string", "examples": ["SCHEDULED"] },
+								"target_hours": { "type": "integer" },
+								"target_status": { "type": "string", "examples": ["COMPLETED"] },
+								"specify_pause_reason": {
+									"description": "Whether pause reasons must be specified for this SLA rule",
+									"type": "boolean"
+								},
+								"pause_reasons": {
+									"description": "List of pause reasons for this SLA rule. There should be at least one pause reason selected if specify_pause_reason is true.",
+									"type": ["array"],
+									"items": { "type": "string" },
+									"minItems": 1
+								}
+							}
+						}
+					}
+				},
+				{
+					"container": "additionalFields",
+					"name": "slaRulesReceivers",
+					"kind": "json",
+					"target": "body",
+					"property": "sla_rules_receivers",
+					"required": false,
+					"schema": {
+						"description": "Who should receive notifications for SLA rules",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"notify_client_building_responsibles": { "type": "boolean" },
+								"notify_work_responsibles": { "type": "boolean" },
+								"operators": { "type": "array", "items": { "type": "integer" } }
+							}
+						}
+					}
+				},
+				{
+					"container": "additionalFields",
+					"name": "supplierId",
+					"kind": "locator",
+					"target": "body",
+					"property": "supplier_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "technicalSkillId",
+					"kind": "intArray",
+					"target": "body",
+					"property": "technical_skill_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "workNotifications",
+					"kind": "json",
+					"target": "body",
+					"property": "work_notifications",
+					"required": false,
+					"schema": {
+						"description": "List with Work Notifications",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"trigger": {
+									"description": "The condition when the notification should be sent",
+									"type": "string",
+									"enum": ["CLOSE", "CONFIRM"]
+								},
+								"client_contacts": {
+									"description": "Whether to notify client associated contacts",
+									"type": "boolean"
+								},
+								"building_contacts": {
+									"description": "Whether to notify building associated contacts",
+									"type": "boolean"
+								},
+								"specific_contacts": {
+									"description": "IDs of specific contacts to notify",
+									"type": "array",
+									"items": { "type": "integer" }
+								},
+								"client_operators": {
+									"description": "Whether to notify client associated operators",
+									"type": "boolean"
+								},
+								"building_operators": {
+									"description": "Whether to notify building associated operators",
+									"type": "boolean"
+								},
+								"technical_skill_operators": {
+									"description": "Whether to notify operators (technician) with the associated technical skill",
+									"type": "boolean"
+								},
+								"specific_operators": {
+									"description": "IDs of specific operators to notify",
+									"type": "array",
+									"items": { "type": "integer" }
+								}
+							}
+						}
+					}
+				},
+				{
+					"container": "",
+					"name": "workTypeId",
+					"kind": "number",
+					"target": "body",
+					"property": "work_type_id",
+					"required": true
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Work POST payload",
+				"type": "object",
+				"properties": {
+					"description": {
+						"description": "Description of the planned job",
+						"type": ["string", "null"]
+					},
+					"type": {
+						"description": "Type of the Planned Job",
+						"type": "string",
+						"enum": ["CYCLIC", "PLAN", "SPECIAL"]
+					},
+					"_type": { "type": "string", "enum": ["works"] },
+					"any_responsible": {
+						"description": "If true anyone can start the planned job, if false `operator_id` or `technical_skill_id` must be filled",
+						"type": "boolean"
+					},
+					"auto_close": {
+						"description": "Indication if the planned job order can be automatically closed, when all tasks are completed. Used only when `type` is \"CYCLIC\" or \"PLAN\".",
+						"type": "boolean",
+						"default": false
+					},
+					"auto_pilot": {
+						"description": "Indication if any user can start this planned job. Used only when `type` is \"CYCLIC\" or \"PLAN\".",
+						"type": "boolean",
+						"default": false
+					},
+					"auto_schedule": {
+						"description": "Information for automatically scheduling events for the Planned Job",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"is_enabled": { "description": "Enables auto schedule", "type": "boolean" },
+								"start_time": {
+									"description": "The start time for scheduling Events in 24-hour format (HH:mm)",
+									"type": "string",
+									"examples": ["10:00"]
+								},
+								"end_time": {
+									"description": "The end time for scheduling Events in 24-hour format (HH:mm)",
+									"type": "string",
+									"examples": ["11:00"]
+								},
+								"operators": {
+									"description": "IDs of the operators assigned to the events",
+									"type": "array",
+									"items": { "type": "integer" }
+								}
+							},
+							"required": ["start_time", "end_time", "operators"]
+						}
+					},
+					"calendar_id": {
+						"description": "ID of the Calendar. Required when `type` is \"CYCLIC\" and `recurrence.FREQ` is \"HOURLY\".",
+						"type": "integer"
+					},
+					"client_id": { "description": "ID of the Client", "type": "integer" },
+					"cost_center_id": { "description": "ID of the Cost Center", "type": ["integer", "null"] },
+					"enforce_nfc": {
+						"description": "Require an NFC tag scan on the assets of this planned job.\nWhat is stored depends on the entity's `enforce-nfc` extension. With it installed and configured as required, a value sent here is honoured and omitting the field stores `true`. Without it, the field is ignored and the planned job is created with `false`. The response carries what was stored, not what was asked for.\n",
+						"type": "boolean"
+					},
+					"failure_id": { "description": "ID of the Failure", "type": ["integer", "null"] },
+					"gatekeeper_id": { "description": "ID of the Gatekeeper", "type": "integer" },
+					"gatekeeper_notification": {
+						"description": "ID of operators to receive the Gatekeeper Notification",
+						"type": "array",
+						"items": { "type": "integer" }
+					},
+					"interventions": {
+						"description": "List of interventions to be performed. Required when `type` is \"CYCLIC\" or \"PLAN\".",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": { "type": "integer" },
+								"elements": {
+									"type": "array",
+									"items": { "type": "object", "properties": { "id": { "type": "string" } } }
+								}
+							}
+						}
+					},
+					"is_protected": {
+						"description": "Protect Planned Job from Manager edition / deletion",
+						"type": "boolean"
+					},
+					"local_id": {
+						"description": "ID's of the locations associated to the planned job",
+						"type": "array",
+						"items": { "type": "integer" }
+					},
+					"name": { "description": "Brief description of the planned job", "type": "string" },
+					"operator_id": {
+						"description": "ID's of Operators associated to the planned job",
+						"type": "array",
+						"items": { "type": "integer" }
+					},
+					"procedures": {
+						"description": "List with Procedure objects. Only used when `type` is \"SPECIAL\".",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"task": { "description": "Name of the task to be performed", "type": "string" },
+								"quantity": { "type": "number", "minimum": 1 },
+								"unit": { "description": "The measure unit of the `quantity`", "type": "string" }
+							}
+						}
+					},
+					"recurrence": {
+						"description": "Information about the recurrence",
+						"type": "object",
+						"properties": {
+							"DTSTART": {
+								"description": "Start date and time for the Planned Job",
+								"type": "string",
+								"format": "date-time",
+								"examples": ["2022-05-29T17:32:28"]
+							},
+							"UNTIL": {
+								"description": "End date and time for the Planned Job",
+								"type": "string",
+								"format": "date-time",
+								"examples": ["2022-05-30T17:32:28"]
+							},
+							"FREQ": {
+								"description": "Type of frequency of the recurrence.",
+								"type": "string",
+								"enum": ["HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "UBM"]
+							},
+							"INTERVAL": {
+								"description": "Interval unit of the recurrence, greater or equal than 0. Required if type is \"CYCLIC\" and FREQ is HOURLY.",
+								"type": "number",
+								"minimum": 0
+							}
+						}
+					},
+					"reminder_rules": {
+						"description": "List with reminder rules objects",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"calendar_id": { "type": "integer" },
+								"notes": { "type": "string" },
+								"notify_hours": { "type": "integer" },
+								"notify_client_contacts": { "type": "boolean" },
+								"notify_building_contacts": { "type": "boolean" },
+								"notify_contacts": { "type": "array", "items": { "type": "integer" } }
+							}
+						}
+					},
+					"sla_rules": {
+						"description": "List of SLA rules associated to the planned job",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"calendar_id": { "type": "string" },
+								"notify_hours": { "type": ["integer", "null"] },
+								"pausable": { "type": "boolean" },
+								"start_status": { "type": "string", "examples": ["SCHEDULED"] },
+								"target_hours": { "type": "integer" },
+								"target_status": { "type": "string", "examples": ["COMPLETED"] },
+								"specify_pause_reason": {
+									"description": "Whether pause reasons must be specified for this SLA rule",
+									"type": "boolean"
+								},
+								"pause_reasons": {
+									"description": "List of pause reasons for this SLA rule. There should be at least one pause reason selected if specify_pause_reason is true.",
+									"type": ["array"],
+									"items": { "type": "string" },
+									"minItems": 1
+								}
+							}
+						}
+					},
+					"sla_rules_receivers": {
+						"description": "Who should receive notifications for SLA rules",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"notify_client_building_responsibles": { "type": "boolean" },
+								"notify_work_responsibles": { "type": "boolean" },
+								"operators": { "type": "array", "items": { "type": "integer" } }
+							}
+						}
+					},
+					"supplier_id": { "description": "ID of the Supplier", "type": ["integer", "null"] },
+					"technical_skill_id": {
+						"description": "ID's of Technical Skills associated to the planned job",
+						"type": "array",
+						"items": { "type": "integer" }
+					},
+					"work_notifications": {
+						"description": "List with Work Notifications",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"trigger": {
+									"description": "The condition when the notification should be sent",
+									"type": "string",
+									"enum": ["CLOSE", "CONFIRM"]
+								},
+								"client_contacts": {
+									"description": "Whether to notify client associated contacts",
+									"type": "boolean"
+								},
+								"building_contacts": {
+									"description": "Whether to notify building associated contacts",
+									"type": "boolean"
+								},
+								"specific_contacts": {
+									"description": "IDs of specific contacts to notify",
+									"type": "array",
+									"items": { "type": "integer" }
+								},
+								"client_operators": {
+									"description": "Whether to notify client associated operators",
+									"type": "boolean"
+								},
+								"building_operators": {
+									"description": "Whether to notify building associated operators",
+									"type": "boolean"
+								},
+								"technical_skill_operators": {
+									"description": "Whether to notify operators (technician) with the associated technical skill",
+									"type": "boolean"
+								},
+								"specific_operators": {
+									"description": "IDs of specific operators to notify",
+									"type": "array",
+									"items": { "type": "integer" }
+								}
+							}
+						}
+					},
+					"work_type_id": { "description": "ID of the WorkType", "type": "integer" }
+				},
+				"required": ["_type", "type", "name", "work_type_id", "local_id", "client_id"]
+			}
+		},
+		{
+			"resource": "work",
+			"operation": "get",
+			"operationId": "getWork",
+			"method": "GET",
+			"path": "/works/{workId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "workId",
+					"kind": "string",
+					"target": "path",
+					"property": "workId",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": [
+						"client",
+						"costCenter",
+						"entity",
+						"events",
+						"eventsPlanned",
+						"failure",
+						"files",
+						"firstWorkScheduled",
+						"gatekeeper",
+						"gatekeeperNotifications",
+						"interventions",
+						"lastWorkScheduled",
+						"locals",
+						"locations",
+						"nextWorkScheduled",
+						"ongoingWorkScheduled",
+						"operators",
+						"previousWorkScheduled",
+						"responsibles",
+						"supplier",
+						"technicalSkills",
+						"template",
+						"workAutoSchedule",
+						"workInterventions",
+						"workMaintenanceProcedures",
+						"workNetwork",
+						"workNotifications",
+						"workPeriodicity",
+						"workReminderRules",
+						"workSchedules",
+						"workSlaRules",
+						"workType",
+						"workUsageTrigger"
+					]
+				}
+			],
+			"allowedQuery": ["expanded"]
+		},
+		{
+			"resource": "work",
+			"operation": "update",
+			"operationId": "updateWork",
+			"method": "PATCH",
+			"path": "/works/{workId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "workId",
+					"kind": "string",
+					"target": "path",
+					"property": "workId",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "type",
+					"kind": "options",
+					"target": "body",
+					"property": "type",
+					"required": true,
+					"options": ["CYCLIC", "PLAN", "SPECIAL"]
+				},
+				{
+					"container": "",
+					"name": "objectType",
+					"kind": "options",
+					"target": "body",
+					"property": "_type",
+					"required": true,
+					"options": ["works"]
+				},
+				{
+					"container": "updateFields",
+					"name": "anyResponsible",
+					"kind": "boolean",
+					"target": "body",
+					"property": "any_responsible",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "autoClose",
+					"kind": "boolean",
+					"target": "body",
+					"property": "auto_close",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "autoPilot",
+					"kind": "boolean",
+					"target": "body",
+					"property": "auto_pilot",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "autoSchedule",
+					"kind": "json",
+					"target": "body",
+					"property": "auto_schedule",
+					"required": false,
+					"schema": {
+						"description": "Information for automatically scheduling events for the Planned Job",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"is_enabled": { "description": "Enables auto schedule", "type": "boolean" },
+								"start_time": {
+									"description": "The start time for scheduling Events in 24-hour format (HH:mm)",
+									"type": "string",
+									"examples": ["10:00"]
+								},
+								"end_time": {
+									"description": "The end time for scheduling Events in 24-hour format (HH:mm)",
+									"type": "string",
+									"examples": ["11:00"]
+								},
+								"operators": {
+									"description": "IDs of the operators assigned to the events",
+									"type": "array",
+									"items": { "type": "integer" }
+								}
+							},
+							"required": ["start_time", "end_time", "operators"]
+						}
+					}
+				},
+				{
+					"container": "updateFields",
+					"name": "calendarId",
+					"kind": "number",
+					"target": "body",
+					"property": "calendar_id",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "body",
+					"property": "client_id",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "costCenterId",
+					"kind": "locator",
+					"target": "body",
+					"property": "cost_center_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "enforceNfc",
+					"kind": "boolean",
+					"target": "body",
+					"property": "enforce_nfc",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "gatekeeperId",
+					"kind": "number",
+					"target": "body",
+					"property": "gatekeeper_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "gatekeeperNotification",
+					"kind": "intArray",
+					"target": "body",
+					"property": "gatekeeper_notification",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "interventions",
+					"kind": "json",
+					"target": "body",
+					"property": "interventions",
+					"required": false,
+					"schema": {
+						"description": "List of interventions to be performed. Required when `type` is \"CYCLIC\" or \"PLAN\".",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": { "type": "integer" },
+								"elements": {
+									"type": "array",
+									"items": { "type": "object", "properties": { "id": { "type": "string" } } }
+								}
+							}
+						}
+					}
+				},
+				{
+					"container": "updateFields",
+					"name": "isProtected",
+					"kind": "boolean",
+					"target": "body",
+					"property": "is_protected",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "localId",
+					"kind": "intArray",
+					"target": "body",
+					"property": "local_id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "operatorId",
+					"kind": "intArray",
+					"target": "body",
+					"property": "operator_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "procedures",
+					"kind": "json",
+					"target": "body",
+					"property": "procedures",
+					"required": false,
+					"schema": {
+						"description": "List with Procedure objects. Only used when `type` is \"SPECIAL\".",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"task": { "description": "Name of the task to be performed", "type": "string" },
+								"quantity": { "type": "number", "minimum": 1 },
+								"unit": { "description": "The measure unit of the `quantity`", "type": "string" }
+							}
+						}
+					}
+				},
+				{
+					"container": "updateFields",
+					"name": "recurrence",
+					"kind": "json",
+					"target": "body",
+					"property": "recurrence",
+					"required": false,
+					"schema": {
+						"description": "Information about the recurrence",
+						"type": "object",
+						"properties": {
+							"DTSTART": {
+								"description": "Start date and time for the Planned Job",
+								"type": "string",
+								"format": "date-time",
+								"examples": ["2022-05-29T17:32:28"]
+							},
+							"UNTIL": {
+								"description": "End date and time for the Planned Job",
+								"type": "string",
+								"format": "date-time",
+								"examples": ["2022-05-30T17:32:28"]
+							},
+							"FREQ": {
+								"description": "Type of frequency of the recurrence.",
+								"type": "string",
+								"enum": ["HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "UBM"]
+							},
+							"INTERVAL": {
+								"description": "Interval unit of the recurrence, greater or equal than 0. Required if type is \"CYCLIC\" and FREQ is HOURLY.",
+								"type": "number",
+								"minimum": 0
+							}
+						}
+					}
+				},
+				{
+					"container": "updateFields",
+					"name": "reminderRules",
+					"kind": "json",
+					"target": "body",
+					"property": "reminder_rules",
+					"required": false,
+					"schema": {
+						"description": "List with reminder rules objects",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"calendar_id": { "type": "integer" },
+								"notes": { "type": "string" },
+								"notify_hours": { "type": "integer" },
+								"notify_client_contacts": { "type": "boolean" },
+								"notify_building_contacts": { "type": "boolean" },
+								"notify_contacts": { "type": "array", "items": { "type": "integer" } }
+							}
+						}
+					}
+				},
+				{
+					"container": "updateFields",
+					"name": "slaRules",
+					"kind": "json",
+					"target": "body",
+					"property": "sla_rules",
+					"required": false,
+					"schema": {
+						"description": "List of SLA rules associated to the planned job",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"calendar_id": { "type": "string" },
+								"notify_hours": { "type": ["integer", "null"] },
+								"pausable": { "type": "boolean" },
+								"start_status": { "type": "string", "examples": ["SCHEDULED"] },
+								"target_hours": { "type": "integer" },
+								"target_status": { "type": "string", "examples": ["COMPLETED"] }
+							}
+						}
+					}
+				},
+				{
+					"container": "updateFields",
+					"name": "slaRulesReceivers",
+					"kind": "json",
+					"target": "body",
+					"property": "sla_rules_receivers",
+					"required": false,
+					"schema": {
+						"description": "Who should receive notifications for SLA rules",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"notify_client_building_responsibles": { "type": "boolean" },
+								"notify_work_responsibles": { "type": "boolean" },
+								"operators": { "type": "array", "items": { "type": "integer" } }
+							}
+						}
+					}
+				},
+				{
+					"container": "updateFields",
+					"name": "supplierId",
+					"kind": "locator",
+					"target": "body",
+					"property": "supplier_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "technicalSkillId",
+					"kind": "intArray",
+					"target": "body",
+					"property": "technical_skill_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "workNotifications",
+					"kind": "json",
+					"target": "body",
+					"property": "work_notifications",
+					"required": false,
+					"schema": {
+						"description": "List with Work Notifications",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"trigger": {
+									"description": "The condition when the notification should be sent",
+									"type": "string",
+									"enum": ["CLOSE", "CONFIRM"]
+								},
+								"client_contacts": {
+									"description": "Whether to notify client associated contacts",
+									"type": "boolean"
+								},
+								"building_contacts": {
+									"description": "Whether to notify building associated contacts",
+									"type": "boolean"
+								},
+								"specific_contacts": {
+									"description": "IDs of specific contacts to notify",
+									"type": "array",
+									"items": { "type": "integer" }
+								},
+								"client_operators": {
+									"description": "Whether to notify client associated operators",
+									"type": "boolean"
+								},
+								"building_operators": {
+									"description": "Whether to notify building associated operators",
+									"type": "boolean"
+								},
+								"technical_skill_operators": {
+									"description": "Whether to notify operators (technician) with the associated technical skill",
+									"type": "boolean"
+								},
+								"specific_operators": {
+									"description": "IDs of specific operators to notify",
+									"type": "array",
+									"items": { "type": "integer" }
+								}
+							}
+						}
+					}
+				},
+				{
+					"container": "",
+					"name": "workTypeId",
+					"kind": "number",
+					"target": "body",
+					"property": "work_type_id",
+					"required": true
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Work PATCH payload",
+				"type": "object",
+				"properties": {
+					"description": {
+						"description": "Description of the planned job",
+						"type": ["string", "null"]
+					},
+					"type": {
+						"description": "Type of the Planned Job",
+						"type": "string",
+						"enum": ["CYCLIC", "PLAN", "SPECIAL"]
+					},
+					"_type": { "type": "string", "enum": ["works"] },
+					"any_responsible": {
+						"description": "If true anyone can start the planned job, if false `operator_id` or `technical_skill_id` must be filled",
+						"type": "boolean"
+					},
+					"auto_close": {
+						"description": "Indication if the planned job order can be automatically closed, when all tasks are completed. Used only when `type` is \"CYCLIC\" or \"PLAN\".",
+						"type": "boolean",
+						"default": false
+					},
+					"auto_pilot": {
+						"description": "Indication if any user can start this planned job. Used only when `type` is \"CYCLIC\" or \"PLAN\".",
+						"type": "boolean",
+						"default": false
+					},
+					"auto_schedule": {
+						"description": "Information for automatically scheduling events for the Planned Job",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"is_enabled": { "description": "Enables auto schedule", "type": "boolean" },
+								"start_time": {
+									"description": "The start time for scheduling Events in 24-hour format (HH:mm)",
+									"type": "string",
+									"examples": ["10:00"]
+								},
+								"end_time": {
+									"description": "The end time for scheduling Events in 24-hour format (HH:mm)",
+									"type": "string",
+									"examples": ["11:00"]
+								},
+								"operators": {
+									"description": "IDs of the operators assigned to the events",
+									"type": "array",
+									"items": { "type": "integer" }
+								}
+							},
+							"required": ["start_time", "end_time", "operators"]
+						}
+					},
+					"calendar_id": {
+						"description": "ID of the Calendar. Required when `type` is \"CYCLIC\" and `recurrence.FREQ` is \"HOURLY\".",
+						"type": "integer"
+					},
+					"client_id": { "description": "ID of the Client", "type": "integer" },
+					"cost_center_id": { "description": "ID of the Cost Center", "type": ["integer", "null"] },
+					"enforce_nfc": {
+						"description": "Require an NFC tag scan on the assets of this planned job. Omit the key to leave the stored value unchanged.",
+						"type": "boolean"
+					},
+					"gatekeeper_id": { "description": "ID of the Gatekeeper", "type": "integer" },
+					"gatekeeper_notification": {
+						"description": "ID of operators to receive the Gatekeeper Notification",
+						"type": "array",
+						"items": { "type": "integer" }
+					},
+					"interventions": {
+						"description": "List of interventions to be performed. Required when `type` is \"CYCLIC\" or \"PLAN\".",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": { "type": "integer" },
+								"elements": {
+									"type": "array",
+									"items": { "type": "object", "properties": { "id": { "type": "string" } } }
+								}
+							}
+						}
+					},
+					"is_protected": {
+						"description": "Protect Planned Job from Manager edition / deletion",
+						"type": "boolean"
+					},
+					"local_id": {
+						"description": "ID's of the locations associated to the planned job",
+						"type": "array",
+						"items": { "type": "integer" }
+					},
+					"name": { "description": "Brief description of the planned job", "type": "string" },
+					"operator_id": {
+						"description": "ID's of Operators associated to the planned job",
+						"type": "array",
+						"items": { "type": "integer" }
+					},
+					"procedures": {
+						"description": "List with Procedure objects. Only used when `type` is \"SPECIAL\".",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"task": { "description": "Name of the task to be performed", "type": "string" },
+								"quantity": { "type": "number", "minimum": 1 },
+								"unit": { "description": "The measure unit of the `quantity`", "type": "string" }
+							}
+						}
+					},
+					"recurrence": {
+						"description": "Information about the recurrence",
+						"type": "object",
+						"properties": {
+							"DTSTART": {
+								"description": "Start date and time for the Planned Job",
+								"type": "string",
+								"format": "date-time",
+								"examples": ["2022-05-29T17:32:28"]
+							},
+							"UNTIL": {
+								"description": "End date and time for the Planned Job",
+								"type": "string",
+								"format": "date-time",
+								"examples": ["2022-05-30T17:32:28"]
+							},
+							"FREQ": {
+								"description": "Type of frequency of the recurrence.",
+								"type": "string",
+								"enum": ["HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "UBM"]
+							},
+							"INTERVAL": {
+								"description": "Interval unit of the recurrence, greater or equal than 0. Required if type is \"CYCLIC\" and FREQ is HOURLY.",
+								"type": "number",
+								"minimum": 0
+							}
+						}
+					},
+					"reminder_rules": {
+						"description": "List with reminder rules objects",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"calendar_id": { "type": "integer" },
+								"notes": { "type": "string" },
+								"notify_hours": { "type": "integer" },
+								"notify_client_contacts": { "type": "boolean" },
+								"notify_building_contacts": { "type": "boolean" },
+								"notify_contacts": { "type": "array", "items": { "type": "integer" } }
+							}
+						}
+					},
+					"sla_rules": {
+						"description": "List of SLA rules associated to the planned job",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"calendar_id": { "type": "string" },
+								"notify_hours": { "type": ["integer", "null"] },
+								"pausable": { "type": "boolean" },
+								"start_status": { "type": "string", "examples": ["SCHEDULED"] },
+								"target_hours": { "type": "integer" },
+								"target_status": { "type": "string", "examples": ["COMPLETED"] }
+							}
+						}
+					},
+					"sla_rules_receivers": {
+						"description": "Who should receive notifications for SLA rules",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"notify_client_building_responsibles": { "type": "boolean" },
+								"notify_work_responsibles": { "type": "boolean" },
+								"operators": { "type": "array", "items": { "type": "integer" } }
+							}
+						}
+					},
+					"supplier_id": { "description": "ID of the Supplier", "type": ["integer", "null"] },
+					"technical_skill_id": {
+						"description": "ID's of Technical Skills associated to the planned job",
+						"type": "array",
+						"items": { "type": "integer" }
+					},
+					"work_notifications": {
+						"description": "List with Work Notifications",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"trigger": {
+									"description": "The condition when the notification should be sent",
+									"type": "string",
+									"enum": ["CLOSE", "CONFIRM"]
+								},
+								"client_contacts": {
+									"description": "Whether to notify client associated contacts",
+									"type": "boolean"
+								},
+								"building_contacts": {
+									"description": "Whether to notify building associated contacts",
+									"type": "boolean"
+								},
+								"specific_contacts": {
+									"description": "IDs of specific contacts to notify",
+									"type": "array",
+									"items": { "type": "integer" }
+								},
+								"client_operators": {
+									"description": "Whether to notify client associated operators",
+									"type": "boolean"
+								},
+								"building_operators": {
+									"description": "Whether to notify building associated operators",
+									"type": "boolean"
+								},
+								"technical_skill_operators": {
+									"description": "Whether to notify operators (technician) with the associated technical skill",
+									"type": "boolean"
+								},
+								"specific_operators": {
+									"description": "IDs of specific operators to notify",
+									"type": "array",
+									"items": { "type": "integer" }
+								}
+							}
+						}
+					},
+					"work_type_id": { "description": "ID of the WorkType", "type": "integer" }
+				},
+				"required": ["_type", "type", "name", "work_type_id", "local_id", "client_id"]
+			}
 		}
 	]
 }

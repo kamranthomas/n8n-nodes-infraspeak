@@ -2,7 +2,7 @@
 
 This is an n8n community node. It lets you use [Infraspeak](https://infraspeak.com) in your n8n workflows.
 
-Infraspeak is a maintenance management platform (CMMS). This node manages **failures** (Infraspeak's corrective work orders), **clients**, **elements** (assets) and **problem** areas/types.
+Infraspeak is a maintenance management platform (CMMS). This node covers corrective maintenance (**failures**, Infraspeak's work orders), preventive maintenance (**works** and **scheduled works**), and the records around them: clients, assets, problems, categories, suppliers, operators, cost centers, other costs, contacts, requests and files.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -19,7 +19,13 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
+**Category**: Create, Get, Get Many (top-level folders), Get Many (All Levels), Get Children, Update, Delete
+
 **Client**: Create, Get, Get Many, Update, Delete, Associate Contacts
+
+**Contact**: Get Many
+
+**Cost Center**: Create, Get, Get Many, Update, Delete
 
 **Element (Asset)**: Create, Get, Get Many, Update, Delete, Archive, Unarchive
 
@@ -30,11 +36,27 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 - **Get Many**: list all, open, or closed failures. You can filter by status, location, problem type, and date ranges (reported, completed, approved, status changed). Return All pages through the API 200 records at a time.
 - **Update**: update a failure's fields, such as priority, description, location, and closing note
 
+**File**: Get Many (the files attached to a record)
+
+**Operator**: Create, Get, Get Many
+
+**Other Cost**: Create, Get, Get Many, Update, Delete
+
 **Problem**: Get Many Areas, Get Area, Get Many Types
 
-Client, Location, Problem Area and Problem Type fields are searchable dropdowns, or you can enter an ID directly. The Location list only shows real locations, because failures and assets can't be attached to buildings or folders. Problem types only exist inside a problem area, so to pick a Problem Type from the list, choose a Problem Area first. The Problem Area field only narrows the list and isn't sent to Infraspeak.
+**Request**: Get
+
+**Scheduled Work**: Get, Get Many, Update
+
+**Supplier**: Create, Get, Get Many, Update, Delete
+
+**Work** (planned jobs): Create, Get, Get Many, Update
+
+Client, Location, Problem Area, Problem Type, Supplier, Operator, Cost Center and Category fields are searchable dropdowns, or you can enter an ID directly. The Location list only shows real locations, because failures and assets can't be attached to buildings or folders. Problem types only exist inside a problem area, so to pick a Problem Type from the list, choose a Problem Area first. The Problem Area field only narrows the list and isn't sent to Infraspeak.
 
 Delete returns `{ "deleted": true }`; Archive and Unarchive return `{ "success": true }`.
+
+Nested structures such as a planned job's recurrence or SLA rules are **JSON** fields: enter the structure the [Infraspeak API reference](https://developer.infraspeak.com) documents for that field. Filters that take several values (for example *Code (Any Of)*) take comma-separated text.
 
 ## Credentials
 
@@ -68,6 +90,8 @@ Most of the node is generated from Infraspeak's OpenAPI spec. Don't edit `nodes/
 - To add a resource, add its OpenAPI tag to `resources` in `overrides.ts`, run `npm run generate`, then add overrides until it generates and `npm run lint` passes.
 
 Checks:
+
+- `npm run test:mock` runs every operation against the Prism mock (start `npm run mock` first). Prism rejects any request that breaks the spec, so this is a second opinion next to `npm test`. Optional date fields are left out, because the date format is a known conflict between the spec and the docs.
 
 - `npm test` runs every generated operation through n8n's real execution engine with HTTP mocked. It checks that the node sends the method, path, query and body the spec describes, and validates bodies against the spec's JSON schema. This proves the node matches the spec, not that the live API matches the spec. That still needs a run against a sandbox account.
 - `npm run lint` and `npm run build`.

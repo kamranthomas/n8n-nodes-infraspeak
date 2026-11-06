@@ -26,7 +26,8 @@
 		"generate": "tsx scripts/generate/index.ts",
 		"test": "jest",
 		"mock": "prism mock -p 4010 docs/api/openapi-full.yaml",
-		"mock:random": "prism mock -d -p 4010 docs/api/openapi-full.yaml"
+		"mock:random": "prism mock -d -p 4010 docs/api/openapi-full.yaml",
+		"test:mock": "INFRASPEAK_MOCK_URL=http://127.0.0.1:4010 jest test/mock.test.ts"
 	},
 	"files": [
 		"dist"

@@ -26,6 +26,7 @@ export interface Param {
 	required: boolean;
 	schema: Schema;
 	description?: string;
+	deprecated?: boolean;
 }
 
 export type HttpMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';

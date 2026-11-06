@@ -45,6 +45,13 @@ export const resourceLocatorIdExpression =
 export const intArrayExpression =
 	'={{ (Array.isArray($value) ? $value : String($value).split(",")).map(v => String(v).trim()).filter(v => v !== "").map(Number) }}';
 
+/** String-array body value from a comma-separated string (or an array), e.g. "a, b" → ["a", "b"]. */
+export const stringArrayExpression =
+	'={{ (Array.isArray($value) ? $value : String($value).split(",")).map(v => String(v).trim()).filter(v => v !== "") }}';
+
+/** Body value from a JSON field: the field holds a JSON string, or an object/array via an expression. */
+export const jsonValueExpression = '={{ typeof $value === "string" ? JSON.parse($value) : $value }}';
+
 /**
  * postReceive hook shared by every operation that returns records. Unwraps the JSON:API
  * `data` member into one n8n item per record and, when Simplify is on,
