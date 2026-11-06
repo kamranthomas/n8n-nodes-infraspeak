@@ -2,7 +2,7 @@
 
 This is an n8n community node. It lets you use [Infraspeak](https://infraspeak.com) in your n8n workflows.
 
-Infraspeak is a maintenance management platform (CMMS). This node manages **failures**, which are Infraspeak's corrective work orders.
+Infraspeak is a maintenance management platform (CMMS). This node manages **failures** (Infraspeak's corrective work orders), **clients**, **elements** (assets) and **problem** areas/types.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -11,6 +11,7 @@ Infraspeak is a maintenance management platform (CMMS). This node manages **fail
 [Credentials](#credentials)
 [Usage](#usage)
 [Resources](#resources)
+[Development](#development)
 
 ## Installation
 
@@ -18,14 +19,22 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
+**Client**: Create, Get, Get Many, Update, Delete, Associate Contacts
+
+**Element (Asset)**: Create, Get, Get Many, Update, Delete, Archive, Unarchive
+
 **Failure**
 
 - **Create**: create a failure for a client and location, with a problem type and priority
 - **Get**: get a failure by numeric ID or UUID
-- **Get Many**: list all, open, or closed failures. You can filter by status, location, problem type, and reported/completed date ranges. Return All pages through the API 200 records at a time.
+- **Get Many**: list all, open, or closed failures. You can filter by status, location, problem type, and date ranges (reported, completed, approved, status changed). Return All pages through the API 200 records at a time.
 - **Update**: update a failure's fields, such as priority, description, location, and closing note
 
-The Client and Location fields are searchable dropdowns, or you can enter an ID directly. The Location list only shows real locations, because failures can't be attached to buildings or folders.
+**Problem**: Get Many Areas, Get Area, Get Many Types
+
+Client, Location, Problem Area and Problem Type fields are searchable dropdowns, or you can enter an ID directly. The Location list only shows real locations, because failures and assets can't be attached to buildings or folders. Problem types only exist inside a problem area, so to pick a Problem Type from the list, choose a Problem Area first. The Problem Area field only narrows the list and isn't sent to Infraspeak.
+
+Delete returns `{ "deleted": true }`; Archive and Unarchive return `{ "success": true }`.
 
 ## Credentials
 
@@ -39,11 +48,24 @@ The credential test calls `GET /locations?limit=1`.
 ## Usage
 
 - **Simplify** (on by default) flattens each JSON:API record to `{ id, ...attributes }`. Turn it off to get the raw record, including `type` and `relationships`.
-- **Problem ID** must be a problem _type_, not a problem area. You can find it with `GET /problems/{problem_id}/subproblems`.
-- The API allows 60 requests per minute. Return All over a large account makes one request per 200 failures.
+- The API allows 60 requests per minute. Return All makes one request per 200 records.
 - Date filters are sent in Infraspeak's `YYYY-MM-DD HH:MM:SS` format.
 
 ## Resources
 
 - [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
 - [Infraspeak developer documentation](https://developer.infraspeak.com/documentation)
+
+## Development
+
+Most of the node is generated from Infraspeak's OpenAPI spec. Don't edit `nodes/Infraspeak/resources/*.ts` by hand.
+
+- `docs/api/openapi-full.yaml` is the spec (git-ignored; download it from https://developer.infraspeak.com/api/openapi.yaml).
+- `scripts/generate/overrides.ts` holds every decision the spec can't make: which resources are enabled, names for non-CRUD actions, dropdown fields, labels, and API-wide rules such as the filter prefix and date-range params.
+- `npm run generate` rewrites `nodes/Infraspeak/resources/` and `test/generated/manifest.json`. It fails loudly on anything it can't map, rather than guessing.
+- To add a resource, add its OpenAPI tag to `resources` in `overrides.ts`, run `npm run generate`, then add overrides until it generates and `npm run lint` passes.
+
+Checks:
+
+- `npm test` runs every generated operation through n8n's real execution engine with HTTP mocked. It checks that the node sends the method, path, query and body the spec describes, and validates bodies against the spec's JSON schema. This proves the node matches the spec, not that the live API matches the spec. That still needs a run against a sandbox account.
+- `npm run lint` and `npm run build`.

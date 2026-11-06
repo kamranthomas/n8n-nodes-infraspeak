@@ -1,7 +1,6 @@
 import { NodeConnectionTypes, type INodeType, type INodeTypeDescription } from 'n8n-workflow';
-import { getClients } from './listSearch/getClients';
-import { getLocations } from './listSearch/getLocations';
-import { failureDescription } from './resources/failure';
+import { listSearch } from './listSearch';
+import { resourceProperties } from './resources';
 import { INFRASPEAK_BASE_URL } from './shared/transport';
 
 export class Infraspeak implements INodeType {
@@ -13,7 +12,7 @@ export class Infraspeak implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Manage failures (work orders) in Infraspeak',
+		description: 'Consume the Infraspeak API',
 		defaults: {
 			name: 'Infraspeak',
 		},
@@ -28,28 +27,10 @@ export class Infraspeak implements INodeType {
 				'Content-Type': 'application/json',
 			},
 		},
-		properties: [
-			{
-				displayName: 'Resource',
-				name: 'resource',
-				type: 'options',
-				noDataExpression: true,
-				options: [
-					{
-						name: 'Failure',
-						value: 'failure',
-					},
-				],
-				default: 'failure',
-			},
-			...failureDescription,
-		],
+		properties: resourceProperties,
 	};
 
 	methods = {
-		listSearch: {
-			getClients,
-			getLocations,
-		},
+		listSearch,
 	};
 }

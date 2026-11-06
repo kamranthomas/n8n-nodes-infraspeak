@@ -37,7 +37,14 @@ export const resourceLocatorIdExpression =
 	'={{ Number(typeof $value === "object" && $value !== null ? $value.value : $value) }}';
 
 /**
- * postReceive hook shared by every Failure operation. Unwraps the JSON:API
+ * Integer-array body value from a comma-separated string (or an array passed via
+ * an expression), e.g. "1, 2, 3" → [1, 2, 3]. Blank entries are dropped.
+ */
+export const intArrayExpression =
+	'={{ (Array.isArray($value) ? $value : String($value).split(",")).map(v => String(v).trim()).filter(v => v !== "").map(Number) }}';
+
+/**
+ * postReceive hook shared by every operation that returns records. Unwraps the JSON:API
  * `data` member into one n8n item per record and, when Simplify is on,
  * flattens each record to `{ id, ...attributes }`.
  */

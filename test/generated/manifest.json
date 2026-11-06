@@ -1,0 +1,1949 @@
+{
+	"specSha256": "985973cf011a9a9e2461bddd63d1bc1875c02e5b2c0b7c33d71708a154722c69",
+	"operations": [
+		{
+			"resource": "client",
+			"operation": "getAll",
+			"operationId": "getClients",
+			"method": "GET",
+			"path": "/clients",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "name",
+					"kind": "string",
+					"target": "query",
+					"property": "name",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "clientId",
+					"kind": "number",
+					"target": "query",
+					"property": "client_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "nif",
+					"kind": "string",
+					"target": "query",
+					"property": "nif",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				}
+			],
+			"allowedQuery": ["client_id", "code", "limit", "name", "nif", "page", "sort"]
+		},
+		{
+			"resource": "client",
+			"operation": "create",
+			"operationId": "createClient",
+			"method": "POST",
+			"path": "/clients",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "nif",
+					"kind": "string",
+					"target": "body",
+					"property": "nif",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "address",
+					"kind": "string",
+					"target": "body",
+					"property": "address",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "postCode",
+					"kind": "string",
+					"target": "body",
+					"property": "post_code",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "city",
+					"kind": "string",
+					"target": "body",
+					"property": "city",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "latitude",
+					"kind": "number",
+					"target": "body",
+					"property": "latitude",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "longitude",
+					"kind": "number",
+					"target": "body",
+					"property": "longitude",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "country",
+					"kind": "string",
+					"target": "body",
+					"property": "country",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "createBuilding",
+					"kind": "boolean",
+					"target": "body",
+					"property": "create_building",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "localId",
+					"kind": "number",
+					"target": "body",
+					"property": "local_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "contacts",
+					"kind": "intArray",
+					"target": "body",
+					"property": "contacts",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "operators",
+					"kind": "intArray",
+					"target": "body",
+					"property": "operators",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Clients payload",
+				"type": "object",
+				"properties": {
+					"name": { "description": "Client name", "type": "string", "examples": ["John Doe"] },
+					"code": {
+						"description": "Client code",
+						"type": ["string", "null"],
+						"examples": ["CH0001"]
+					},
+					"nif": {
+						"description": "NIF/ VAT number of the Client",
+						"type": ["string", "null"],
+						"examples": ["123456789"]
+					},
+					"address": {
+						"description": "Address of the Client",
+						"type": ["string", "null"],
+						"examples": ["abc"]
+					},
+					"post_code": {
+						"description": "Postal Code of the Client",
+						"type": ["string", "null"],
+						"examples": ["1234-567"]
+					},
+					"city": {
+						"description": "City of the Client",
+						"type": ["string", "null"],
+						"examples": ["Lisbon"]
+					},
+					"latitude": {
+						"description": "Latitude of the Client",
+						"type": ["number", "null"],
+						"examples": [-8.189341]
+					},
+					"longitude": {
+						"description": "Longitude of the Client",
+						"type": ["number", "null"],
+						"examples": [5.1893312]
+					},
+					"observations": {
+						"description": "Additional information",
+						"type": ["string", "null"],
+						"examples": ["abc"]
+					},
+					"country": {
+						"description": "Country of the Client. The value of this field must be compliant with the `ISO 3166-1 Alpha 2` standard, for country codes.",
+						"type": ["string", "null"],
+						"examples": ["PT"]
+					},
+					"create_building": {
+						"description": "Indicates if it should create a new building for the Client",
+						"type": ["boolean", "null"],
+						"examples": [false]
+					},
+					"local_id": {
+						"description": "Indicates the ID of the Building to replicate information from, when the 'create_building' field is set to true (Optional).",
+						"type": ["integer", "null"],
+						"examples": [123]
+					},
+					"contacts": {
+						"description": "A list of Contact IDs to associate with this Client.",
+						"type": "array",
+						"items": {
+							"description": "The ID of the Contact",
+							"type": "integer",
+							"examples": [123]
+						}
+					},
+					"operators": {
+						"description": "A list of Operator IDs to associate with this Client.",
+						"type": "array",
+						"items": {
+							"description": "The ID of the Operator",
+							"type": "integer",
+							"examples": [123]
+						}
+					}
+				},
+				"required": ["name"]
+			}
+		},
+		{
+			"resource": "client",
+			"operation": "get",
+			"operationId": "getClient",
+			"method": "GET",
+			"path": "/clients/{client}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "path",
+					"property": "client",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "client",
+			"operation": "update",
+			"operationId": "updateClient",
+			"method": "PATCH",
+			"path": "/clients/{client}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "path",
+					"property": "client",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "nif",
+					"kind": "string",
+					"target": "body",
+					"property": "nif",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "address",
+					"kind": "string",
+					"target": "body",
+					"property": "address",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "postCode",
+					"kind": "string",
+					"target": "body",
+					"property": "post_code",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "city",
+					"kind": "string",
+					"target": "body",
+					"property": "city",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "latitude",
+					"kind": "number",
+					"target": "body",
+					"property": "latitude",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "longitude",
+					"kind": "number",
+					"target": "body",
+					"property": "longitude",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "country",
+					"kind": "string",
+					"target": "body",
+					"property": "country",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Client Patch payload",
+				"type": "object",
+				"properties": {
+					"name": { "description": "Client Name", "type": "string", "examples": ["John Doe"] },
+					"code": {
+						"description": "Client Code",
+						"type": ["string", "null"],
+						"examples": ["CH0001"]
+					},
+					"nif": {
+						"description": "NIF/ VAT number of the Client",
+						"type": ["string", "null"],
+						"examples": ["123456789"]
+					},
+					"address": {
+						"description": "Address of the Client",
+						"type": ["string", "null"],
+						"examples": ["abc"]
+					},
+					"post_code": {
+						"description": "Postal Code of the Client",
+						"type": ["string", "null"],
+						"examples": ["1234-567"]
+					},
+					"city": {
+						"description": "City of the Client",
+						"type": ["string", "null"],
+						"examples": ["Lisbon"]
+					},
+					"latitude": {
+						"description": "Latitude of the Client",
+						"type": ["number", "null"],
+						"examples": [-8.189341]
+					},
+					"longitude": {
+						"description": "Longitude of the Client",
+						"type": ["number", "null"],
+						"examples": [5.1893312]
+					},
+					"observations": {
+						"description": "Additional information",
+						"type": ["string", "null"],
+						"examples": ["abc"]
+					},
+					"country": {
+						"description": "Country of the Client. The value of this field must be compliant with the `ISO 3166-1 Alpha 2` standard, for country codes.",
+						"type": ["string", "null"],
+						"examples": ["PT"]
+					}
+				}
+			}
+		},
+		{
+			"resource": "client",
+			"operation": "delete",
+			"operationId": "deleteClient",
+			"method": "DELETE",
+			"path": "/clients/{client}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "path",
+					"property": "client",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "client",
+			"operation": "associateContacts",
+			"operationId": "syncContacts",
+			"method": "POST",
+			"path": "/clients/{client}/contacts",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "path",
+					"property": "client",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "contactIds",
+					"kind": "intArray",
+					"target": "body",
+					"property": "contact_ids",
+					"required": true
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"type": "object",
+				"properties": { "contact_ids": { "type": "array", "items": { "type": "integer" } } },
+				"required": ["contact_ids"]
+			}
+		},
+		{
+			"resource": "element",
+			"operation": "getAll",
+			"operationId": "getElements",
+			"method": "GET",
+			"path": "/elements",
+			"output": "records",
+			"list": true,
+			"fields": [],
+			"allowedQuery": ["limit", "page"]
+		},
+		{
+			"resource": "element",
+			"operation": "create",
+			"operationId": "createElement",
+			"method": "POST",
+			"path": "/elements",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "additionalFields",
+					"name": "nfcCode",
+					"kind": "string",
+					"target": "body",
+					"property": "nfc_code",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "barCode",
+					"kind": "string",
+					"target": "body",
+					"property": "bar_code",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "latitude",
+					"kind": "number",
+					"target": "body",
+					"property": "latitude",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "longitude",
+					"kind": "number",
+					"target": "body",
+					"property": "longitude",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "categoryId",
+					"kind": "number",
+					"target": "body",
+					"property": "category_id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "locationId",
+					"kind": "locator",
+					"target": "body",
+					"property": "local_id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "maintenancePolicyId",
+					"kind": "number",
+					"target": "body",
+					"property": "maintenance_policy_id",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "acquisitionCost",
+					"kind": "number",
+					"target": "body",
+					"property": "acquisition_cost",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "acquisitionDate",
+					"kind": "date",
+					"target": "body",
+					"property": "acquisition_date",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "supplierName",
+					"kind": "string",
+					"target": "body",
+					"property": "supplier_name",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "lifetime",
+					"kind": "number",
+					"target": "body",
+					"property": "lifetime",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "residualValue",
+					"kind": "number",
+					"target": "body",
+					"property": "residual_value",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "stoppageCost",
+					"kind": "number",
+					"target": "body",
+					"property": "stoppage_cost",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "elementUuid",
+					"kind": "string",
+					"target": "body",
+					"property": "element_uuid",
+					"required": false,
+					"format": "uuid"
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Payload required to create a new Element (Asset)",
+				"type": "object",
+				"properties": {
+					"nfc_code": {
+						"description": "Optional NFC code for the Element.\nWhen available, it can help to quickly identify the Element.\n",
+						"type": ["string", "null"],
+						"examples": ["ABC1"]
+					},
+					"bar_code": {
+						"description": "Optional bar code for the Element.\nWhen available, it can help to quickly identify the Element.\n",
+						"type": ["string", "null"],
+						"examples": ["123C"]
+					},
+					"latitude": {
+						"description": "Optional geographic latitude coordinate for the Element's precise location.\nEssential for visualizing where the Element is on the map.\n- Required when longitude is filled\n",
+						"type": ["number", "null"],
+						"examples": [-8.189341]
+					},
+					"longitude": {
+						"description": "Optional geographic longitude coordinate for the Element's precise location.\nEssential for visualizing where the Element is on the map.\n- Required when latitude is filled\n",
+						"type": ["number", "null"],
+						"examples": [5.1893312]
+					},
+					"observation": {
+						"description": "Optional notes, remarks, or additional descriptive information about the Element.",
+						"type": ["string", "null"],
+						"examples": ["A blue chair"]
+					},
+					"code": {
+						"description": "Optional code for the Element within its context (e.g., within the Entity or Category).\nUseful for quick reference or integration purposes.\n",
+						"type": ["string", "null"],
+						"examples": ["123A"]
+					},
+					"category_id": {
+						"description": "Mandatory ID of the associated Category.\n- Must reference a Category from `GET /categories/all`.\n- The Category must be of type \"TYPE_OF_EQUIPMENT\". Categories of type \"SOFT_MAINTENANCE\" are NOT allowed.\n",
+						"type": "integer",
+						"examples": [123]
+					},
+					"local_id": {
+						"description": "Mandatory ID of the associated Location (where the Element is situated).\n- Must reference a Location from `GET /locations`.\n- The Location must be of type \"location\". Locations of type \"building\" or \"location-folder\" are NOT allowed.\n",
+						"type": "integer",
+						"examples": [345]
+					},
+					"maintenance_policy_id": {
+						"description": "Mandatory ID of the associated Maintenance Policy.\n- Must reference a Maintenance Policy from `GET /maintenance-policies`.\n- The Maintenance Policy must belong to the same Category specified in `category_id`.\n",
+						"type": "integer",
+						"examples": [678]
+					},
+					"acquisition_cost": {
+						"description": "Optional acquisition Cost of the element. Required with:\n- lifetime\n- residual_value\n",
+						"type": ["number", "null"],
+						"examples": [12.3]
+					},
+					"acquisition_date": {
+						"description": "Optional date (and time) when the Element was acquired (or put into service).\nUses ISO 8601 `date-time` format.\n",
+						"type": ["string", "null"],
+						"format": "date-time",
+						"examples": ["2020-08-28 17:12:00"]
+					},
+					"supplier_name": {
+						"description": "Optional name of the vendor or supplier from whom the Element was acquired.",
+						"type": ["string", "null"],
+						"examples": ["Global Tech Solutions Inc."]
+					},
+					"lifetime": {
+						"description": "Optional expected useful lifetime of the Element in years.\nUsed for depreciation or replacement planning.\nFor this field, `acquisition_cost` is required.\n",
+						"type": ["number", "null"],
+						"examples": [10.2]
+					},
+					"residual_value": {
+						"description": "Optional estimated residual or salvage value of the Element at the end of its useful lifetime.\nFor this field, `acquisition_cost` is required.\n",
+						"type": ["number", "null"],
+						"examples": [7]
+					},
+					"stoppage_cost": {
+						"description": "Optional estimated cost incurred of downtime if this Element fails or stops working.",
+						"type": ["number", "null"],
+						"examples": [25]
+					},
+					"element_uuid": {
+						"description": "Optional universal unique identifier (UUID) supplied by the client for the element.\nIf omitted, the server generates a creation time.\nProviding a UUID can support idempotent creation patterns. Allowing offline creation (such as from the mobile app).\n",
+						"type": ["string", "null"],
+						"format": "uuid",
+						"examples": ["f81d4fae-7dec-11d0-a765-00a0c91e6bf6"]
+					}
+				},
+				"required": ["category_id", "local_id", "maintenance_policy_id"]
+			}
+		},
+		{
+			"resource": "element",
+			"operation": "get",
+			"operationId": "getElement",
+			"method": "GET",
+			"path": "/elements/{elementId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "elementId",
+					"kind": "string",
+					"target": "path",
+					"property": "elementId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "element",
+			"operation": "update",
+			"operationId": "updateElement",
+			"method": "PATCH",
+			"path": "/elements/{elementId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "elementId",
+					"kind": "string",
+					"target": "path",
+					"property": "elementId",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "nfcCode",
+					"kind": "string",
+					"target": "body",
+					"property": "nfc_code",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "barCode",
+					"kind": "string",
+					"target": "body",
+					"property": "bar_code",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "latitude",
+					"kind": "number",
+					"target": "body",
+					"property": "latitude",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "longitude",
+					"kind": "number",
+					"target": "body",
+					"property": "longitude",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "locationId",
+					"kind": "locator",
+					"target": "body",
+					"property": "local_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "maintenancePolicyId",
+					"kind": "number",
+					"target": "body",
+					"property": "maintenance_policy_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "costCenterId",
+					"kind": "number",
+					"target": "body",
+					"property": "cost_center_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "acquisitionCost",
+					"kind": "number",
+					"target": "body",
+					"property": "acquisition_cost",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "acquisitionDate",
+					"kind": "date",
+					"target": "body",
+					"property": "acquisition_date",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "supplierName",
+					"kind": "string",
+					"target": "body",
+					"property": "supplier_name",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "lifetime",
+					"kind": "number",
+					"target": "body",
+					"property": "lifetime",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "residualValue",
+					"kind": "number",
+					"target": "body",
+					"property": "residual_value",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "stoppageCost",
+					"kind": "number",
+					"target": "body",
+					"property": "stoppage_cost",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Payload required to update a Element (Asset)",
+				"type": "object",
+				"properties": {
+					"nfc_code": {
+						"description": "Optional NFC code for the Element.\nWhen available, it can help to quickly identify the Element.\n",
+						"type": ["string", "null"],
+						"examples": ["ABC1"]
+					},
+					"bar_code": {
+						"description": "Optional bar code for the Element.\nWhen available, it can help to quickly identify the Element.\n",
+						"type": ["string", "null"],
+						"examples": ["123C"]
+					},
+					"latitude": {
+						"description": "Optional geographic latitude coordinate for the Element's precise location.\nEssential for visualizing where the Element is on the map.\n- Required when longitude is filled\n",
+						"type": ["number", "null"],
+						"examples": [-8.189341]
+					},
+					"longitude": {
+						"description": "Optional geographic longitude coordinate for the Element's precise location.\nEssential for visualizing where the Element is on the map.\n- Required when latitude is filled\n",
+						"type": ["number", "null"],
+						"examples": [5.1893312]
+					},
+					"observation": {
+						"description": "Optional notes, remarks, or additional descriptive information about the Element.",
+						"type": ["string", "null"],
+						"examples": ["A blue chair"]
+					},
+					"code": {
+						"description": "Optional code for the Element within its context (e.g., within the Entity or Category).\nUseful for quick reference or integration purposes.\n",
+						"type": ["string", "null"],
+						"examples": ["123A"]
+					},
+					"local_id": {
+						"description": "Mandatory ID of the associated Location (where the Element is situated).\n- Must reference a Location from `GET /locations`.\n- The Location must be of type \"location\". Locations of type \"building\" or \"location-folder\" are NOT allowed.\n",
+						"type": "integer",
+						"examples": [345]
+					},
+					"maintenance_policy_id": {
+						"description": "Mandatory ID of the associated Maintenance Policy.\n- Must reference a Maintenance Policy from `GET /maintenance-policies`.\n- The Maintenance Policy must belong to the same Category specified in `category_id`.\n",
+						"type": "integer",
+						"examples": [678]
+					},
+					"cost_center_id": {
+						"description": "ID of the associated Cost Center.\n- Must reference a Cost Center from `GET /cost-centers`.\n",
+						"type": ["integer", "null"],
+						"examples": [758]
+					},
+					"acquisition_cost": {
+						"description": "Optional acquisition Cost of the element. Required with:\n- lifetime\n- residual_value\n",
+						"type": ["number", "null"],
+						"examples": [12.3]
+					},
+					"acquisition_date": {
+						"description": "Optional date (and time) when the Element was acquired (or put into service).\nUses ISO 8601 `date-time` format.\n",
+						"type": ["string", "null"],
+						"format": "date-time",
+						"examples": ["2020-08-28 17:12:00"]
+					},
+					"supplier_name": {
+						"description": "Optional name of the vendor or supplier from whom the Element was acquired.",
+						"type": ["string", "null"],
+						"examples": ["Global Tech Solutions Inc."]
+					},
+					"lifetime": {
+						"description": "Optional expected useful lifetime of the Element in years.\nUsed for depreciation or replacement planning.\nFor this field, `acquisition_cost` is required.\n",
+						"type": ["number", "null"],
+						"examples": [10.2]
+					},
+					"residual_value": {
+						"description": "Optional estimated residual or salvage value of the Element at the end of its useful lifetime.\nFor this field, `acquisition_cost` is required.\n",
+						"type": ["number", "null"],
+						"examples": [7]
+					},
+					"stoppage_cost": {
+						"description": "Optional estimated cost incurred of downtime if this Element fails or stops working.",
+						"type": ["number", "null"],
+						"examples": [25]
+					}
+				}
+			}
+		},
+		{
+			"resource": "element",
+			"operation": "delete",
+			"operationId": "deleteElement",
+			"method": "DELETE",
+			"path": "/elements/{elementId}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "elementId",
+					"kind": "string",
+					"target": "path",
+					"property": "elementId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "element",
+			"operation": "archive",
+			"operationId": "archiveElement",
+			"method": "POST",
+			"path": "/elements/{elementId}/archive",
+			"output": "success",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "elementId",
+					"kind": "string",
+					"target": "path",
+					"property": "elementId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "element",
+			"operation": "unarchive",
+			"operationId": "unarchiveElement",
+			"method": "POST",
+			"path": "/elements/{elementId}/unarchive",
+			"output": "success",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "elementId",
+					"kind": "string",
+					"target": "path",
+					"property": "elementId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "failure",
+			"operation": "getAll",
+			"operationId": "getFailures",
+			"method": "GET",
+			"path": "/failures",
+			"output": "records",
+			"list": true,
+			"selector": { "name": "statusGroup", "value": "all" },
+			"fields": [
+				{
+					"container": "filters",
+					"name": "approvedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_approved_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "approvedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_approved_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "completedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_completed_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "completedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_completed_date",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "string",
+					"target": "query",
+					"property": "expanded",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "failureId",
+					"kind": "number",
+					"target": "query",
+					"property": "failure_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "statusChangedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_last_status_change_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "statusChangedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_last_status_change_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "locationId",
+					"kind": "locator",
+					"target": "query",
+					"property": "local_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "problemAreaId",
+					"kind": "locator",
+					"target": "none",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "problemId",
+					"kind": "locator",
+					"target": "query",
+					"property": "problem_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "reportedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_start_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "reportedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_start_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "status",
+					"kind": "options",
+					"target": "query",
+					"property": "status",
+					"required": false,
+					"options": [
+						"ARCHIVED",
+						"COMPLETED",
+						"IN_RESOLUTION",
+						"PAUSED",
+						"WAITING_APPROVAL",
+						"WAITING_RESOLUTION"
+					],
+					"showFor": ["all", "open"]
+				}
+			],
+			"allowedQuery": [
+				"date_max_approved_date",
+				"date_max_completed_date",
+				"date_max_last_status_change_date",
+				"date_max_start_date",
+				"date_min_approved_date",
+				"date_min_completed_date",
+				"date_min_last_status_change_date",
+				"date_min_start_date",
+				"expanded",
+				"failure_id",
+				"limit",
+				"local_id",
+				"page",
+				"problem_id",
+				"status",
+				"undefined"
+			]
+		},
+		{
+			"resource": "failure",
+			"operation": "getAll",
+			"operationId": "getClosedFailures",
+			"method": "GET",
+			"path": "/failures/closed",
+			"output": "records",
+			"list": true,
+			"selector": { "name": "statusGroup", "value": "closed" },
+			"fields": [
+				{
+					"container": "filters",
+					"name": "approvedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_approved_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "approvedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_approved_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "completedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_completed_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "completedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_completed_date",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "string",
+					"target": "query",
+					"property": "expanded",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "failureId",
+					"kind": "number",
+					"target": "query",
+					"property": "failure_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "statusChangedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_last_status_change_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "statusChangedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_last_status_change_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "locationId",
+					"kind": "locator",
+					"target": "query",
+					"property": "local_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "problemAreaId",
+					"kind": "locator",
+					"target": "none",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "problemId",
+					"kind": "locator",
+					"target": "query",
+					"property": "problem_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "reportedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_start_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "reportedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_start_date",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"date_max_approved_date",
+				"date_max_completed_date",
+				"date_max_last_status_change_date",
+				"date_max_start_date",
+				"date_min_approved_date",
+				"date_min_completed_date",
+				"date_min_last_status_change_date",
+				"date_min_start_date",
+				"expanded",
+				"failure_id",
+				"limit",
+				"local_id",
+				"page",
+				"problem_id",
+				"status",
+				"undefined"
+			]
+		},
+		{
+			"resource": "failure",
+			"operation": "getAll",
+			"operationId": "getOpenFailures",
+			"method": "GET",
+			"path": "/failures/open",
+			"output": "records",
+			"list": true,
+			"selector": { "name": "statusGroup", "value": "open" },
+			"fields": [
+				{
+					"container": "filters",
+					"name": "approvedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_approved_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "approvedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_approved_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "completedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_completed_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "completedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_completed_date",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "string",
+					"target": "query",
+					"property": "expanded",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "failureId",
+					"kind": "number",
+					"target": "query",
+					"property": "failure_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "statusChangedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_last_status_change_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "statusChangedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_last_status_change_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "locationId",
+					"kind": "locator",
+					"target": "query",
+					"property": "local_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "problemAreaId",
+					"kind": "locator",
+					"target": "none",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "problemId",
+					"kind": "locator",
+					"target": "query",
+					"property": "problem_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "reportedAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_start_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "reportedBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_start_date",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "status",
+					"kind": "options",
+					"target": "query",
+					"property": "status",
+					"required": false,
+					"options": [
+						"ARCHIVED",
+						"COMPLETED",
+						"IN_RESOLUTION",
+						"PAUSED",
+						"WAITING_APPROVAL",
+						"WAITING_RESOLUTION"
+					],
+					"showFor": ["all", "open"]
+				}
+			],
+			"allowedQuery": [
+				"date_max_approved_date",
+				"date_max_completed_date",
+				"date_max_last_status_change_date",
+				"date_max_start_date",
+				"date_min_approved_date",
+				"date_min_completed_date",
+				"date_min_last_status_change_date",
+				"date_min_start_date",
+				"expanded",
+				"failure_id",
+				"limit",
+				"local_id",
+				"page",
+				"problem_id",
+				"status",
+				"undefined"
+			]
+		},
+		{
+			"resource": "failure",
+			"operation": "create",
+			"operationId": "createFailure",
+			"method": "POST",
+			"path": "/failures",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "problemAreaId",
+					"kind": "locator",
+					"target": "none",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "problemId",
+					"kind": "locator",
+					"target": "body",
+					"property": "problem_id",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "priority",
+					"kind": "options",
+					"target": "body",
+					"property": "priority",
+					"required": true,
+					"options": [1, 2, 3, 4]
+				},
+				{
+					"container": "",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "body",
+					"property": "client_id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "locationId",
+					"kind": "locator",
+					"target": "body",
+					"property": "local_id",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "operatorId",
+					"kind": "number",
+					"target": "body",
+					"property": "operator_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "reportType",
+					"kind": "options",
+					"target": "body",
+					"property": "report_type",
+					"required": false,
+					"options": ["contact", "operator"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "reportId",
+					"kind": "number",
+					"target": "body",
+					"property": "report_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "supplierId",
+					"kind": "number",
+					"target": "body",
+					"property": "supplier_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "gatekeeperId",
+					"kind": "number",
+					"target": "body",
+					"property": "gatekeeper_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "costCenterId",
+					"kind": "number",
+					"target": "body",
+					"property": "cost_center_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "includeAutomaticAssignees",
+					"kind": "boolean",
+					"target": "body",
+					"property": "include_automatic_assignees",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "enforceNfc",
+					"kind": "boolean",
+					"target": "body",
+					"property": "enforce_nfc",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Failure payload",
+				"type": "object",
+				"properties": {
+					"problem_id": {
+						"description": "ID of the associated problem. Refers to the type of Problem and need to be a Problem Type, not a Problem Area. To get the Problem Types, first, you need to retrieve the Problem Areas (GET `/problems`). Then, list the Problem Types from the desired area (GET `/problems/{problem_id}/subproblems`) and, from the response, use the respective `problem_id`.\n",
+						"type": "integer"
+					},
+					"description": {
+						"description": "A more detailed description of the reported incident.",
+						"type": "string",
+						"examples": ["The bathroom light needs replacement"]
+					},
+					"observations": {
+						"description": "A longer description or anything with longer text that needs to be reported.",
+						"type": "string"
+					},
+					"priority": {
+						"description": "Failure priority number, being 1 the lowest priority and 4 the highest priority.",
+						"type": "integer",
+						"enum": [1, 2, 3, 4]
+					},
+					"client_id": {
+						"description": "ID of the client associated to the Failure",
+						"type": "integer"
+					},
+					"local_id": {
+						"description": "ID of the location associated to the Failure",
+						"type": "integer"
+					},
+					"operator_id": {
+						"description": "ID of the operator that owns the Failure. By default, uses the ID of the Operator associated to the API token.",
+						"type": "integer",
+						"writeOnly": true
+					},
+					"report_type": {
+						"description": "Type of the Failure's reporter. The failure can be reported by an Operator or by a Contact.",
+						"type": "string",
+						"enum": ["contact", "operator"]
+					},
+					"report_id": {
+						"description": "ID of the operator or contact who reported the Failure",
+						"type": "integer",
+						"writeOnly": true
+					},
+					"supplier_id": {
+						"description": "ID of the supplier associated to the Failure",
+						"type": "integer"
+					},
+					"gatekeeper_id": { "description": "ID for the associated Gatekeeper", "type": "integer" },
+					"cost_center_id": { "description": "ID of the associated CostCenter", "type": "integer" },
+					"include_automatic_assignees": {
+						"description": "If is to append automatic assignees when a user select a custom list of assignees",
+						"type": "boolean"
+					},
+					"enforce_nfc": {
+						"description": "Whether the asset's NFC tag must be scanned to execute the tasks of this work order.\nOnly administrators and managers decide this field. A value sent by any other role is ignored rather than rejected.\nWhat is stored depends on the entity's `enforce-nfc` extension. With it configured as required, a value sent by an administrator or a manager is honoured and omitting the field stores `true`. Otherwise the field is ignored and the work order is created with `false`.\n",
+						"type": "boolean"
+					}
+				},
+				"required": ["client_id", "problem_id", "priority", "local_id"]
+			}
+		},
+		{
+			"resource": "failure",
+			"operation": "get",
+			"operationId": "getFailure",
+			"method": "GET",
+			"path": "/failures/{failure}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "failureId",
+					"kind": "string",
+					"target": "path",
+					"property": "failure",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "string",
+					"target": "query",
+					"property": "expanded",
+					"required": false
+				}
+			],
+			"allowedQuery": ["expanded"]
+		},
+		{
+			"resource": "failure",
+			"operation": "update",
+			"operationId": "updateFailure",
+			"method": "PATCH",
+			"path": "/failures/{failure}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "failureId",
+					"kind": "string",
+					"target": "path",
+					"property": "failure",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "problemAreaId",
+					"kind": "locator",
+					"target": "none",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "problemId",
+					"kind": "locator",
+					"target": "body",
+					"property": "problem_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "priority",
+					"kind": "options",
+					"target": "body",
+					"property": "priority",
+					"required": false,
+					"options": [1, 2, 3, 4]
+				},
+				{
+					"container": "updateFields",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "body",
+					"property": "client_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "locationId",
+					"kind": "locator",
+					"target": "body",
+					"property": "local_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "supplierId",
+					"kind": "number",
+					"target": "body",
+					"property": "supplier_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "costCenterId",
+					"kind": "number",
+					"target": "body",
+					"property": "cost_center_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "gatekeeperId",
+					"kind": "number",
+					"target": "body",
+					"property": "gatekeeper_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "gatekeeperNotification",
+					"kind": "intArray",
+					"target": "body",
+					"property": "gatekeeper_notification",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "lastStatusDescription",
+					"kind": "string",
+					"target": "body",
+					"property": "last_status_description",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "externalId",
+					"kind": "string",
+					"target": "body",
+					"property": "external_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "enforceNfc",
+					"kind": "boolean",
+					"target": "body",
+					"property": "enforce_nfc",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "string",
+					"target": "query",
+					"property": "expanded",
+					"required": false
+				}
+			],
+			"allowedQuery": ["expanded"],
+			"bodySchema": {
+				"description": "Failure payload",
+				"type": "object",
+				"properties": {
+					"problem_id": {
+						"description": "ID of the associated problem. Refers to the type of Problem and need to be a Problem Type, not a Problem Area. To get the Problem Types, first, you need to retrieve the Problem Areas (GET `/problems`). Then, list the Problem Types from the desired area (GET `/problems/{problem_id}/subproblems`) and, from the response, use the respective `problem_id`.\n",
+						"type": "integer"
+					},
+					"description": {
+						"description": "A more detailed description of the reported incident.",
+						"type": "string",
+						"examples": ["The bathroom light needs replacement"]
+					},
+					"observations": {
+						"description": "A longer description or anything with longer text that needs to be reported.",
+						"type": "string"
+					},
+					"priority": {
+						"description": "Failure priority number, being 1 the lowest priority and 4 the highest priority.",
+						"type": "integer",
+						"enum": [1, 2, 3, 4]
+					},
+					"client_id": {
+						"description": "ID of the client associated to the Failure",
+						"type": "integer"
+					},
+					"local_id": {
+						"description": "ID of the location associated to the Failure",
+						"type": "integer"
+					},
+					"supplier_id": {
+						"description": "ID of the supplier associated to the Failure",
+						"type": "integer"
+					},
+					"cost_center_id": { "description": "ID of the associated CostCenter", "type": "integer" },
+					"gatekeeper_id": { "description": "ID for the associated Gatekeeper", "type": "integer" },
+					"gatekeeper_notification": {
+						"description": "A set of notifications IDs to be dispatched under Gatekeeper.",
+						"type": "array",
+						"items": { "type": "integer" }
+					},
+					"last_status_description": {
+						"description": "Observation for closing Failure action",
+						"type": "string"
+					},
+					"external_id": {
+						"description": "Id of the failure in the external system",
+						"type": "string"
+					},
+					"enforce_nfc": {
+						"description": "Whether the asset's NFC tag must be scanned to execute the tasks of this work order. Omitting it keeps the stored value.\nOnly admins and managers may change it, and only while the work order is not closed.\n",
+						"type": "boolean"
+					}
+				}
+			}
+		},
+		{
+			"resource": "problem",
+			"operation": "getManyAreas",
+			"operationId": "getProblemAreas",
+			"method": "GET",
+			"path": "/problems",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "filters",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "query",
+					"property": "filter[client_id]",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "filterNetworkOnlyWithClient",
+					"kind": "boolean",
+					"target": "query",
+					"property": "filter[network_only_with_client]",
+					"required": false
+				}
+			],
+			"allowedQuery": ["filter[client_id]", "filter[network_only_with_client]", "limit", "page"]
+		},
+		{
+			"resource": "problem",
+			"operation": "getArea",
+			"operationId": "getProblemArea",
+			"method": "GET",
+			"path": "/problems/{problemAreaId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "problemAreaId",
+					"kind": "locator",
+					"target": "path",
+					"property": "problemAreaId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "problem",
+			"operation": "getManyTypes",
+			"operationId": "getProblemTypes",
+			"method": "GET",
+			"path": "/problems/{problemAreaId}/subproblems",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "",
+					"name": "problemAreaId",
+					"kind": "locator",
+					"target": "path",
+					"property": "problemAreaId",
+					"required": true
+				}
+			],
+			"allowedQuery": ["limit", "page"]
+		}
+	]
+}
