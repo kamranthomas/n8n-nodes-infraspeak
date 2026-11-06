@@ -51,13 +51,16 @@ function applyGenericAuth(
 	return { ...requestOptions, headers };
 }
 
-function buildAdditionalData(hooks: ExecutionLifecycleHooks): IWorkflowExecuteAdditionalData {
+function buildAdditionalData(
+	hooks: ExecutionLifecycleHooks,
+	credentials: ICredentialDataDecryptedObject,
+): IWorkflowExecuteAdditionalData {
 	const credentialsHelper = {
 		getParentTypes: () => [],
 		isCredentialUsableByNode: () => true,
 		runPreAuthentication: async () => undefined,
-		getDecrypted: async () => ({ accessToken: TEST_TOKEN }),
-		getCredentials: async () => ({ getData: () => ({ accessToken: TEST_TOKEN }) }),
+		getDecrypted: async () => credentials,
+		getCredentials: async () => ({ getData: () => credentials }),
 		getCredentialsProperties: () => credentialType.properties,
 		authenticate: async (
 			credentials: ICredentialDataDecryptedObject,
@@ -98,8 +101,16 @@ export interface NodeRunResult {
 	error?: Error;
 }
 
+export interface RunNodeOptions {
+	/** Credential data. Defaults to just the test token, so the base URL falls back to production. */
+	credentials?: ICredentialDataDecryptedObject;
+}
+
 /** Executes the Infraspeak node once with the given parameters. */
-export async function runNode(parameters: INodeParameters): Promise<NodeRunResult> {
+export async function runNode(
+	parameters: INodeParameters,
+	options: RunNodeOptions = {},
+): Promise<NodeRunResult> {
 	const node: INode = {
 		id: 'infraspeak-node',
 		name: 'Infraspeak',
@@ -130,7 +141,10 @@ export async function runNode(parameters: INodeParameters): Promise<NodeRunResul
 		updatedAt: new Date(),
 	} as never);
 
-	const execute = new WorkflowExecute(buildAdditionalData(hooks), 'manual');
+	const execute = new WorkflowExecute(
+		buildAdditionalData(hooks, options.credentials ?? { accessToken: TEST_TOKEN }),
+		'manual',
+	);
 	const run: IRun = await execute.run({ workflow, startNode: node });
 
 	const taskData = run.data.resultData.runData[node.name]?.[0];

@@ -24,7 +24,8 @@
 		"release": "n8n-node release",
 		"prepublishOnly": "n8n-node prerelease",
 		"generate": "tsx scripts/generate/index.ts",
-		"test": "jest"
+		"test": "jest",
+		"mock": "prism mock -d -p 4010 docs/api/openapi-full.yaml"
 	},
 	"files": [
 		"dist"
@@ -41,6 +42,7 @@
 	},
 	"devDependencies": {
 		"@n8n/node-cli": "*",
+		"@stoplight/prism-cli": "5.16.0",
 		"@types/jest": "^29.5.14",
 		"ajv": "^8.20.0",
 		"ajv-formats": "^3.0.1",

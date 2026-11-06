@@ -43,6 +43,8 @@ The node authenticates with a bearer token.
 1. In Infraspeak, create a Personal Access Token (see [Using the token](https://developer.infraspeak.com/documentation/authentication/using-the-token)).
 2. In n8n, create an **Infraspeak API** credential and paste the token into **Access Token**.
 
+Leave **Base URL** at its default (`https://api.infraspeak.com/v3`) unless you're pointing at a sandbox or the local mock described under Development.
+
 The credential test calls `GET /locations?limit=1`.
 
 ## Usage
@@ -69,3 +71,18 @@ Checks:
 
 - `npm test` runs every generated operation through n8n's real execution engine with HTTP mocked. It checks that the node sends the method, path, query and body the spec describes, and validates bodies against the spec's JSON schema. This proves the node matches the spec, not that the live API matches the spec. That still needs a run against a sandbox account.
 - `npm run lint` and `npm run build`.
+
+### Testing without a token
+
+`npm run mock` serves a fake Infraspeak API on `http://localhost:4010`. It's generated from the spec with [Prism](https://github.com/stoplightio/prism), so you can click through the node in n8n without an account.
+
+1. Download the spec to `docs/api/openapi-full.yaml` (see above).
+2. Run `npm run mock` and leave it running.
+3. In n8n, create an Infraspeak API credential:
+   - Access Token: any value.
+   - Base URL: `http://localhost:4010`.
+4. Use the node as normal.
+
+Responses are random data in the spec's shape: IDs and names are filler text. Prism's terminal flags any request that doesn't match the spec, but the request still goes through.
+
+The mock agrees with the spec by construction. It can't show where the live API differs, for example in the filter prefix or the date format. That still needs a real account.
