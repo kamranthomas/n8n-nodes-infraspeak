@@ -74,13 +74,13 @@ Checks:
 
 ### Testing without a token
 
-`npm run mock` serves a fake Infraspeak API on `http://localhost:4010`. It's generated from the spec with [Prism](https://github.com/stoplightio/prism), so you can click through the node in n8n without an account.
+`npm run mock` serves a fake Infraspeak API on `http://127.0.0.1:4010`. It's generated from the spec with [Prism](https://github.com/stoplightio/prism), so you can click through the node in n8n without an account.
 
 1. Download the spec to `docs/api/openapi-full.yaml` (see above).
 2. Run `npm run mock` and leave it running.
 3. In n8n, create an Infraspeak API credential:
    - Access Token: any value.
-   - Base URL: `http://localhost:4010`.
+   - Base URL: `http://127.0.0.1:4010`. Use the IP, not `localhost`: Prism listens on IPv4 only, and n8n resolves `localhost` to IPv6 `::1`, so the connection is refused.
 4. Use the node as normal.
 
 Responses are random data in the spec's shape: IDs and names are filler text. Prism's terminal flags any request that doesn't match the spec, but the request still goes through.
