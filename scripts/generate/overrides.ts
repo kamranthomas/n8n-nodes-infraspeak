@@ -182,7 +182,10 @@ export interface OperationOverride {
 	pathLocators?: Record<string, LocatorKey>;
 	/** Display name for a plain path-param ID field. */
 	pathDisplayNames?: Record<string, string>;
-	/** Treat as a list (Get Many with Return All/Limit) even if the spec's shape doesn't say so. */
+	/**
+	 * true: a list (Return All/Limit) even if the spec's shape doesn't say so.
+	 * false: not paginated, even though it returns several records (e.g. a whole tree).
+	 */
 	list?: boolean;
 	/** Output the response records even though the spec's response shape isn't a JSON:API record. */
 	returnsRecords?: boolean;
@@ -199,6 +202,12 @@ export interface ListVariants {
 export interface ResourceConfig {
 	/** OpenAPI tag. */
 	tag: string;
+	/**
+	 * Only the tag's operations whose path matches, for tags that mix several entities
+	 * (Materials covers material types, their folders, and stock materials). Every active
+	 * operation of an enabled tag must land in some resource, or the generator fails.
+	 */
+	paths?: RegExp;
 	value: string;
 	displayName: string;
 	singular: string;
@@ -443,6 +452,205 @@ export const resources: ResourceConfig[] = [
 				description: 'Remove the association between an operator and a warehouse',
 				pathLocators: { warehouseId: 'warehouse', operatorId: 'operator' },
 			},
+		},
+	},
+	{
+		tag: 'Buy Orders',
+		value: 'buyOrder',
+		displayName: 'Buy Order',
+		singular: 'buy order',
+		plural: 'buy orders',
+		operations: {
+			getBuyOrderLines: {
+				value: 'getLines',
+				name: 'Get Lines',
+				action: 'Get the lines of a buy order',
+				description: 'Get the lines of a buy order',
+				list: true,
+				pathDisplayNames: { 'buy-order-id': 'Buy Order ID' },
+			},
+			createBuyOrderLine: {
+				value: 'addLine',
+				name: 'Add Line',
+				action: 'Add a line to a buy order',
+				description: 'Add a line to a buy order',
+				pathDisplayNames: { 'buy-order-id': 'Buy Order ID' },
+			},
+			updateBuyOrderLine: {
+				value: 'updateLine',
+				name: 'Update Line',
+				action: 'Update a buy order line',
+				description: 'Update a line of a buy order',
+				pathDisplayNames: { 'buy-order-id': 'Buy Order ID', 'buy-order-line-id': 'Line ID' },
+			},
+			deleteBuyOrderLine: {
+				value: 'deleteLine',
+				name: 'Delete Line',
+				action: 'Delete a buy order line',
+				description: 'Delete a line of a buy order',
+				pathDisplayNames: { 'buy-order-id': 'Buy Order ID', 'buy-order-line-id': 'Line ID' },
+			},
+			getBuyOrder: { pathDisplayNames: { 'buy-order-id': 'Buy Order ID' } },
+			updateBuyOrder: { pathDisplayNames: { 'buy-order-id': 'Buy Order ID' } },
+			deleteBuyOrder: { pathDisplayNames: { 'buy-order-id': 'Buy Order ID' } },
+		},
+	},
+	{
+		tag: 'Materials',
+		paths: /^\/stocks\/material-types(\/\{[^/]+\}|\/ancestor-folders\/.+)?$/,
+		value: 'materialType',
+		displayName: 'Material Type',
+		singular: 'material type',
+		plural: 'material types',
+		operations: {
+			getMaterialTypeAncestors: {
+				value: 'getAncestors',
+				name: 'Get Ancestors',
+				action: 'Get the ancestor folders of a material type',
+				description: 'Get the folders above a material type',
+			},
+		},
+	},
+	{
+		tag: 'Materials',
+		paths: /^\/stocks\/material-types\/(folders|root-folders)/,
+		value: 'materialTypeFolder',
+		displayName: 'Material Type Folder',
+		singular: 'material type folder',
+		plural: 'material type folders',
+		operations: {
+			getMaterialTypeFolders: {
+				value: 'getAll',
+				name: 'Get Many',
+				action: 'Get many material type folders',
+				description: 'Get many material type folders',
+				list: true,
+			},
+			getMaterialTypeRootFolders: {
+				value: 'getManyRoot',
+				name: 'Get Many Root Folders',
+				action: 'Get many root material type folders',
+				description: 'Get the top-level material type folders',
+			},
+			getMaterialTypeChildren: {
+				value: 'getChildren',
+				name: 'Get Children',
+				action: 'Get the children of a material type folder',
+				description: 'Get the folders and material types one level below a folder',
+				list: true,
+			},
+			getMaterialTypeFolderTree: {
+				value: 'getTree',
+				name: 'Get Tree',
+				action: 'Get the material type tree',
+				description: 'Get the complete tree of material type folders and types',
+				// One response with the whole tree: the endpoint documents no limit/page.
+				list: false,
+			},
+			getMaterialTypeFolderAncestors: {
+				value: 'getAncestors',
+				name: 'Get Ancestors',
+				action: 'Get the ancestor folders of a material type folder',
+				description: 'Get the folders above a material type folder',
+			},
+			getMaterialTypeFolderDeepMaterialTypes: {
+				value: 'getDeepMaterialTypes',
+				name: 'Get Material Types (All Levels)',
+				action: 'Get all material types in a folder',
+				description: 'Get the material types in a folder and all its subfolders',
+			},
+		},
+		fields: {
+			only_associated_to_materials: {
+				displayName: 'Only Associated to Materials',
+				description: 'Whether to return only folders associated with materials',
+			},
+		},
+	},
+	{
+		tag: 'Quotes',
+		value: 'quote',
+		displayName: 'Quote',
+		singular: 'quote',
+		plural: 'quotes',
+		operations: {
+			getQuote: { pathDisplayNames: { id: 'Quote ID' } },
+			getQuoteLines: {
+				value: 'getLines',
+				name: 'Get Lines',
+				action: 'Get the lines of a quote',
+				description: 'Get the lines of a quote',
+				list: true,
+				pathDisplayNames: { id: 'Quote ID' },
+			},
+			createQuoteLine: {
+				value: 'addLine',
+				name: 'Add Line',
+				action: 'Add a line to a quote',
+				description: 'Add a line to a quote',
+				pathDisplayNames: { id: 'Quote ID' },
+			},
+		},
+	},
+	{
+		tag: 'Sell Orders',
+		value: 'sellOrder',
+		displayName: 'Sell Order',
+		singular: 'sell order',
+		plural: 'sell orders',
+		operations: {
+			getSellOrderLines: {
+				value: 'getLines',
+				name: 'Get Lines',
+				action: 'Get the lines of a sell order',
+				description: 'Get the lines of a sell order',
+				list: true,
+			},
+			createSellOrderLine: {
+				value: 'addLine',
+				name: 'Add Line',
+				action: 'Add a line to a sell order',
+				description: 'Add a line to a sell order',
+			},
+			updateSellOrderLine: {
+				value: 'updateLine',
+				name: 'Update Line',
+				action: 'Update a sell order line',
+				description: 'Update a line of a sell order',
+				pathDisplayNames: { sellOrderLineId: 'Line ID' },
+			},
+			deleteSellOrderLine: {
+				value: 'deleteLine',
+				name: 'Delete Line',
+				action: 'Delete a sell order line',
+				description: 'Delete a line of a sell order',
+				pathDisplayNames: { sellOrderLineId: 'Line ID' },
+			},
+		},
+	},
+	{
+		tag: 'Materials',
+		paths: /^\/stocks\/materials/,
+		value: 'stockMaterial',
+		displayName: 'Stock Material',
+		singular: 'stock material',
+		plural: 'stock materials',
+		operations: {
+			getStockMaterialRegistry: {
+				value: 'getRegistry',
+				name: 'Get Registry',
+				action: 'Get the registry of a stock material',
+				description: 'Get the stock movement registry of a material',
+			},
+			createMaterialStockBatchTransactions: {
+				value: 'addStockTransactions',
+				name: 'Add Stock Transactions',
+				action: 'Add stock transactions to a material',
+				description: 'Create a batch of stock transactions for a material',
+			},
+			// Described as an xlsx download, but the spec says JSON of an unspecified shape:
+			// declarative nodes can't handle files properly, so leave it out until verified.
+			getStockMaterialExport: { skip: true },
 		},
 	},
 	{

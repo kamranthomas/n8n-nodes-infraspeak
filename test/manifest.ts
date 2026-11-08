@@ -39,6 +39,7 @@ export interface Field {
 	format?: string;
 	schema?: JsonSchema;
 	arrayItems?: string;
+	dateFormat?: 'iso';
 }
 
 export interface Operation {
@@ -113,7 +114,10 @@ export function sample(field: Field): { input: unknown; sent: unknown } {
 		case 'options':
 			return { input: field.options![0], sent: field.options![0] };
 		case 'date':
-			return { input: SAMPLE_DATE_INPUT, sent: SAMPLE_DATE_SENT };
+			return {
+				input: SAMPLE_DATE_INPUT,
+				sent: field.dateFormat === 'iso' ? SAMPLE_DATE_INPUT : SAMPLE_DATE_SENT,
+			};
 		case 'intArray':
 			return { input: '1, 2', sent: [1, 2] };
 		case 'stringArray':

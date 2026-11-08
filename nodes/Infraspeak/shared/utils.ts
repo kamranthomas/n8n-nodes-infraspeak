@@ -30,6 +30,13 @@ export const toInfraspeakDateExpression =
 	'={{ DateTime.fromISO($value).toFormat("yyyy-MM-dd HH:mm:ss") }}';
 
 /**
+ * For the few fields whose spec pattern demands ISO 8601 (e.g. a buy order line's
+ * estimated_at): `YYYY-MM-DDTHH:MM:SS`, no offset.
+ */
+export const toIsoDateExpression =
+	'={{ DateTime.fromISO($value).toFormat("yyyy-MM-dd\'T\'HH:mm:ss") }}';
+
+/**
  * Value of a resourceLocator parameter as an integer. Handles both the raw
  * locator object and an already-extracted value. A non-numeric value is sent
  * unchanged, so the API rejects it with the bad ID visible instead of the node

@@ -19,9 +19,12 @@ const MOCK_URL = process.env.INFRASPEAK_MOCK_URL;
 const describeIfMock = MOCK_URL ? describe : describe.skip;
 
 describeIfMock('operations against the Prism mock', () => {
-	// A required-only Update with nothing required has no request worth sending.
+	// n8n drops an empty request body, and these specs require one: a required-only run
+	// of an operation whose body has no required field has nothing valid to send.
 	const nothingToSend = (op: Operation) =>
-		op.method === 'PATCH' && !op.fields.some((f) => f.required && f.target === 'body');
+		(op.method === 'POST' || op.method === 'PATCH') &&
+		Boolean(op.bodySchema) &&
+		!op.fields.some((f) => f.required && f.target === 'body');
 
 	it.each(
 		operations.flatMap((op) =>

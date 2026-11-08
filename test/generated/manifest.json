@@ -2,6 +2,664 @@
 	"specSha256": "985973cf011a9a9e2461bddd63d1bc1875c02e5b2c0b7c33d71708a154722c69",
 	"operations": [
 		{
+			"resource": "buyOrder",
+			"operation": "getAll",
+			"operationId": "getBuyOrders",
+			"method": "GET",
+			"path": "/sales/buy-orders",
+			"output": "records",
+			"list": true,
+			"fields": [],
+			"allowedQuery": ["limit", "page"]
+		},
+		{
+			"resource": "buyOrder",
+			"operation": "create",
+			"operationId": "createBuyOrder",
+			"method": "POST",
+			"path": "/sales/buy-orders",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "type",
+					"kind": "options",
+					"target": "body",
+					"property": "type",
+					"required": true,
+					"options": ["MATERIAL", "SERVICE"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "deliveryAddress",
+					"kind": "string",
+					"target": "body",
+					"property": "delivery_address",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "externalSaleId",
+					"kind": "string",
+					"target": "body",
+					"property": "external_sale_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "internalSaleId",
+					"kind": "string",
+					"target": "body",
+					"property": "internal_sale_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "relatedToId",
+					"kind": "number",
+					"target": "body",
+					"property": "related_to_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "relatedToType",
+					"kind": "options",
+					"target": "body",
+					"property": "related_to_type",
+					"required": false,
+					"options": ["FAILURE", "SCHEDULED_WORK"]
+				},
+				{
+					"container": "",
+					"name": "state",
+					"kind": "options",
+					"target": "body",
+					"property": "state",
+					"required": true,
+					"options": ["CONFIRMED", "CREATED", "RECEIVED", "RECEIVED_PARTIALLY", "SAVED_AS_DRAFT"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "supplierId",
+					"kind": "locator",
+					"target": "body",
+					"property": "supplier_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "warehouseId",
+					"kind": "locator",
+					"target": "body",
+					"property": "warehouse_id",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Buy Order payload",
+				"type": "object",
+				"properties": {
+					"type": {
+						"description": "Type of Buy Order.",
+						"type": "string",
+						"enum": ["MATERIAL", "SERVICE"]
+					},
+					"delivery_address": {
+						"description": "Delivery Address of the Buy Order.",
+						"type": ["string", "null"]
+					},
+					"external_sale_id": {
+						"description": "External ID of the Buy Order.",
+						"type": ["string", "null"]
+					},
+					"internal_sale_id": {
+						"description": "Internal ID of the Buy Order.",
+						"type": ["string", "null"]
+					},
+					"observation": {
+						"description": "Observations/notes of the Buy Order.",
+						"type": ["string", "null"]
+					},
+					"related_to_id": {
+						"description": "ID of the object (failure or scheduled work) related to the Buy Order. Required with field related_to_type.",
+						"type": ["integer", "null"]
+					},
+					"related_to_type": {
+						"description": "Type of object related to the Buy Order. Required with field related_to_id.",
+						"type": ["string", "null"],
+						"enum": ["FAILURE", "SCHEDULED_WORK"]
+					},
+					"state": {
+						"description": "State of the Buy Order.",
+						"type": "string",
+						"enum": ["SAVED_AS_DRAFT", "CREATED", "RECEIVED_PARTIALLY", "RECEIVED", "CONFIRMED"],
+						"default": "SAVED_AS_DRAFT"
+					},
+					"supplier_id": {
+						"description": "ID of the supplier associated with the Buy Order. Required for type 'SERVICE' unless the state is 'SAVED_AS_DRAFT'.",
+						"type": ["integer", "null"]
+					},
+					"warehouse_id": {
+						"description": "ID of the Warehouse associated to the Buy Order. Required for type 'MATERIAL' unless the state is 'SAVED_AS_DRAFT'.",
+						"type": "integer"
+					}
+				},
+				"required": ["type", "state"]
+			}
+		},
+		{
+			"resource": "buyOrder",
+			"operation": "get",
+			"operationId": "getBuyOrder",
+			"method": "GET",
+			"path": "/sales/buy-orders/{buy-order-id}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "buyOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "buy-order-id",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "buyOrder",
+			"operation": "update",
+			"operationId": "updateBuyOrder",
+			"method": "PATCH",
+			"path": "/sales/buy-orders/{buy-order-id}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "buyOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "buy-order-id",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "supplierId",
+					"kind": "locator",
+					"target": "body",
+					"property": "supplier_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "warehouseId",
+					"kind": "locator",
+					"target": "body",
+					"property": "warehouse_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "internalSaleId",
+					"kind": "string",
+					"target": "body",
+					"property": "internal_sale_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "externalSaleId",
+					"kind": "string",
+					"target": "body",
+					"property": "external_sale_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "relatedToType",
+					"kind": "options",
+					"target": "body",
+					"property": "related_to_type",
+					"required": false,
+					"options": ["FAILURE", "SCHEDULED_WORK"]
+				},
+				{
+					"container": "updateFields",
+					"name": "relatedToId",
+					"kind": "number",
+					"target": "body",
+					"property": "related_to_id",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Buy Order update payload",
+				"type": "object",
+				"properties": {
+					"supplier_id": {
+						"description": "ID of the supplier associated with the Buy Order. Nullable only if state is 'SAVED_AS_DRAFT'.",
+						"type": ["integer", "null"]
+					},
+					"warehouse_id": {
+						"description": "ID of the Warehouse associated to the Buy Order.",
+						"type": "integer"
+					},
+					"description": {
+						"description": "Observations/notes of the Buy Order.",
+						"type": ["string", "null"]
+					},
+					"internal_sale_id": {
+						"description": "Internal ID of the Buy Order.",
+						"type": ["string", "null"]
+					},
+					"external_sale_id": {
+						"description": "External ID of the Buy Order.",
+						"type": ["string", "null"]
+					},
+					"related_to_type": {
+						"description": "Type of object related to the Buy Order. Required with field related_to_id.",
+						"type": ["string", "null"],
+						"enum": ["FAILURE", "SCHEDULED_WORK", null]
+					},
+					"related_to_id": {
+						"description": "ID of the object (failure or scheduled work) related to the Buy Order. Required with field related_to_type.",
+						"type": ["integer", "null"]
+					}
+				}
+			}
+		},
+		{
+			"resource": "buyOrder",
+			"operation": "delete",
+			"operationId": "deleteBuyOrder",
+			"method": "DELETE",
+			"path": "/sales/buy-orders/{buy-order-id}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "buyOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "buy-order-id",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "buyOrder",
+			"operation": "getLines",
+			"operationId": "getBuyOrderLines",
+			"method": "GET",
+			"path": "/sales/buy-orders/{buy-order-id}/lines",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "",
+					"name": "buyOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "buy-order-id",
+					"required": true
+				}
+			],
+			"allowedQuery": ["limit", "page"]
+		},
+		{
+			"resource": "buyOrder",
+			"operation": "addLine",
+			"operationId": "createBuyOrderLine",
+			"method": "POST",
+			"path": "/sales/buy-orders/{buy-order-id}/lines",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "buyOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "buy-order-id",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "materialId",
+					"kind": "number",
+					"target": "body",
+					"property": "material_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "price",
+					"kind": "string",
+					"target": "body",
+					"property": "price",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "quantity",
+					"kind": "string",
+					"target": "body",
+					"property": "quantity",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "vat",
+					"kind": "string",
+					"target": "body",
+					"property": "vat",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "discount",
+					"kind": "string",
+					"target": "body",
+					"property": "discount",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "unit",
+					"kind": "string",
+					"target": "body",
+					"property": "unit",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "costCenterId",
+					"kind": "locator",
+					"target": "body",
+					"property": "cost_center_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "estimatedAt",
+					"kind": "date",
+					"target": "body",
+					"property": "estimated_at",
+					"required": false,
+					"dateFormat": "iso"
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Buy Order Line payload",
+				"type": "object",
+				"properties": {
+					"description": {
+						"description": "Description of the item of Buy Order Line. Required if buy order type is 'SERVICE'.",
+						"type": ["string", "null"]
+					},
+					"material_id": {
+						"description": "ID of the Material item in the Buy Order Line. Only present if the type of Buy Order is 'MATERIAL'.",
+						"type": ["integer", "null"]
+					},
+					"price": {
+						"description": "ID of the Other Cost in the Buy Order Line.",
+						"type": ["string", "null"],
+						"minimum": 0
+					},
+					"quantity": {
+						"description": "Quantity of the item in the Buy Order Line.",
+						"type": "string",
+						"minimum": 0
+					},
+					"observation": {
+						"description": "Observation or notes of the Buy Order Line.",
+						"type": ["string", "null"]
+					},
+					"vat": {
+						"description": "VAT applied to the item in the Buy Order Line.",
+						"type": "string",
+						"minimum": 0
+					},
+					"discount": {
+						"description": "Discount percentage applied to the item in the Buy Order Line.",
+						"type": "string",
+						"minimum": 0,
+						"maximum": 100
+					},
+					"unit": {
+						"description": "Unit of the item in the Buy Order Line. Only present if the type of Buy Order is 'MATERIAL'.",
+						"type": ["string", "null"]
+					},
+					"cost_center_id": {
+						"description": "ID of the Cost Center item in the Buy Order Line.",
+						"type": ["integer", "null"]
+					},
+					"estimated_at": {
+						"description": "Date when material is estimated to arrive. Only present if the type of Buy Order is 'MATERIAL'.",
+						"type": "string",
+						"pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])+(.*)$",
+						"examples": ["2024-07-21T18:38:00"]
+					}
+				}
+			}
+		},
+		{
+			"resource": "buyOrder",
+			"operation": "updateLine",
+			"operationId": "updateBuyOrderLine",
+			"method": "PATCH",
+			"path": "/sales/buy-orders/{buy-order-id}/lines/{buy-order-line-id}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "buyOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "buy-order-id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "buyOrderLineId",
+					"kind": "string",
+					"target": "path",
+					"property": "buy-order-line-id",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "materialId",
+					"kind": "number",
+					"target": "body",
+					"property": "material_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "price",
+					"kind": "string",
+					"target": "body",
+					"property": "price",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "quantity",
+					"kind": "string",
+					"target": "body",
+					"property": "quantity",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "vat",
+					"kind": "string",
+					"target": "body",
+					"property": "vat",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "discount",
+					"kind": "string",
+					"target": "body",
+					"property": "discount",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "unit",
+					"kind": "string",
+					"target": "body",
+					"property": "unit",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "costCenterId",
+					"kind": "locator",
+					"target": "body",
+					"property": "cost_center_id",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Buy Order Line update payload",
+				"type": "object",
+				"properties": {
+					"description": {
+						"description": "Description of the item of Buy Order Line. Only present if buy order type is 'SERVICE'.",
+						"type": ["string", "null"]
+					},
+					"material_id": {
+						"description": "ID of the Material item in the Buy Order Line. Only present if the type of Buy Order is 'MATERIAL'.",
+						"type": ["integer", "null"]
+					},
+					"price": {
+						"description": "ID of the Other Cost in the Buy Order Line.",
+						"type": ["string", "null"],
+						"minimum": 0
+					},
+					"quantity": {
+						"description": "Quantity of the item in the Buy Order Line.",
+						"type": "string",
+						"minimum": 0
+					},
+					"observation": {
+						"description": "Observation or notes of the Buy Order Line.",
+						"type": ["string", "null"]
+					},
+					"vat": {
+						"description": "VAT applied to the item in the Buy Order Line.",
+						"type": "string",
+						"minimum": 0
+					},
+					"discount": {
+						"description": "Discount percentage applied to the item in the Buy Order Line.",
+						"type": "string",
+						"minimum": 0,
+						"maximum": 100
+					},
+					"unit": {
+						"description": "Unit of the item in the Buy Order Line. Only present if the type of Buy Order is 'MATERIAL'.",
+						"type": ["string", "null"]
+					},
+					"cost_center_id": {
+						"description": "ID of the cost center in the Buy Order Line.",
+						"type": ["integer", "null"]
+					}
+				}
+			}
+		},
+		{
+			"resource": "buyOrder",
+			"operation": "deleteLine",
+			"operationId": "deleteBuyOrderLine",
+			"method": "DELETE",
+			"path": "/sales/buy-orders/{buy-order-id}/lines/{buy-order-line-id}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "buyOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "buy-order-id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "buyOrderLineId",
+					"kind": "string",
+					"target": "path",
+					"property": "buy-order-line-id",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
 			"resource": "category",
 			"operation": "getAll",
 			"operationId": "getCategories",
@@ -4373,6 +5031,630 @@
 			]
 		},
 		{
+			"resource": "materialType",
+			"operation": "create",
+			"operationId": "createMaterialType",
+			"method": "POST",
+			"path": "/stocks/material-types",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "parentId",
+					"kind": "string",
+					"target": "body",
+					"property": "parent_id",
+					"required": true
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Create Material Type payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "Name of the material type.",
+						"type": "string",
+						"minLength": 1,
+						"examples": ["Material Type 1"]
+					},
+					"code": {
+						"description": "Code of the material type. Not required in the endpoint request but will be generated internally since there cannot be a material type without a code. When sent, needs to be unique.",
+						"type": ["string", "null"],
+						"examples": ["MT1"]
+					},
+					"parent_id": {
+						"description": "ID of the material type folder to which this new material type will belong.",
+						"type": "string",
+						"examples": ["1"]
+					}
+				},
+				"required": ["name", "parent_id"]
+			}
+		},
+		{
+			"resource": "materialType",
+			"operation": "update",
+			"operationId": "updateMaterialType",
+			"method": "PATCH",
+			"path": "/stocks/material-types/{materialTypeId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialTypeId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialTypeId",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Update Material Type payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "Name of the material type.",
+						"type": "string",
+						"minLength": 1,
+						"examples": ["Material Type 1"]
+					},
+					"code": {
+						"description": "Code of the material type. Needs to be unique.",
+						"type": "string",
+						"examples": ["MT1"]
+					}
+				}
+			}
+		},
+		{
+			"resource": "materialType",
+			"operation": "delete",
+			"operationId": "deleteMaterialType",
+			"method": "DELETE",
+			"path": "/stocks/material-types/{materialTypeId}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialTypeId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialTypeId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "materialType",
+			"operation": "getAncestors",
+			"operationId": "getMaterialTypeAncestors",
+			"method": "GET",
+			"path": "/stocks/material-types/ancestor-folders/{materialTypeId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialTypeId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialTypeId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "materialTypeFolder",
+			"operation": "getAll",
+			"operationId": "getMaterialTypeFolders",
+			"method": "GET",
+			"path": "/stocks/material-types/folders",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "filters",
+					"name": "searchText",
+					"kind": "string",
+					"target": "query",
+					"property": "search_text",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "order",
+					"kind": "options",
+					"target": "query",
+					"property": "order",
+					"required": false,
+					"options": ["asc", "desc"]
+				}
+			],
+			"allowedQuery": ["limit", "order", "page", "search_text", "sort"]
+		},
+		{
+			"resource": "materialTypeFolder",
+			"operation": "create",
+			"operationId": "createMaterialTypeFolder",
+			"method": "POST",
+			"path": "/stocks/material-types/folders",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "parentId",
+					"kind": "string",
+					"target": "body",
+					"property": "parent_id",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Create Material Type Folder payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "Name of the material type folder.",
+						"type": "string",
+						"minLength": 1,
+						"examples": ["Material Type Folder 1"]
+					},
+					"code": {
+						"description": "Code of the material type folder. Not required in the endpoint request but will be generated internally since there cannot be a material type folder without a code. When sent, needs to be unique.",
+						"type": ["string", "null"],
+						"examples": ["MTF1"]
+					},
+					"parent_id": {
+						"description": "ID of the parent material type folder",
+						"type": "string",
+						"examples": ["1"]
+					}
+				},
+				"required": ["name"]
+			}
+		},
+		{
+			"resource": "materialTypeFolder",
+			"operation": "get",
+			"operationId": "getMaterialTypeFolder",
+			"method": "GET",
+			"path": "/stocks/material-types/folders/{materialTypeFolderId}",
+			"output": "success",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialTypeFolderId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialTypeFolderId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "materialTypeFolder",
+			"operation": "update",
+			"operationId": "updateMaterialTypeFolder",
+			"method": "PATCH",
+			"path": "/stocks/material-types/folders/{materialTypeFolderId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialTypeFolderId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialTypeFolderId",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Update Material Type Folder payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "Name of the material type folder.",
+						"type": "string",
+						"minLength": 1,
+						"examples": ["Material Type Folder 1"]
+					},
+					"code": {
+						"description": "Code of the material type folder. Needs to be unique.",
+						"type": "string",
+						"examples": ["MTF1"]
+					}
+				}
+			}
+		},
+		{
+			"resource": "materialTypeFolder",
+			"operation": "delete",
+			"operationId": "deleteMaterialTypeFolder",
+			"method": "DELETE",
+			"path": "/stocks/material-types/folders/{materialTypeFolderId}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialTypeFolderId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialTypeFolderId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "materialTypeFolder",
+			"operation": "getManyRoot",
+			"operationId": "getMaterialTypeRootFolders",
+			"method": "GET",
+			"path": "/stocks/material-types/root-folders",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "order",
+					"kind": "options",
+					"target": "query",
+					"property": "order",
+					"required": false,
+					"options": ["asc", "desc"]
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "s_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "name",
+					"kind": "string",
+					"target": "query",
+					"property": "s_name",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"date_max_updated_at",
+				"date_min_updated_at",
+				"limit",
+				"order",
+				"page",
+				"s_code",
+				"s_name",
+				"sort"
+			]
+		},
+		{
+			"resource": "materialTypeFolder",
+			"operation": "getChildren",
+			"operationId": "getMaterialTypeChildren",
+			"method": "GET",
+			"path": "/stocks/material-types/folders/{materialTypeFolderId}/children",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialTypeFolderId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialTypeFolderId",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "order",
+					"kind": "options",
+					"target": "query",
+					"property": "order",
+					"required": false,
+					"options": ["asc", "desc"]
+				},
+				{
+					"container": "filters",
+					"name": "onlyAssociatedToMaterials",
+					"kind": "boolean",
+					"target": "query",
+					"property": "only_associated_to_materials",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "s_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "name",
+					"kind": "string",
+					"target": "query",
+					"property": "s_name",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"date_max_updated_at",
+				"date_min_updated_at",
+				"limit",
+				"only_associated_to_materials",
+				"order",
+				"page",
+				"s_code",
+				"s_name",
+				"sort"
+			]
+		},
+		{
+			"resource": "materialTypeFolder",
+			"operation": "getAncestors",
+			"operationId": "getMaterialTypeFolderAncestors",
+			"method": "GET",
+			"path": "/stocks/material-types/folders/{materialTypeFolderId}/ancestor-folders",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialTypeFolderId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialTypeFolderId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "materialTypeFolder",
+			"operation": "getDeepMaterialTypes",
+			"operationId": "getMaterialTypeFolderDeepMaterialTypes",
+			"method": "GET",
+			"path": "/stocks/material-types/folders/{materialTypeFolderId}/deep-material-types",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialTypeFolderId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialTypeFolderId",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "order",
+					"kind": "options",
+					"target": "query",
+					"property": "order",
+					"required": false,
+					"options": ["asc", "desc"]
+				},
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "s_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "name",
+					"kind": "string",
+					"target": "query",
+					"property": "s_name",
+					"required": false
+				}
+			],
+			"allowedQuery": ["limit", "order", "page", "s_code", "s_name", "sort"]
+		},
+		{
+			"resource": "materialTypeFolder",
+			"operation": "getTree",
+			"operationId": "getMaterialTypeFolderTree",
+			"method": "GET",
+			"path": "/stocks/material-types/folders/tree",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "filters",
+					"name": "searchText",
+					"kind": "string",
+					"target": "query",
+					"property": "search_text",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "order",
+					"kind": "options",
+					"target": "query",
+					"property": "order",
+					"required": false,
+					"options": ["asc", "desc"]
+				},
+				{
+					"container": "filters",
+					"name": "includeTrashed",
+					"kind": "boolean",
+					"target": "query",
+					"property": "include_trashed",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_updated_at",
+					"required": false
+				}
+			],
+			"allowedQuery": ["date_min_updated_at", "include_trashed", "order", "search_text", "sort"]
+		},
+		{
 			"resource": "operator",
 			"operation": "getAll",
 			"operationId": "getOperators",
@@ -5079,6 +6361,283 @@
 			"allowedQuery": ["limit", "page"]
 		},
 		{
+			"resource": "quote",
+			"operation": "getAll",
+			"operationId": "getQuotes",
+			"method": "GET",
+			"path": "/sales/quotes",
+			"output": "records",
+			"list": true,
+			"fields": [],
+			"allowedQuery": ["limit", "page"]
+		},
+		{
+			"resource": "quote",
+			"operation": "create",
+			"operationId": "createQuote",
+			"method": "POST",
+			"path": "/sales/quotes",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "additionalFields",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "body",
+					"property": "client_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "relatedToType",
+					"kind": "options",
+					"target": "body",
+					"property": "related_to_type",
+					"required": false,
+					"options": ["FAILURE", "SCHEDULED_WORK"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "relatedToId",
+					"kind": "number",
+					"target": "body",
+					"property": "related_to_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "receivedQuoteRequestId",
+					"kind": "number",
+					"target": "body",
+					"property": "received_quote_request_id",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Quote payload",
+				"type": "object",
+				"properties": {
+					"client_id": { "type": "integer" },
+					"related_to_type": {
+						"description": "Type of object (failure or scheduled work) related to the quote.",
+						"type": "string",
+						"enum": ["FAILURE", "SCHEDULED_WORK"]
+					},
+					"related_to_id": {
+						"description": "ID of the object (failure or scheduled work) related to the quote",
+						"type": "integer"
+					},
+					"received_quote_request_id": {
+						"description": "ID of the Received Quote Request",
+						"type": "integer"
+					}
+				}
+			}
+		},
+		{
+			"resource": "quote",
+			"operation": "get",
+			"operationId": "getQuote",
+			"method": "GET",
+			"path": "/sales/quotes/{id}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "id",
+					"kind": "string",
+					"target": "path",
+					"property": "id",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "quote",
+			"operation": "getLines",
+			"operationId": "getQuoteLines",
+			"method": "GET",
+			"path": "/sales/quotes/{id}/lines",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "",
+					"name": "id",
+					"kind": "string",
+					"target": "path",
+					"property": "id",
+					"required": true
+				}
+			],
+			"allowedQuery": ["limit", "page"]
+		},
+		{
+			"resource": "quote",
+			"operation": "addLine",
+			"operationId": "createQuoteLine",
+			"method": "POST",
+			"path": "/sales/quotes/{id}/lines",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "id",
+					"kind": "string",
+					"target": "path",
+					"property": "id",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "type",
+					"kind": "string",
+					"target": "body",
+					"property": "type",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "discount",
+					"kind": "number",
+					"target": "body",
+					"property": "discount",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "materialId",
+					"kind": "number",
+					"target": "body",
+					"property": "material_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "otherCostId",
+					"kind": "number",
+					"target": "body",
+					"property": "other_cost_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "quantity",
+					"kind": "number",
+					"target": "body",
+					"property": "quantity",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "receivedQuoteRequestLineId",
+					"kind": "number",
+					"target": "body",
+					"property": "received_quote_request_line_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "receivedQuoteRequestLineUuid",
+					"kind": "string",
+					"target": "body",
+					"property": "received_quote_request_line_uuid",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "unit",
+					"kind": "string",
+					"target": "body",
+					"property": "unit",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "unitPrice",
+					"kind": "number",
+					"target": "body",
+					"property": "unit_price",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "vat",
+					"kind": "number",
+					"target": "body",
+					"property": "vat",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Quote line payload",
+				"type": "object",
+				"properties": {
+					"description": {
+						"description": "The description of the Quote Line. Required if the type is \"SERVICE\".",
+						"type": "string"
+					},
+					"type": { "description": "Type of the item in the Quote Line.", "type": "string" },
+					"discount": {
+						"description": "Discount applied to the item in the Quote Line.",
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 100
+					},
+					"material_id": {
+						"description": "ID of the associated Material. Required if the type is \"MATERIAL\".",
+						"type": "integer"
+					},
+					"observations": {
+						"description": "Observation or notes of the Quote Line.",
+						"type": "string"
+					},
+					"other_cost_id": {
+						"description": "ID of the associated Other Cost. Required if the type is \"OTHER_COST\".",
+						"type": "integer"
+					},
+					"quantity": {
+						"description": "Quantity of the item in the Quote Line.",
+						"type": "integer"
+					},
+					"received_quote_request_line_id": { "type": ["integer", "null"] },
+					"received_quote_request_line_uuid": { "type": ["string", "null"] },
+					"unit": { "description": "Units of the item in the Quote Line.", "type": "string" },
+					"unit_price": {
+						"description": "Price per unit of the item in the Quote Line.",
+						"type": "integer"
+					},
+					"vat": {
+						"description": "VAT applied to the item in the Quote Line.",
+						"type": "integer",
+						"minimum": 0
+					}
+				}
+			}
+		},
+		{
 			"resource": "request",
 			"operation": "get",
 			"operationId": "getRequest",
@@ -5255,6 +6814,1367 @@
 						}
 					}
 				}
+			}
+		},
+		{
+			"resource": "sellOrder",
+			"operation": "getAll",
+			"operationId": "getSellOrders",
+			"method": "GET",
+			"path": "/sales/sell-orders",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": [
+						"cancelledBy",
+						"client",
+						"completedBy",
+						"confirmedBy",
+						"contacts",
+						"createdBy",
+						"entity",
+						"failure",
+						"files",
+						"quote",
+						"scheduledWork",
+						"startedBy"
+					]
+				}
+			],
+			"allowedQuery": ["expanded", "limit", "page"]
+		},
+		{
+			"resource": "sellOrder",
+			"operation": "create",
+			"operationId": "createSellOrder",
+			"method": "POST",
+			"path": "/sales/sell-orders",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "additionalFields",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "body",
+					"property": "client_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "internalSaleId",
+					"kind": "string",
+					"target": "body",
+					"property": "internal_sale_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "externalSaleId",
+					"kind": "string",
+					"target": "body",
+					"property": "external_sale_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "relatedToType",
+					"kind": "options",
+					"target": "body",
+					"property": "related_to_type",
+					"required": false,
+					"options": ["FAILURE", "SCHEDULED_WORK"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "relatedToId",
+					"kind": "number",
+					"target": "body",
+					"property": "related_to_id",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Sell Order (Sale) Create Payload",
+				"type": "object",
+				"properties": {
+					"client_id": {
+						"description": "ID of the client associated with the Sell Order (Sale).\n\n**This field is required if `related_to_type` and `related_to_id` are not filled.**\n",
+						"type": "integer",
+						"examples": [123]
+					},
+					"description": {
+						"description": "Observations or notes for the Sell Order (Sale).\n\nThis field is a free text input that holds any information regarding the Sell Order (Sale), filled by the user.\n",
+						"type": ["string", "null"],
+						"examples": ["Some information regarding the sell Order (Sale)"]
+					},
+					"internal_sale_id": {
+						"description": "Internal ID of the Sell Order (Sale).\n",
+						"type": ["string", "null"],
+						"examples": ["123"]
+					},
+					"external_sale_id": {
+						"description": "External ID of the associated Sell Order (Sale).\n\nUsually used to identify the Sell Order (Sale) with an unique identifier from a third-party application.\n",
+						"type": ["string", "null"],
+						"examples": ["1e29e166-c6b8-4686-8856-2090d8dc12e1"]
+					},
+					"related_to_type": {
+						"description": "Type of the Infraspeak Object related to the Sell Order (Sale).\n\n**This is required when the field `related_to_id` is filled.**\n\nAllowed values for this field are:\n- `FAILURE` (Work Order)\n- `SCHEDULED_WORK` (Planned Job Order)\n",
+						"type": ["string", "null"],
+						"enum": ["FAILURE", "SCHEDULED_WORK"],
+						"examples": ["FAILURE"]
+					},
+					"related_to_id": {
+						"description": "ID for the Infraspeak Object related to the Sell Order (Sale).\n\n**This is required when the field `related_to_type` is filled.**\n\nPossible related objects to a Sell Order (Sale) are:\n- `FAILURE` (Work Order)\n- `SCHEDULED_WORK` (Planned Job Order)\n",
+						"type": ["integer", "null"],
+						"examples": [123]
+					}
+				}
+			}
+		},
+		{
+			"resource": "sellOrder",
+			"operation": "get",
+			"operationId": "getSellOrder",
+			"method": "GET",
+			"path": "/sales/sell-orders/{sellOrderId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "sellOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "sellOrderId",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": [
+						"cancelledBy",
+						"client",
+						"completedBy",
+						"confirmedBy",
+						"contacts",
+						"createdBy",
+						"entity",
+						"failure",
+						"files",
+						"quote",
+						"scheduledWork",
+						"startedBy"
+					]
+				}
+			],
+			"allowedQuery": ["expanded"]
+		},
+		{
+			"resource": "sellOrder",
+			"operation": "update",
+			"operationId": "updateSellOrder",
+			"method": "PATCH",
+			"path": "/sales/sell-orders/{sellOrderId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "sellOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "sellOrderId",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "body",
+					"property": "client_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "internalSaleId",
+					"kind": "string",
+					"target": "body",
+					"property": "internal_sale_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "externalSaleId",
+					"kind": "string",
+					"target": "body",
+					"property": "external_sale_id",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "relatedToType",
+					"kind": "options",
+					"target": "body",
+					"property": "related_to_type",
+					"required": false,
+					"options": ["FAILURE", "SCHEDULED_WORK"]
+				},
+				{
+					"container": "updateFields",
+					"name": "relatedToId",
+					"kind": "number",
+					"target": "body",
+					"property": "related_to_id",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Sell Order (Sale) Update Payload",
+				"type": "object",
+				"properties": {
+					"client_id": {
+						"allOf": [
+							{
+								"description": "ID of the client associated with the Sell Order (Sale).\n\n**This field is required if `related_to_type` and `related_to_id` are not filled.**\n",
+								"type": "integer",
+								"examples": [123]
+							},
+							{ "description": "ID of the client associated with the Sell Order (Sale)." }
+						]
+					},
+					"description": {
+						"description": "Observations or notes for the Sell Order (Sale).\n\nThis field is a free text input that holds any information regarding the Sell Order (Sale), filled by the user.\n",
+						"type": ["string", "null"],
+						"examples": ["Some information regarding the sell Order (Sale)"]
+					},
+					"internal_sale_id": {
+						"description": "Internal ID of the Sell Order (Sale).\n",
+						"type": ["string", "null"],
+						"examples": ["123"]
+					},
+					"external_sale_id": {
+						"description": "External ID of the associated Sell Order (Sale).\n\nUsually used to identify the Sell Order (Sale) with an unique identifier from a third-party application.\n",
+						"type": ["string", "null"],
+						"examples": ["1e29e166-c6b8-4686-8856-2090d8dc12e1"]
+					},
+					"related_to_type": {
+						"description": "Type of the Infraspeak Object related to the Sell Order (Sale).\n\n**This is required when the field `related_to_id` is filled.**\n\nAllowed values for this field are:\n- `FAILURE` (Work Order)\n- `SCHEDULED_WORK` (Planned Job Order)\n",
+						"type": ["string", "null"],
+						"enum": ["FAILURE", "SCHEDULED_WORK"],
+						"examples": ["FAILURE"]
+					},
+					"related_to_id": {
+						"description": "ID for the Infraspeak Object related to the Sell Order (Sale).\n\n**This is required when the field `related_to_type` is filled.**\n\nPossible related objects to a Sell Order (Sale) are:\n- `FAILURE` (Work Order)\n- `SCHEDULED_WORK` (Planned Job Order)\n",
+						"type": ["integer", "null"],
+						"examples": [123]
+					}
+				}
+			}
+		},
+		{
+			"resource": "sellOrder",
+			"operation": "delete",
+			"operationId": "deleteSellOrder",
+			"method": "DELETE",
+			"path": "/sales/sell-orders/{sellOrderId}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "sellOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "sellOrderId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "sellOrder",
+			"operation": "getLines",
+			"operationId": "getSellOrderLines",
+			"method": "GET",
+			"path": "/sales/sell-orders/{sellOrderId}/lines",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "",
+					"name": "sellOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "sellOrderId",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["cost_center", "material", "other_cost"]
+				}
+			],
+			"allowedQuery": ["expanded", "limit", "page"]
+		},
+		{
+			"resource": "sellOrder",
+			"operation": "addLine",
+			"operationId": "createSellOrderLine",
+			"method": "POST",
+			"path": "/sales/sell-orders/{sellOrderId}/lines",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "sellOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "sellOrderId",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "type",
+					"kind": "options",
+					"target": "body",
+					"property": "type",
+					"required": true,
+					"options": ["MATERIAL", "OTHER_COST", "SERVICE"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "discount",
+					"kind": "number",
+					"target": "body",
+					"property": "discount",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "materialId",
+					"kind": "number",
+					"target": "body",
+					"property": "material_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "otherCostId",
+					"kind": "number",
+					"target": "body",
+					"property": "other_cost_id",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "quantity",
+					"kind": "string",
+					"target": "body",
+					"property": "quantity",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "unit",
+					"kind": "string",
+					"target": "body",
+					"property": "unit",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "unitPrice",
+					"kind": "number",
+					"target": "body",
+					"property": "unit_price",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "vat",
+					"kind": "number",
+					"target": "body",
+					"property": "vat",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["cost_center", "material", "other_cost"]
+				}
+			],
+			"allowedQuery": ["expanded"],
+			"bodySchema": {
+				"description": "Sell Order (Sale) Line Create Payload",
+				"type": "object",
+				"properties": {
+					"description": {
+						"description": "Description of the Sell Order (Sale) Line Item.\n\nThis field is required if `type` is `SERVICE`.\n",
+						"type": ["string", "null"],
+						"examples": ["Short description regarding the Sell Order (Sale) Line Item"]
+					},
+					"type": {
+						"description": "Type of the item on the Sell Order (Sale) Line Item.\n\nAvailable types are:\n- `MATERIAL`\n- `SERVICE`\n- `OTHER_COST`\n",
+						"type": "string",
+						"enum": ["MATERIAL", "SERVICE", "OTHER_COST"],
+						"examples": ["SERVICE"]
+					},
+					"discount": {
+						"description": "Discount percentage applied to the item in the Sell Order (Sale) Line.\n\n**`10.23` in this field means 10.23% Discount**\n",
+						"type": "number",
+						"minimum": 0,
+						"maximum": 100,
+						"examples": [10.23]
+					},
+					"material_id": {
+						"description": "ID of the Material in the Sell Order (Sale) Line Item.\n\nThis field is required if `type` is `MATERIAL`.\n",
+						"type": ["integer", "null"],
+						"examples": [123]
+					},
+					"observations": {
+						"description": "Observations or notes regardint the Sell Order (Sale) Line Item.\n",
+						"type": ["string", "null"],
+						"maxLength": 255,
+						"examples": ["Some observation that gives more context about the Line Item."]
+					},
+					"other_cost_id": {
+						"description": "ID of the Other Cost in the Sell Order (Sale) Line Item.\n\nThis field is required if `type` is `OTHER_COST`.\n",
+						"type": ["integer", "null"],
+						"examples": [123]
+					},
+					"quantity": {
+						"description": "Quantity of items in the Sell Order (Sale) Line.\n\n**This field is a Numeric String.**\n",
+						"type": "string",
+						"examples": ["10.00"]
+					},
+					"unit": {
+						"description": "Unit of the item in the Sell Order (Sale) Line.\n",
+						"type": ["string", "null"],
+						"examples": ["kg"]
+					},
+					"unit_price": {
+						"description": "Price of each unit of the item in the Sell Order (Sale) Line.",
+						"type": "number",
+						"examples": [12.34]
+					},
+					"vat": {
+						"description": "Tax percentage applied to the item in the Sell Order (Sale) Line.\n\n**`10.23` in this field means 10.23% Tax**\n",
+						"type": "number",
+						"minimum": 0,
+						"maximum": 100,
+						"examples": [10.23]
+					}
+				},
+				"required": ["type", "quantity", "unit_price"]
+			}
+		},
+		{
+			"resource": "sellOrder",
+			"operation": "updateLine",
+			"operationId": "updateSellOrderLine",
+			"method": "PATCH",
+			"path": "/sales/sell-orders/{sellOrderId}/lines/{sellOrderLineId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "sellOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "sellOrderId",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "sellOrderLineId",
+					"kind": "string",
+					"target": "path",
+					"property": "sellOrderLineId",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "materialId",
+					"kind": "number",
+					"target": "body",
+					"property": "material_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "otherCostId",
+					"kind": "number",
+					"target": "body",
+					"property": "other_cost_id",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "quantity",
+					"kind": "string",
+					"target": "body",
+					"property": "quantity",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "unit",
+					"kind": "string",
+					"target": "body",
+					"property": "unit",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "unitPrice",
+					"kind": "number",
+					"target": "body",
+					"property": "unit_price",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "vat",
+					"kind": "number",
+					"target": "body",
+					"property": "vat",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "discount",
+					"kind": "number",
+					"target": "body",
+					"property": "discount",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Sell Order (Sale) Line Update Payload",
+				"type": "object",
+				"properties": {
+					"description": {
+						"description": "Description of the Sell Order (Sale) Line Item.\n\nThis field is required if `type` is `SERVICE`.\n",
+						"type": ["string", "null"],
+						"examples": ["Short description regarding the Sell Order (Sale) Line Item"]
+					},
+					"material_id": {
+						"description": "ID of the Material in the Sell Order (Sale) Line Item.\n\nThis field is required if `type` is `MATERIAL`.\n",
+						"type": ["integer", "null"],
+						"examples": [123]
+					},
+					"other_cost_id": {
+						"description": "ID of the Other Cost in the Sell Order (Sale) Line Item.\n\nThis field is required if `type` is `OTHER_COST`.\n",
+						"type": ["integer", "null"],
+						"examples": [123]
+					},
+					"quantity": {
+						"description": "Quantity of items in the Sell Order (Sale) Line.\n\n**This field is a Numeric String.**\n",
+						"type": "string",
+						"examples": ["10.00"]
+					},
+					"unit": {
+						"description": "Unit of the item in the Sell Order (Sale) Line.\n",
+						"type": ["string", "null"],
+						"examples": ["kg"]
+					},
+					"unit_price": {
+						"description": "Price of each unit of the item in the Sell Order (Sale) Line.",
+						"type": "number",
+						"examples": [12.34]
+					},
+					"vat": {
+						"description": "Tax percentage applied to the item in the Sell Order (Sale) Line.\n\n**`10.23` in this field means 10.23% Tax**\n",
+						"type": "number",
+						"minimum": 0,
+						"maximum": 100,
+						"examples": [10.23]
+					},
+					"discount": {
+						"description": "Discount percentage applied to the item in the Sell Order (Sale) Line.\n\n**`10.23` in this field means 10.23% Discount**\n",
+						"type": "number",
+						"minimum": 0,
+						"maximum": 100,
+						"examples": [10.23]
+					},
+					"observations": {
+						"description": "Observations or notes regardint the Sell Order (Sale) Line Item.\n",
+						"type": ["string", "null"],
+						"maxLength": 255,
+						"examples": ["Some observation that gives more context about the Line Item."]
+					}
+				}
+			}
+		},
+		{
+			"resource": "sellOrder",
+			"operation": "deleteLine",
+			"operationId": "deleteSellOrderLine",
+			"method": "DELETE",
+			"path": "/sales/sell-orders/{sellOrderId}/lines/{sellOrderLineId}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "sellOrderId",
+					"kind": "string",
+					"target": "path",
+					"property": "sellOrderId",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "sellOrderLineId",
+					"kind": "string",
+					"target": "path",
+					"property": "sellOrderLineId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "stockMaterial",
+			"operation": "getAll",
+			"operationId": "getAllStockMaterials",
+			"method": "GET",
+			"path": "/stocks/materials",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["material_type", "supplier_custom_price", "warehouse"]
+				},
+				{
+					"container": "filters",
+					"name": "searchText",
+					"kind": "string",
+					"target": "query",
+					"property": "searchText",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "options",
+					"target": "query",
+					"property": "sort",
+					"required": false,
+					"options": ["code", "description", "ean_upc", "material_id", "name", "sku", "updated_at"]
+				},
+				{
+					"container": "filters",
+					"name": "order",
+					"kind": "options",
+					"target": "query",
+					"property": "order",
+					"required": false,
+					"options": ["asc", "desc"]
+				},
+				{
+					"container": "filters",
+					"name": "materialTypeId",
+					"kind": "number",
+					"target": "query",
+					"property": "s_material_type_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "materialTypeFolderId",
+					"kind": "number",
+					"target": "query",
+					"property": "s_material_type_folder_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "includePendingDeliveryQuantity",
+					"kind": "options",
+					"target": "query",
+					"property": "include_pending_delivery_quantity",
+					"required": false,
+					"options": [true]
+				},
+				{
+					"container": "filters",
+					"name": "includeStockOnHand",
+					"kind": "options",
+					"target": "query",
+					"property": "include_stock_on_hand",
+					"required": false,
+					"options": [true]
+				},
+				{
+					"container": "filters",
+					"name": "includeWarehouseMinimumStock",
+					"kind": "options",
+					"target": "query",
+					"property": "include_warehouse_minimum_stock",
+					"required": false,
+					"options": [true]
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "s_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "materialIdNoneOf",
+					"kind": "string",
+					"target": "query",
+					"property": "s_material_id_notin",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"date_max_updated_at",
+				"date_min_updated_at",
+				"expanded",
+				"include_pending_delivery_quantity",
+				"include_stock_on_hand",
+				"include_warehouse_minimum_stock",
+				"limit",
+				"order",
+				"page",
+				"s_code",
+				"s_material_id_notin",
+				"s_material_type_folder_id",
+				"s_material_type_id",
+				"searchText",
+				"sort"
+			]
+		},
+		{
+			"resource": "stockMaterial",
+			"operation": "create",
+			"operationId": "createStockMaterial",
+			"method": "POST",
+			"path": "/stocks/materials",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "units",
+					"kind": "string",
+					"target": "body",
+					"property": "units",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "materialTypeId",
+					"kind": "number",
+					"target": "body",
+					"property": "material_type_id",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "purchaseConsumptionType",
+					"kind": "options",
+					"target": "body",
+					"property": "purchase_consumption_type",
+					"required": false,
+					"options": ["AUTOMATIC", "INHERIT", "MANUAL"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "sku",
+					"kind": "string",
+					"target": "body",
+					"property": "sku",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "eanUpc",
+					"kind": "string",
+					"target": "body",
+					"property": "ean_upc",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "salePrice",
+					"kind": "number",
+					"target": "body",
+					"property": "sale_price",
+					"required": false
+				},
+				{
+					"container": "additionalFields",
+					"name": "saleVat",
+					"kind": "number",
+					"target": "body",
+					"property": "sale_vat",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Material payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "Name of the material",
+						"type": "string",
+						"examples": ["Chair"]
+					},
+					"code": {
+						"description": "Code of the material. It must be unique",
+						"type": "string",
+						"examples": ["CH-0001"]
+					},
+					"description": {
+						"description": "Description of the material",
+						"type": "string",
+						"examples": ["This is a chair"]
+					},
+					"units": {
+						"description": "What unit should this item be measured with",
+						"type": "string",
+						"examples": ["un"]
+					},
+					"material_type_id": {
+						"description": "Material type id",
+						"type": "integer",
+						"examples": [1]
+					},
+					"purchase_consumption_type": {
+						"description": "Purchase consumption type of the material",
+						"type": "string",
+						"enum": ["INHERIT", "AUTOMATIC", "MANUAL"]
+					},
+					"sku": { "description": "Material SKU", "type": "string", "examples": ["SKU-00001"] },
+					"ean_upc": {
+						"description": "Material EAN",
+						"type": "string",
+						"examples": ["1234567890123"]
+					},
+					"observations": {
+						"description": "Material observations",
+						"type": "string",
+						"examples": ["Observations"]
+					},
+					"sale_price": {
+						"description": "This is the default sale price for the material",
+						"type": "number",
+						"examples": [100]
+					},
+					"sale_vat": {
+						"description": "This is the default sale vat for the material",
+						"type": "number",
+						"examples": [23]
+					}
+				},
+				"required": ["material_type_id", "name", "code", "units"]
+			}
+		},
+		{
+			"resource": "stockMaterial",
+			"operation": "get",
+			"operationId": "getStockMaterial",
+			"method": "GET",
+			"path": "/stocks/materials/{materialId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialId",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["material_type", "supplier_custom_price", "warehouse"]
+				},
+				{
+					"container": "filters",
+					"name": "includePendingDeliveryQuantity",
+					"kind": "options",
+					"target": "query",
+					"property": "include_pending_delivery_quantity",
+					"required": false,
+					"options": [true]
+				},
+				{
+					"container": "filters",
+					"name": "includeStockOnHand",
+					"kind": "options",
+					"target": "query",
+					"property": "include_stock_on_hand",
+					"required": false,
+					"options": [true]
+				}
+			],
+			"allowedQuery": ["expanded", "include_pending_delivery_quantity", "include_stock_on_hand"]
+		},
+		{
+			"resource": "stockMaterial",
+			"operation": "update",
+			"operationId": "updateStockMaterial",
+			"method": "PATCH",
+			"path": "/stocks/materials/{materialId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialId",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "description",
+					"kind": "string",
+					"target": "body",
+					"property": "description",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "units",
+					"kind": "string",
+					"target": "body",
+					"property": "units",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "materialTypeId",
+					"kind": "number",
+					"target": "body",
+					"property": "material_type_id",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "sku",
+					"kind": "string",
+					"target": "body",
+					"property": "sku",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "eanUpc",
+					"kind": "string",
+					"target": "body",
+					"property": "ean_upc",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "purchaseConsumptionType",
+					"kind": "options",
+					"target": "body",
+					"property": "purchase_consumption_type",
+					"required": false,
+					"options": ["AUTOMATIC", "INHERIT", "MANUAL"]
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["material_type", "supplier_custom_price", "warehouse"]
+				}
+			],
+			"allowedQuery": ["expanded"],
+			"bodySchema": {
+				"description": "Material payload",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "Name of the material",
+						"type": "string",
+						"examples": ["Chair"]
+					},
+					"code": {
+						"description": "Code of the material. It must be unique",
+						"type": "string",
+						"examples": ["CH-0001"]
+					},
+					"description": {
+						"description": "Description of the material",
+						"type": ["string", "null"],
+						"examples": ["This is a chair"]
+					},
+					"units": {
+						"description": "What unit should this item be measured with",
+						"type": "string",
+						"examples": ["un"]
+					},
+					"material_type_id": {
+						"description": "Material type id",
+						"type": "integer",
+						"examples": [1]
+					},
+					"observations": {
+						"description": "Material observations",
+						"type": ["string", "null"],
+						"examples": ["This is an observation"]
+					},
+					"sku": {
+						"description": "SKU of the material",
+						"type": ["string", "null"],
+						"examples": ["SKU-00001"]
+					},
+					"ean_upc": {
+						"description": "EAN/UPC of the material",
+						"type": ["string", "null"],
+						"examples": ["1234567890123"]
+					},
+					"purchase_consumption_type": {
+						"description": "Purchase consumption type of the material",
+						"type": "string",
+						"enum": ["INHERIT", "AUTOMATIC", "MANUAL"]
+					}
+				},
+				"required": ["material_type_id", "name", "code", "units"]
+			}
+		},
+		{
+			"resource": "stockMaterial",
+			"operation": "delete",
+			"operationId": "deleteStockMaterial",
+			"method": "DELETE",
+			"path": "/stocks/materials/{materialId}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "stockMaterial",
+			"operation": "getRegistry",
+			"operationId": "getStockMaterialRegistry",
+			"method": "GET",
+			"path": "/stocks/materials/{materialId}/registry",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialId",
+					"required": true
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["operator"]
+				}
+			],
+			"allowedQuery": ["expanded"]
+		},
+		{
+			"resource": "stockMaterial",
+			"operation": "addStockTransactions",
+			"operationId": "createMaterialStockBatchTransactions",
+			"method": "POST",
+			"path": "/stocks/materials/{materialId}/stock-transactions",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "materialId",
+					"kind": "string",
+					"target": "path",
+					"property": "materialId",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "stockMaterialAction",
+					"kind": "options",
+					"target": "body",
+					"property": "action",
+					"required": true,
+					"options": ["MATERIAL_ADD", "MATERIAL_SUBTRACT"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "transactions",
+					"kind": "json",
+					"target": "body",
+					"property": "transactions",
+					"required": true,
+					"schema": {
+						"description": "List of transactions",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"quantity": {
+									"description": "Quantity of the transaction",
+									"type": "number",
+									"examples": [10]
+								},
+								"warehouse_id": {
+									"description": "Warehouse ID",
+									"type": "integer",
+									"examples": [1]
+								},
+								"cost_price": {
+									"description": "Cost price of the transaction",
+									"type": "number",
+									"examples": [10]
+								},
+								"observations": {
+									"description": "Observations about the transaction",
+									"type": "string",
+									"examples": ["Observations about the transaction"]
+								}
+							},
+							"required": ["quantity", "warehouse_id"]
+						}
+					}
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Material Stock Batch Transactions payload",
+				"type": "object",
+				"properties": {
+					"action": {
+						"description": "Action to be performed",
+						"type": "string",
+						"enum": ["MATERIAL_ADD", "MATERIAL_SUBTRACT"],
+						"examples": ["MATERIAL_ADD"]
+					},
+					"observations": {
+						"description": "Observations about the transaction",
+						"type": "string",
+						"examples": ["Observations about the transaction"]
+					},
+					"transactions": {
+						"description": "List of transactions",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"quantity": {
+									"description": "Quantity of the transaction",
+									"type": "number",
+									"examples": [10]
+								},
+								"warehouse_id": {
+									"description": "Warehouse ID",
+									"type": "integer",
+									"examples": [1]
+								},
+								"cost_price": {
+									"description": "Cost price of the transaction",
+									"type": "number",
+									"examples": [10]
+								},
+								"observations": {
+									"description": "Observations about the transaction",
+									"type": "string",
+									"examples": ["Observations about the transaction"]
+								}
+							},
+							"required": ["quantity", "warehouse_id"]
+						}
+					}
+				},
+				"required": ["action", "transactions"]
 			}
 		},
 		{

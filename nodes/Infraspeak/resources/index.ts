@@ -3,6 +3,7 @@
 // All enabled resources.
 
 import type { INodeProperties } from 'n8n-workflow';
+import { buyOrderDescription } from './buyOrder';
 import { categoryDescription } from './category';
 import { clientDescription } from './client';
 import { contactDescription } from './contact';
@@ -11,11 +12,16 @@ import { elementDescription } from './element';
 import { failureDescription } from './failure';
 import { fileDescription } from './file';
 import { locationDescription } from './location';
+import { materialTypeDescription } from './materialType';
+import { materialTypeFolderDescription } from './materialTypeFolder';
 import { operatorDescription } from './operator';
 import { otherCostDescription } from './otherCost';
 import { problemDescription } from './problem';
+import { quoteDescription } from './quote';
 import { requestDescription } from './request';
 import { scheduledWorkDescription } from './scheduledWork';
+import { sellOrderDescription } from './sellOrder';
+import { stockMaterialDescription } from './stockMaterial';
 import { stockStatusDescription } from './stockStatus';
 import { stockTransactionDescription } from './stockTransaction';
 import { supplierDescription } from './supplier';
@@ -29,6 +35,7 @@ export const resourceProperties: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		options: [
+			{ name: 'Buy Order', value: 'buyOrder' },
 			{ name: 'Category', value: 'category' },
 			{ name: 'Client', value: 'client' },
 			{ name: 'Contact', value: 'contact' },
@@ -37,11 +44,16 @@ export const resourceProperties: INodeProperties[] = [
 			{ name: 'Failure', value: 'failure' },
 			{ name: 'File', value: 'file' },
 			{ name: 'Location', value: 'location' },
+			{ name: 'Material Type', value: 'materialType' },
+			{ name: 'Material Type Folder', value: 'materialTypeFolder' },
 			{ name: 'Operator', value: 'operator' },
 			{ name: 'Other Cost', value: 'otherCost' },
 			{ name: 'Problem', value: 'problem' },
+			{ name: 'Quote', value: 'quote' },
 			{ name: 'Request', value: 'request' },
 			{ name: 'Scheduled Work', value: 'scheduledWork' },
+			{ name: 'Sell Order', value: 'sellOrder' },
+			{ name: 'Stock Material', value: 'stockMaterial' },
 			{ name: 'Stock Status', value: 'stockStatus' },
 			{ name: 'Stock Transaction', value: 'stockTransaction' },
 			{ name: 'Supplier', value: 'supplier' },
@@ -50,6 +62,7 @@ export const resourceProperties: INodeProperties[] = [
 		],
 		default: 'failure',
 	},
+	...buyOrderDescription,
 	...categoryDescription,
 	...clientDescription,
 	...contactDescription,
@@ -58,11 +71,16 @@ export const resourceProperties: INodeProperties[] = [
 	...failureDescription,
 	...fileDescription,
 	...locationDescription,
+	...materialTypeDescription,
+	...materialTypeFolderDescription,
 	...operatorDescription,
 	...otherCostDescription,
 	...problemDescription,
+	...quoteDescription,
 	...requestDescription,
 	...scheduledWorkDescription,
+	...sellOrderDescription,
+	...stockMaterialDescription,
 	...stockStatusDescription,
 	...stockTransactionDescription,
 	...supplierDescription,

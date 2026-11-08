@@ -182,6 +182,8 @@ interface ManifestField {
 	arrayItems?: string;
 	/** Body variant (oneOf) this field belongs to; absent for fields common to all. */
 	variant?: string;
+	/** Dates whose spec pattern demands ISO 8601 instead of YYYY-MM-DD HH:MM:SS. */
+	dateFormat?: 'iso';
 }
 
 interface ManifestOperation {
@@ -451,9 +453,12 @@ function buildValueFields(
 	}
 
 	if (schema.enum || override.options) {
+		// A nullable enum lists null as a value: not something a dropdown can offer.
 		const options =
 			override.options ??
-			(schema.enum ?? []).map((v) => ({ name: titleCase(String(v)), value: v }));
+			(schema.enum ?? [])
+				.filter((v) => v !== null)
+				.map((v) => ({ name: titleCase(String(v)), value: v }));
 		const sorted = [...options].sort((a, b) => a.name.localeCompare(b.name));
 		return [
 			{
@@ -471,16 +476,22 @@ function buildValueFields(
 
 	switch (type) {
 		case 'string': {
-			if (schema.format === 'date-time') {
+			// A date: typed date-time, or a plain string whose pattern describes a date-time.
+			const pattern = String(schema.pattern ?? '');
+			const datePattern = /^\^\\d\{4\}-.*:/.test(pattern);
+			if (schema.format === 'date-time' || datePattern) {
+				// The spec mixes formats: a field whose pattern demands ISO 8601 (a literal T)
+				// gets ISO; everything else gets the README's YYYY-MM-DD HH:MM:SS.
+				const iso = /\)T\(/.test(pattern);
 				return [
 					{
 						property: {
 							...base,
 							type: 'dateTime',
 							default: '',
-							routing: send(prop, '={{ INFRASPEAK_DATE }}'),
+							routing: send(prop, iso ? '={{ ISO_DATE }}' : '={{ INFRASPEAK_DATE }}'),
 						},
-						manifest: manifest('date'),
+						manifest: manifest('date', iso ? { dateFormat: 'iso' } : {}),
 					},
 				];
 			}
@@ -587,7 +598,13 @@ function classify(
 	const s = resource.singular;
 	const crud = (() => {
 		const hasTrailingParam = /\}$/.test(op.path);
-		if (override?.list || (op.method === 'get' && op.returns === 'records' && !hasTrailingParam))
+		if (
+			override?.list ||
+			(override?.list !== false &&
+				op.method === 'get' &&
+				op.returns === 'records' &&
+				!hasTrailingParam)
+		)
 			return { value: 'getAll', name: 'Get Many', action: `Get many ${resource.plural}` };
 		if (op.method === 'get' && hasTrailingParam)
 			return { value: 'get', name: 'Get', action: `Get ${article(s)} ${s}` };
@@ -872,18 +889,42 @@ function buildOperation(
 			queryByName.set(param.name, entry);
 		}
 	}
+	// The n8n field a query param becomes, and which spelling wins when two collide:
+	// date_min_/date_max_ (the docs' date ranges) > s_/sc_ filter syntax > anything else.
+	const queryFieldName = (param: Param): string => {
+		const fo = fieldOverride(resource, override, param.name);
+		const key =
+			fo.locator === null
+				? undefined
+				: (fo.locator ?? (primaryType(param.schema) === 'array' ? undefined : propertyLocators[param.name]));
+		return fo.name ?? (key ? locators[key].fieldName : filterName(param.name));
+	};
+	const rank = (name: string) => (/^date_(min|max)_/.test(name) ? 2 : /^(s|sc)_/.test(name) ? 1 : 0);
+	const preferredByField = new Map<string, Param>();
+	for (const { param } of queryByName.values()) {
+		const field = queryFieldName(param);
+		const current = preferredByField.get(field);
+		if (!current || rank(param.name) > rank(current.name)) preferredByField.set(field, param);
+	}
+
 	const allowedQuery = new Set<string>();
+	// A GET that documents both limit and page paginates, whatever its path or shape.
+	const documentsPaging = ['limit', 'page'].every((n) =>
+		primary.queryParams.some((q) => q.name === n),
+	);
 	const isListOp =
 		override?.list === true ||
-		(primary.method === 'get' && primary.returns === 'records' && !/\}$/.test(primary.path));
+		(override?.list !== false &&
+			primary.method === 'get' &&
+			((primary.returns === 'records' && !/\}$/.test(primary.path)) || documentsPaging));
 	for (const { param, operationIds } of queryByName.values()) {
 		const fo = fieldOverride(resource, override, param.name);
 		if (fo.skip || param.deprecated) continue;
 		// Return All / Limit already send these.
 		if (isListOp && (param.name === 'limit' || param.name === 'page')) continue;
-		// Some endpoints document a filter both bare (`code`) and in filter syntax (`s_code`).
-		// Keep the documented syntax; the bare form would be a second "Code" field.
-		if (queryByName.has(`s_${param.name}`)) continue;
+		// Some endpoints document one filter in two styles (`code` and `s_code`,
+		// `materialTypeId` and `s_material_type_id`): keep only the preferred one.
+		if (preferredByField.get(queryFieldName(param))?.name !== param.name) continue;
 		const isOption = apiRules.optionParams.includes(param.name);
 		const container = isOption ? 'options' : 'filters';
 		// Plain equality filters get the API-wide prefix; date ranges, options and
@@ -1068,6 +1109,7 @@ function serialize(value: unknown): string {
 		const placeholders: Record<string, string> = {
 			'={{ RESOURCE_LOCATOR_ID }}': 'resourceLocatorIdExpression',
 			'={{ INFRASPEAK_DATE }}': 'toInfraspeakDateExpression',
+			'={{ ISO_DATE }}': 'toIsoDateExpression',
 			'={{ INT_ARRAY }}': 'intArrayExpression',
 			'={{ STRING_ARRAY }}': 'stringArrayExpression',
 			'={{ JSON_VALUE }}': 'jsonValueExpression',
@@ -1078,8 +1120,10 @@ function serialize(value: unknown): string {
 }
 
 function buildResource(resource: ResourceConfig, all: SpecOperation[]) {
-	const tagOps = all.filter((op) => op.tag === resource.tag);
-	if (tagOps.length === 0) fail(`No operations found for tag "${resource.tag}"`);
+	const tagOps = all.filter(
+		(op) => op.tag === resource.tag && (!resource.paths || resource.paths.test(op.path)),
+	);
+	if (tagOps.length === 0) fail(`No operations found for tag "${resource.tag}" (${resource.value})`);
 
 	const variantIds = new Set(Object.keys(resource.listVariants?.variants ?? {}));
 	const built: BuiltOperation[] = [];
@@ -1138,6 +1182,7 @@ function buildResource(resource: ResourceConfig, all: SpecOperation[]) {
 		'jsonValueExpression',
 		'resourceLocatorIdExpression',
 		'stringArrayExpression',
+		'toIsoDateExpression',
 		'toInfraspeakDateExpression',
 		'unwrapJsonApi',
 	].filter((name) => new RegExp(`\\b${name}\\b`).test(body));
@@ -1167,6 +1212,21 @@ async function main() {
 		const { source, manifests } = buildResource(resource, operations);
 		files.push({ name: `${resource.value}.ts`, source: header(`Resource: ${resource.displayName}`) + source });
 		manifest.push(...manifests);
+	}
+
+	// Split tags: every active operation of an enabled tag must belong to some resource.
+	for (const tag of new Set(resources.map((r) => r.tag))) {
+		const owners = resources.filter((r) => r.tag === tag);
+		for (const op of operations.filter((o) => o.tag === tag && !o.deprecated)) {
+			const claimed = owners.filter((r) => !r.paths || r.paths.test(op.path));
+			if (claimed.length === 0) {
+				problem(`${tag} ${op.operationId} (${op.path}) isn't in any resource (check \`paths\`)`);
+			} else if (claimed.length > 1) {
+				problem(
+					`${tag} ${op.operationId} (${op.path}) is in ${claimed.map((r) => r.value).join(' and ')}`,
+				);
+			}
+		}
 	}
 
 	if (problems.length > 0) {

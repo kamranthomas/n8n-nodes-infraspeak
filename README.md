@@ -2,7 +2,7 @@
 
 This is an n8n community node. It lets you use [Infraspeak](https://infraspeak.com) in your n8n workflows.
 
-Infraspeak is a maintenance management platform (CMMS). This node covers corrective maintenance (**failures**, Infraspeak's work orders), preventive maintenance (**works** and **scheduled works**), and the records around them: clients, locations, assets, problems, categories, suppliers, operators, cost centers, other costs, contacts, requests, files, warehouses and stock.
+Infraspeak is a maintenance management platform (CMMS). This node covers corrective maintenance (**failures**, Infraspeak's work orders), preventive maintenance (**works** and **scheduled works**), and the records around them: clients, locations, assets, problems, categories, suppliers, operators, cost centers, other costs, contacts, requests, files, warehouses, stock and materials, and sales (quotes, buy and sell orders).
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -18,6 +18,8 @@ Infraspeak is a maintenance management platform (CMMS). This node covers correct
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
 ## Operations
+
+**Buy Order**: Create, Get, Get Many, Update, Delete, Get Lines, Add Line, Update Line, Delete Line
 
 **Category**: Create, Get, Get Many (top-level folders), Get Many (All Levels), Get Children, Update, Delete
 
@@ -40,15 +42,25 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 **Location**: Create, Get, Get Many, Get Many Buildings, Get Children, Update, Update Many, Delete, Duplicate Building. Create and Update ask for a **Type** (building, location folder or location) and show the fields for that type.
 
+**Material Type**: Create, Update, Delete, Get Ancestors
+
+**Material Type Folder**: Create, Get, Get Many, Get Many Root Folders, Get Children, Get Tree, Get Ancestors, Get Material Types (All Levels), Update, Delete
+
 **Operator**: Create, Get, Get Many
 
 **Other Cost**: Create, Get, Get Many, Update, Delete
 
 **Problem**: Get Many Areas, Get Area, Get Many Types
 
+**Quote**: Create, Get, Get Many, Get Lines, Add Line
+
 **Request**: Get
 
 **Scheduled Work**: Get, Get Many, Update
+
+**Sell Order**: Create, Get, Get Many, Update, Delete, Get Lines, Add Line, Update Line, Delete Line
+
+**Stock Material**: Create, Get, Get Many, Update, Delete, Get Registry, Add Stock Transactions
 
 **Stock Status**: Get Many, Update, Delete
 
@@ -63,6 +75,8 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 Client, Location, Problem Area, Problem Type, Supplier, Operator, Cost Center, Category and Warehouse fields are searchable dropdowns, or you can enter an ID directly. The Location list only shows real locations, because failures and assets can't be attached to buildings or folders. Problem types only exist inside a problem area, so to pick a Problem Type from the list, choose a Problem Area first. The Problem Area field only narrows the list and isn't sent to Infraspeak.
 
 Delete returns `{ "deleted": true }`; Archive and Unarchive return `{ "success": true }`.
+
+Not covered: the endpoints the API marks deprecated, and the material export (described as an xlsx download, which this node can't verify or handle yet). Use the HTTP Request node with the Infraspeak API credential for anything missing.
 
 Nested structures such as a planned job's recurrence or SLA rules are **JSON** fields: enter the structure the [Infraspeak API reference](https://developer.infraspeak.com) documents for that field. Filters that take several values (for example *Code (Any Of)*) take comma-separated text.
 
