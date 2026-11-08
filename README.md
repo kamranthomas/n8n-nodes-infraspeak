@@ -2,7 +2,7 @@
 
 This is an n8n community node. It lets you use [Infraspeak](https://infraspeak.com) in your n8n workflows.
 
-Infraspeak is a maintenance management platform (CMMS). This node covers corrective maintenance (**failures**, Infraspeak's work orders), preventive maintenance (**works** and **scheduled works**), and the records around them: clients, assets, problems, categories, suppliers, operators, cost centers, other costs, contacts, requests and files.
+Infraspeak is a maintenance management platform (CMMS). This node covers corrective maintenance (**failures**, Infraspeak's work orders), preventive maintenance (**works** and **scheduled works**), and the records around them: clients, locations, assets, problems, categories, suppliers, operators, cost centers, other costs, contacts, requests, files, warehouses and stock.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -38,6 +38,8 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 **File**: Get Many (the files attached to a record)
 
+**Location**: Create, Get, Get Many, Get Many Buildings, Get Children, Update, Update Many, Delete, Duplicate Building. Create and Update ask for a **Type** (building, location folder or location) and show the fields for that type.
+
 **Operator**: Create, Get, Get Many
 
 **Other Cost**: Create, Get, Get Many, Update, Delete
@@ -48,11 +50,17 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 **Scheduled Work**: Get, Get Many, Update
 
+**Stock Status**: Get Many, Update, Delete
+
+**Stock Transaction**: Get Many, Get Many Batches, Transfer, Transfer All
+
 **Supplier**: Create, Get, Get Many, Update, Delete
+
+**Warehouse**: Create, Get, Get Many, Update, Delete, Get Registry, Add Stock Transaction, Check Associations, Remove Operator
 
 **Work** (planned jobs): Create, Get, Get Many, Update
 
-Client, Location, Problem Area, Problem Type, Supplier, Operator, Cost Center and Category fields are searchable dropdowns, or you can enter an ID directly. The Location list only shows real locations, because failures and assets can't be attached to buildings or folders. Problem types only exist inside a problem area, so to pick a Problem Type from the list, choose a Problem Area first. The Problem Area field only narrows the list and isn't sent to Infraspeak.
+Client, Location, Problem Area, Problem Type, Supplier, Operator, Cost Center, Category and Warehouse fields are searchable dropdowns, or you can enter an ID directly. The Location list only shows real locations, because failures and assets can't be attached to buildings or folders. Problem types only exist inside a problem area, so to pick a Problem Type from the list, choose a Problem Area first. The Problem Area field only narrows the list and isn't sent to Infraspeak.
 
 Delete returns `{ "deleted": true }`; Archive and Unarchive return `{ "success": true }`.
 

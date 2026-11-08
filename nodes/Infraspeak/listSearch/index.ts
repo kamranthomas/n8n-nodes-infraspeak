@@ -56,4 +56,10 @@ export const listSearch = {
 		searchParam: 'sc_search',
 		label: (a) => withCode(a.name, a.full_code ?? a.code),
 	}),
+
+	getWarehouses: makeListSearch({
+		endpoint: '/stocks/warehouses',
+		searchParam: 'searchText',
+		label: (a) => withCode(a.name, a.code),
+	}),
 };

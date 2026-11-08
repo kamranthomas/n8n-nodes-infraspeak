@@ -50,6 +50,7 @@ export interface Operation {
 	output: 'records' | 'deleted' | 'success';
 	list: boolean;
 	selector?: { name: string; value: string };
+	variant?: string;
 	fields: Field[];
 	allowedQuery: string[];
 	bodySchema?: object;
@@ -174,4 +175,4 @@ export function build(
 }
 
 export const label = (op: Operation) =>
-	`${op.resource} → ${op.operation}${op.selector ? ` (${op.selector.value})` : ''} [${op.method} ${op.path}]`;
+	`${op.resource} → ${op.operation}${op.selector ? ` (${op.selector.value})` : ''}${op.variant ? ` <${op.variant}>` : ''} [${op.method} ${op.path}]`;

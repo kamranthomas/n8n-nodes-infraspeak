@@ -33,7 +33,8 @@ export type LocatorKey =
 	| 'supplier'
 	| 'operator'
 	| 'costCenter'
-	| 'category';
+	| 'category'
+	| 'warehouse';
 
 export interface LocatorConfig {
 	displayName: string;
@@ -97,6 +98,12 @@ export const locators: Record<LocatorKey, LocatorConfig> = {
 		listSearch: 'getCategories',
 		description: 'The category',
 	},
+	warehouse: {
+		displayName: 'Warehouse',
+		fieldName: 'warehouseId',
+		listSearch: 'getWarehouses',
+		description: 'The warehouse',
+	},
 };
 
 /** Body/query property → locator, applied in every resource. */
@@ -110,6 +117,7 @@ export const propertyLocators: Record<string, LocatorKey> = {
 	cost_center_id: 'costCenter',
 	category_id: 'category',
 	s_category_id: 'category',
+	warehouse_id: 'warehouse',
 };
 
 // ─── Field overrides ─────────────────────────────────────────────────────────
@@ -283,6 +291,157 @@ export const resources: ResourceConfig[] = [
 				description: 'Get the files attached to an Infraspeak object',
 				list: true,
 				pathDisplayNames: { relatedTo: 'Related To', relatedToId: 'Related To ID' },
+			},
+		},
+	},
+	{
+		tag: 'Locations',
+		value: 'location',
+		displayName: 'Location',
+		singular: 'location',
+		plural: 'locations',
+		operations: {
+			getLocations: {
+				list: true,
+				description: 'Get many locations: buildings, folders and locations',
+			},
+			getLocationsBuildings: {
+				value: 'getManyBuildings',
+				name: 'Get Many Buildings',
+				action: 'Get many buildings',
+				description: 'Get many locations of type building',
+			},
+			getLocationChildren: {
+				value: 'getChildren',
+				name: 'Get Children',
+				action: 'Get the children of a location',
+				description: 'Get the locations one level below a location',
+				list: true,
+				pathDisplayNames: { id: 'Location ID' },
+			},
+			updateMultipleLocations: {
+				value: 'updateMany',
+				name: 'Update Many',
+				action: 'Update many locations',
+				description: 'Update several locations in one request',
+			},
+			duplicateBuilding: {
+				value: 'duplicateBuilding',
+				name: 'Duplicate Building',
+				action: 'Duplicate a building',
+				description: 'Create a building as a copy of an existing one',
+			},
+			getLocation: { pathDisplayNames: { id: 'Location ID' } },
+			updateLocation: { pathDisplayNames: { id: 'Location ID' } },
+			deleteLocation: { pathDisplayNames: { id: 'Location ID' } },
+		},
+		fields: {
+			is_real: {
+				displayName: 'Real Locations Only',
+				description: 'Whether to return only real locations, not buildings or folders',
+			},
+			s_with_assets_count: {
+				displayName: 'Include Asset Count',
+				description:
+					'Whether to include each location’s cumulative asset count, including descendant locations',
+			},
+			with_assets_count: {
+				displayName: 'Include Asset Count',
+				description:
+					'Whether to include each location’s cumulative asset count, including descendant locations',
+			},
+			force: {
+				description: 'Whether to delete the location even if it has active dependencies',
+			},
+			locations: {
+				description: 'Array of locations to update, each with its location_id',
+			},
+		},
+	},
+	{
+		tag: 'Stocks',
+		value: 'stockStatus',
+		displayName: 'Stock Status',
+		singular: 'stock status',
+		plural: 'stock statuses',
+		operations: {
+			updateStockStatus: { pathDisplayNames: { stockStatus: 'Stock Status ID' } },
+			deleteStockStatus: { pathDisplayNames: { stockStatus: 'Stock Status ID' } },
+		},
+	},
+	{
+		tag: 'Stock Transactions',
+		value: 'stockTransaction',
+		displayName: 'Stock Transaction',
+		singular: 'stock transaction',
+		plural: 'stock transactions',
+		operations: {
+			getAllStockTransactions: {
+				value: 'getAll',
+				name: 'Get Many',
+				action: 'Get many stock transactions',
+				description: 'Get many stock transactions',
+				list: true,
+			},
+			getAllStockTransactionBatches: {
+				value: 'getManyBatches',
+				name: 'Get Many Batches',
+				action: 'Get many stock transaction batches',
+				description: 'Get many stock transaction batches',
+				list: true,
+			},
+			stockTransactionsTransfer: {
+				value: 'transfer',
+				name: 'Transfer',
+				action: 'Transfer stock between warehouses',
+				description: 'Transfer stock between warehouses',
+			},
+			stockTransactionsTransferAll: {
+				value: 'transferAll',
+				name: 'Transfer All',
+				action: 'Transfer all stock between warehouses',
+				description: 'Transfer all the stock of one warehouse to another',
+			},
+		},
+	},
+	{
+		tag: 'Warehouses',
+		value: 'warehouse',
+		displayName: 'Warehouse',
+		singular: 'warehouse',
+		plural: 'warehouses',
+		operations: {
+			getStockWarehouse: { pathLocators: { warehouseId: 'warehouse' } },
+			updateStockWarehouse: { pathLocators: { warehouseId: 'warehouse' } },
+			deleteStockWarehouse: { pathLocators: { warehouseId: 'warehouse' } },
+			getStockWarehousesRegistry: {
+				value: 'getRegistry',
+				name: 'Get Registry',
+				action: 'Get the registry of a warehouse',
+				description: 'Get the stock movement registry of a warehouse',
+				pathLocators: { warehouseId: 'warehouse' },
+			},
+			postStockWarehousesStockTransactions: {
+				value: 'addStockTransaction',
+				name: 'Add Stock Transaction',
+				action: 'Add a stock transaction to a warehouse',
+				description: 'Create a stock transaction in a warehouse',
+				pathLocators: { warehouseId: 'warehouse' },
+			},
+			getWarehousesAssociations: {
+				value: 'checkAssociations',
+				name: 'Check Associations',
+				action: 'Check whether a warehouse has dependencies',
+				description: 'Check whether a warehouse has dependencies, e.g. before deleting it',
+				pathLocators: { warehouseId: 'warehouse' },
+				returnsRecords: false,
+			},
+			deleteWarehouseAssociatedOperator: {
+				value: 'removeOperator',
+				name: 'Remove Operator',
+				action: 'Remove an operator from a warehouse',
+				description: 'Remove the association between an operator and a warehouse',
+				pathLocators: { warehouseId: 'warehouse', operatorId: 'operator' },
 			},
 		},
 	},

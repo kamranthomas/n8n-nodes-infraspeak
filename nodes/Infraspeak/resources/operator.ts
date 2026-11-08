@@ -3,7 +3,7 @@
 // Resource: Operator
 import type { INodeProperties } from 'n8n-workflow';
 import { returnAllAndLimitFields } from '../shared/pagination';
-import { intArrayExpression, unwrapJsonApi } from '../shared/utils';
+import { intArrayExpression, resourceLocatorIdExpression, unwrapJsonApi } from '../shared/utils';
 
 export const operatorDescription: INodeProperties[] = [
 	{
@@ -179,12 +179,33 @@ export const operatorDescription: INodeProperties[] = [
 				routing: { send: { type: 'body', property: 'timezone' } },
 			},
 			{
-				displayName: 'Warehouse ID',
+				displayName: 'Warehouse',
 				name: 'warehouseId',
-				description: 'ID of the warehouse associated to the Operator by default',
-				type: 'number',
-				default: 0,
-				routing: { send: { type: 'body', property: 'warehouse_id' } },
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
+				modes: [
+					{
+						displayName: 'From List',
+						name: 'list',
+						type: 'list',
+						typeOptions: { searchListMethod: 'getWarehouses', searchable: true },
+					},
+					{
+						displayName: 'By ID',
+						name: 'id',
+						type: 'string',
+						placeholder: 'e.g. 123',
+						validation: [
+							{
+								type: 'regex',
+								properties: { regex: '^[0-9]+$', errorMessage: 'Not a valid ID: must be a number' },
+							},
+						],
+					},
+				],
+				routing: {
+					send: { type: 'body', property: 'warehouse_id', value: resourceLocatorIdExpression },
+				},
 			},
 		],
 	},

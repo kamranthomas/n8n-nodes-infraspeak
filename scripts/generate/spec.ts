@@ -73,12 +73,21 @@ function classifyResponse(op: Record<string, unknown>): SpecOperation['returns']
 		string,
 		{ content?: Record<string, { schema?: Schema }> }
 	>;
-	const data = responses['200']?.content?.['application/json']?.schema?.properties?.data;
+	const ok = responses['200'] ?? responses['201'];
+	const data = ok?.content?.['application/json']?.schema?.properties?.data;
 	if (!data) return 'other';
+	// Polymorphic resources (e.g. a location is a building, folder or location) are a
+	// oneOf/anyOf of JSON:API records: it's a record if every variant is one.
+	const isRecord = (schema: Schema | undefined): boolean => {
+		if (!schema) return false;
+		if (schema.properties?.attributes) return true;
+		const variants = schema.oneOf ?? (schema.anyOf as Schema[] | undefined);
+		return Boolean(variants?.length && variants.every((variant) => isRecord(variant)));
+	};
 	if (primaryType(data) === 'array') {
-		return data.items?.properties?.attributes ? 'records' : 'other';
+		return isRecord(data.items) ? 'records' : 'other';
 	}
-	return data.properties?.attributes ? 'record' : 'other';
+	return isRecord(data) ? 'record' : 'other';
 }
 
 export function loadSpec(): LoadedSpec {

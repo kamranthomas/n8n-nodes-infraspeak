@@ -3039,6 +3039,1340 @@
 			"allowedQuery": ["limit", "page"]
 		},
 		{
+			"resource": "location",
+			"operation": "getAll",
+			"operationId": "getLocations",
+			"method": "GET",
+			"path": "/locations",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "filters",
+					"name": "search",
+					"kind": "string",
+					"target": "query",
+					"property": "sc_search",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "fullCode",
+					"kind": "string",
+					"target": "query",
+					"property": "full_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "isReal",
+					"kind": "boolean",
+					"target": "query",
+					"property": "is_real",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "locationId",
+					"kind": "locator",
+					"target": "query",
+					"property": "local_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "parentId",
+					"kind": "string",
+					"target": "query",
+					"property": "parent_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "rootParentId",
+					"kind": "string",
+					"target": "query",
+					"property": "root_parent_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "withAssetsCount",
+					"kind": "boolean",
+					"target": "query",
+					"property": "s_with_assets_count",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"code",
+				"full_code",
+				"is_real",
+				"limit",
+				"local_id",
+				"page",
+				"parent_id",
+				"root_parent_id",
+				"s_with_assets_count",
+				"sc_search",
+				"sort"
+			]
+		},
+		{
+			"resource": "location",
+			"operation": "create",
+			"operationId": "createLocation",
+			"method": "POST",
+			"path": "/locations",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "objectType",
+					"kind": "options",
+					"target": "body",
+					"property": "_type",
+					"required": true,
+					"options": ["building"],
+					"variant": "building"
+				},
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true,
+					"variant": "building"
+				},
+				{
+					"container": "",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": true,
+					"variant": "building"
+				},
+				{
+					"container": "",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "body",
+					"property": "client_id",
+					"required": true,
+					"variant": "building"
+				},
+				{
+					"container": "additionalFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "additionalFields",
+					"name": "address",
+					"kind": "string",
+					"target": "body",
+					"property": "address",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "additionalFields",
+					"name": "postalCode",
+					"kind": "string",
+					"target": "body",
+					"property": "postal_code",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "additionalFields",
+					"name": "city",
+					"kind": "string",
+					"target": "body",
+					"property": "city",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "additionalFields",
+					"name": "latitude",
+					"kind": "string",
+					"target": "body",
+					"property": "latitude",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "additionalFields",
+					"name": "longitude",
+					"kind": "string",
+					"target": "body",
+					"property": "longitude",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "additionalFields",
+					"name": "operators",
+					"kind": "intArray",
+					"target": "body",
+					"property": "operators",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "additionalFields",
+					"name": "teams",
+					"kind": "intArray",
+					"target": "body",
+					"property": "teams",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "additionalFields",
+					"name": "suppliers",
+					"kind": "intArray",
+					"target": "body",
+					"property": "suppliers",
+					"required": false,
+					"variant": "building"
+				}
+			],
+			"allowedQuery": [],
+			"variant": "building",
+			"bodySchema": {
+				"description": "Location payload to create a `building`",
+				"type": "object",
+				"properties": {
+					"_type": {
+						"description": "Location type",
+						"type": "string",
+						"enum": ["building"],
+						"writeOnly": true
+					},
+					"name": { "type": "string", "examples": ["Main Building"] },
+					"code": {
+						"description": "Building code. Must be unique across its level.",
+						"type": "string",
+						"examples": ["MB"]
+					},
+					"client_id": { "description": "ID of the associated client.", "type": "integer" },
+					"observation": { "description": "Additional information", "type": ["string", "null"] },
+					"address": {
+						"description": "Building address",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"postal_code": {
+						"description": "Building postal code",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"city": { "description": "Building city", "type": ["string", "null"], "writeOnly": true },
+					"latitude": {
+						"description": "Building latitude",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"longitude": {
+						"description": "Building longitude",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"operators": {
+						"description": "A list of IDs of the operators responsible for the building.",
+						"type": "array",
+						"items": { "type": "integer" },
+						"writeOnly": true
+					},
+					"teams": {
+						"description": "A list of IDs of the teams to associate to the location.",
+						"type": "array",
+						"items": { "type": "integer" },
+						"writeOnly": true
+					},
+					"suppliers": {
+						"description": "A list of IDs of the suppliers associated to the building.",
+						"type": "array",
+						"items": { "type": "integer" },
+						"writeOnly": true
+					}
+				},
+				"required": ["_type", "name", "code", "client_id"]
+			}
+		},
+		{
+			"resource": "location",
+			"operation": "create",
+			"operationId": "createLocation",
+			"method": "POST",
+			"path": "/locations",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "objectType",
+					"kind": "options",
+					"target": "body",
+					"property": "_type",
+					"required": true,
+					"options": ["location-folder"],
+					"variant": "location-folder"
+				},
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true,
+					"variant": "location-folder"
+				},
+				{
+					"container": "",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": true,
+					"variant": "location-folder"
+				},
+				{
+					"container": "",
+					"name": "parentId",
+					"kind": "number",
+					"target": "body",
+					"property": "parent_id",
+					"required": true,
+					"variant": "location-folder"
+				},
+				{
+					"container": "additionalFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false,
+					"variant": "location-folder"
+				}
+			],
+			"allowedQuery": [],
+			"variant": "location-folder",
+			"bodySchema": {
+				"description": "Location payload to create a `location-folder`",
+				"type": "object",
+				"properties": {
+					"_type": {
+						"description": "Location type",
+						"type": "string",
+						"enum": ["location-folder"],
+						"writeOnly": true
+					},
+					"name": { "type": "string", "examples": ["1st Floor"] },
+					"code": {
+						"description": "Folder code. Must be unique across its level.",
+						"type": "string",
+						"examples": ["1F"]
+					},
+					"parent_id": {
+						"description": "ID of the folder parent (upper level folder or building)",
+						"type": "integer"
+					},
+					"observation": { "description": "Additional information", "type": ["string", "null"] }
+				},
+				"required": ["_type", "name", "code", "parent_id"]
+			}
+		},
+		{
+			"resource": "location",
+			"operation": "create",
+			"operationId": "createLocation",
+			"method": "POST",
+			"path": "/locations",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "objectType",
+					"kind": "options",
+					"target": "body",
+					"property": "_type",
+					"required": true,
+					"options": ["location"],
+					"variant": "location"
+				},
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true,
+					"variant": "location"
+				},
+				{
+					"container": "",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": true,
+					"variant": "location"
+				},
+				{
+					"container": "",
+					"name": "parentId",
+					"kind": "number",
+					"target": "body",
+					"property": "parent_id",
+					"required": true,
+					"variant": "location"
+				},
+				{
+					"container": "",
+					"name": "locationTypeId",
+					"kind": "number",
+					"target": "body",
+					"property": "location_type_id",
+					"required": true,
+					"variant": "location"
+				},
+				{
+					"container": "additionalFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "additionalFields",
+					"name": "latitude",
+					"kind": "string",
+					"target": "body",
+					"property": "latitude",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "additionalFields",
+					"name": "longitude",
+					"kind": "string",
+					"target": "body",
+					"property": "longitude",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "additionalFields",
+					"name": "area",
+					"kind": "number",
+					"target": "body",
+					"property": "area",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "additionalFields",
+					"name": "glassArea",
+					"kind": "number",
+					"target": "body",
+					"property": "glass_area",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "additionalFields",
+					"name": "volume",
+					"kind": "number",
+					"target": "body",
+					"property": "volume",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "additionalFields",
+					"name": "operators",
+					"kind": "intArray",
+					"target": "body",
+					"property": "operators",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "additionalFields",
+					"name": "orientation",
+					"kind": "string",
+					"target": "body",
+					"property": "orientation",
+					"required": false,
+					"variant": "location"
+				}
+			],
+			"allowedQuery": [],
+			"variant": "location",
+			"bodySchema": {
+				"description": "Location payload for create a `location`",
+				"type": "object",
+				"properties": {
+					"_type": {
+						"description": "Location type",
+						"type": "string",
+						"enum": ["location"],
+						"writeOnly": true
+					},
+					"name": { "type": "string", "examples": ["Room 101"] },
+					"code": {
+						"description": "Location code. Must be unique across its level.",
+						"type": "string",
+						"examples": ["R101"]
+					},
+					"parent_id": {
+						"description": "ID of the folder parent (upper level folder or building)",
+						"type": "integer"
+					},
+					"location_type_id": {
+						"description": "ID of the location type (GET `/location-types`)",
+						"type": "integer"
+					},
+					"observation": { "description": "Additional information", "type": ["string", "null"] },
+					"latitude": { "description": "Element Location latitude", "type": ["string", "null"] },
+					"longitude": { "description": "Element Location longitude", "type": ["string", "null"] },
+					"area": { "description": "Location area", "type": ["number", "null"] },
+					"glass_area": { "description": "Location glass area", "type": ["number", "null"] },
+					"volume": { "description": "Location volume", "type": ["number", "null"] },
+					"operators": {
+						"description": "A list of IDs of the operators responsible for the location.",
+						"type": "array",
+						"items": { "type": "integer" },
+						"writeOnly": true
+					},
+					"orientation": {
+						"description": "Solar orientation (North, South, West, East)",
+						"type": "string"
+					}
+				},
+				"required": ["_type", "name", "code", "parent_id", "location_type_id"]
+			}
+		},
+		{
+			"resource": "location",
+			"operation": "updateMany",
+			"operationId": "updateMultipleLocations",
+			"method": "PATCH",
+			"path": "/locations",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "additionalFields",
+					"name": "locations",
+					"kind": "json",
+					"target": "body",
+					"property": "locations",
+					"required": false,
+					"schema": {
+						"description": "An array of locations to update",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"location_id": {
+									"description": "Id of Location to be updated",
+									"type": "integer",
+									"readOnly": true
+								},
+								"name": { "type": ["string", "null"], "examples": ["Room 101"] },
+								"code": {
+									"description": "Location code. Must be unique across its level.",
+									"type": ["string", "null"],
+									"examples": ["R101"]
+								},
+								"observation": {
+									"description": "Additional information",
+									"type": ["string", "null"]
+								},
+								"latitude": {
+									"description": "Element Location latitude",
+									"type": ["number", "null"]
+								},
+								"longitude": {
+									"description": "Element Location longitude",
+									"type": ["number", "null"]
+								},
+								"area": { "description": "Location area", "type": ["number", "null"] },
+								"glass_area": { "description": "Location glass area", "type": ["number", "null"] },
+								"volume": { "description": "Location volume", "type": ["number", "null"] },
+								"orientation": {
+									"description": "Solar orientation (North, South, West, East)",
+									"type": ["string", "null"]
+								}
+							},
+							"required": ["location_id"]
+						}
+					}
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Location payload for update multiple locations",
+				"type": "object",
+				"properties": {
+					"locations": {
+						"description": "An array of locations to update",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"location_id": {
+									"description": "Id of Location to be updated",
+									"type": "integer",
+									"readOnly": true
+								},
+								"name": { "type": ["string", "null"], "examples": ["Room 101"] },
+								"code": {
+									"description": "Location code. Must be unique across its level.",
+									"type": ["string", "null"],
+									"examples": ["R101"]
+								},
+								"observation": {
+									"description": "Additional information",
+									"type": ["string", "null"]
+								},
+								"latitude": {
+									"description": "Element Location latitude",
+									"type": ["number", "null"]
+								},
+								"longitude": {
+									"description": "Element Location longitude",
+									"type": ["number", "null"]
+								},
+								"area": { "description": "Location area", "type": ["number", "null"] },
+								"glass_area": { "description": "Location glass area", "type": ["number", "null"] },
+								"volume": { "description": "Location volume", "type": ["number", "null"] },
+								"orientation": {
+									"description": "Solar orientation (North, South, West, East)",
+									"type": ["string", "null"]
+								}
+							},
+							"required": ["location_id"]
+						}
+					}
+				}
+			}
+		},
+		{
+			"resource": "location",
+			"operation": "getManyBuildings",
+			"operationId": "getLocationsBuildings",
+			"method": "GET",
+			"path": "/locations/buildings",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "filters",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "query",
+					"property": "filter[client_id]",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "withAssetsCount",
+					"kind": "boolean",
+					"target": "query",
+					"property": "with_assets_count",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				}
+			],
+			"allowedQuery": ["filter[client_id]", "limit", "page", "sort", "with_assets_count"]
+		},
+		{
+			"resource": "location",
+			"operation": "duplicateBuilding",
+			"operationId": "duplicateBuilding",
+			"method": "POST",
+			"path": "/locations/buildings",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "body",
+					"property": "client_id",
+					"required": true
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Duplicate Building payload",
+				"type": "object",
+				"properties": {
+					"name": { "type": "string", "examples": ["Building Name"] },
+					"code": {
+						"description": "Building code. Must be unique across its level.",
+						"type": "string",
+						"examples": ["MB"]
+					},
+					"client_id": { "description": "ID of the associated client.", "type": "integer" }
+				},
+				"required": ["name", "code", "client_id"]
+			}
+		},
+		{
+			"resource": "location",
+			"operation": "get",
+			"operationId": "getLocation",
+			"method": "GET",
+			"path": "/locations/{id}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "id",
+					"kind": "string",
+					"target": "path",
+					"property": "id",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "location",
+			"operation": "update",
+			"operationId": "updateLocation",
+			"method": "PATCH",
+			"path": "/locations/{id}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "id",
+					"kind": "string",
+					"target": "path",
+					"property": "id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "objectType",
+					"kind": "options",
+					"target": "body",
+					"property": "_type",
+					"required": true,
+					"options": ["building"],
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "clientId",
+					"kind": "locator",
+					"target": "body",
+					"property": "client_id",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "operators",
+					"kind": "intArray",
+					"target": "body",
+					"property": "operators",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "address",
+					"kind": "string",
+					"target": "body",
+					"property": "address",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "postalCode",
+					"kind": "string",
+					"target": "body",
+					"property": "postal_code",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "city",
+					"kind": "string",
+					"target": "body",
+					"property": "city",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "latitude",
+					"kind": "string",
+					"target": "body",
+					"property": "latitude",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "longitude",
+					"kind": "string",
+					"target": "body",
+					"property": "longitude",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "activity",
+					"kind": "string",
+					"target": "body",
+					"property": "activity",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "meanPopulation",
+					"kind": "string",
+					"target": "body",
+					"property": "mean_population",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "schedulesInfo",
+					"kind": "string",
+					"target": "body",
+					"property": "schedules_info",
+					"required": false,
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "contacts",
+					"kind": "json",
+					"target": "body",
+					"property": "contacts",
+					"required": false,
+					"schema": {
+						"type": "object",
+						"properties": {
+							"data": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"type": { "type": "string", "enum": ["contact"], "readOnly": true },
+										"id": { "type": "string", "readOnly": true }
+									}
+								}
+							}
+						}
+					},
+					"variant": "building"
+				},
+				{
+					"container": "updateFields",
+					"name": "teams",
+					"kind": "intArray",
+					"target": "body",
+					"property": "teams",
+					"required": false,
+					"variant": "building"
+				}
+			],
+			"allowedQuery": [],
+			"variant": "building",
+			"bodySchema": {
+				"description": "Location payload to update a `building`",
+				"type": "object",
+				"properties": {
+					"_type": {
+						"description": "Location type",
+						"type": "string",
+						"enum": ["building"],
+						"writeOnly": true
+					},
+					"name": { "type": "string", "examples": ["Main Building"] },
+					"code": {
+						"description": "Building code. Must be unique across its level.",
+						"type": "string",
+						"examples": ["MB"]
+					},
+					"client_id": { "description": "ID of the associated client.", "type": "integer" },
+					"operators": {
+						"description": "A list of IDs of the operators responsible for the building.",
+						"type": "array",
+						"items": { "type": "integer" },
+						"writeOnly": true
+					},
+					"observation": { "description": "Additional information", "type": ["string", "null"] },
+					"address": {
+						"description": "Building address",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"postal_code": {
+						"description": "Building postal code",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"city": { "description": "Building city", "type": ["string", "null"], "writeOnly": true },
+					"latitude": {
+						"description": "Building latitude",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"longitude": {
+						"description": "Building longitude",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"activity": {
+						"description": "Building activity",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"mean_population": {
+						"description": "Building mean population",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"schedules_info": {
+						"description": "Building schedules info",
+						"type": ["string", "null"],
+						"writeOnly": true
+					},
+					"contacts": {
+						"type": "object",
+						"properties": {
+							"data": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"type": { "type": "string", "enum": ["contact"], "readOnly": true },
+										"id": { "type": "string", "readOnly": true }
+									}
+								}
+							}
+						}
+					},
+					"teams": {
+						"description": "A list of IDs of the teams to associate to the location.",
+						"type": "array",
+						"items": { "type": "integer" },
+						"writeOnly": true
+					}
+				},
+				"required": ["_type"]
+			}
+		},
+		{
+			"resource": "location",
+			"operation": "update",
+			"operationId": "updateLocation",
+			"method": "PATCH",
+			"path": "/locations/{id}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "id",
+					"kind": "string",
+					"target": "path",
+					"property": "id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "objectType",
+					"kind": "options",
+					"target": "body",
+					"property": "_type",
+					"required": true,
+					"options": ["location-folder"],
+					"variant": "location-folder"
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false,
+					"variant": "location-folder"
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false,
+					"variant": "location-folder"
+				},
+				{
+					"container": "updateFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false,
+					"variant": "location-folder"
+				},
+				{
+					"container": "updateFields",
+					"name": "parentId",
+					"kind": "number",
+					"target": "body",
+					"property": "parent_id",
+					"required": false,
+					"variant": "location-folder"
+				}
+			],
+			"allowedQuery": [],
+			"variant": "location-folder",
+			"bodySchema": {
+				"description": "Location payload to update a `location-folder`",
+				"type": "object",
+				"properties": {
+					"_type": {
+						"description": "Location type",
+						"type": "string",
+						"enum": ["location-folder"],
+						"writeOnly": true
+					},
+					"name": { "type": "string", "examples": ["1st Floor"] },
+					"code": {
+						"description": "Folder code. Must be unique across its level.",
+						"type": "string",
+						"examples": ["1F"]
+					},
+					"observation": { "description": "Additional information", "type": ["string", "null"] },
+					"parent_id": {
+						"description": "ID of the folder parent (upper level folder or building)",
+						"type": "integer"
+					}
+				},
+				"required": ["_type"]
+			}
+		},
+		{
+			"resource": "location",
+			"operation": "update",
+			"operationId": "updateLocation",
+			"method": "PATCH",
+			"path": "/locations/{id}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "id",
+					"kind": "string",
+					"target": "path",
+					"property": "id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "objectType",
+					"kind": "options",
+					"target": "body",
+					"property": "_type",
+					"required": true,
+					"options": ["location"],
+					"variant": "location"
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "updateFields",
+					"name": "observation",
+					"kind": "string",
+					"target": "body",
+					"property": "observation",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "updateFields",
+					"name": "parentId",
+					"kind": "number",
+					"target": "body",
+					"property": "parent_id",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "updateFields",
+					"name": "locationTypeId",
+					"kind": "number",
+					"target": "body",
+					"property": "location_type_id",
+					"required": false,
+					"variant": "location"
+				},
+				{
+					"container": "updateFields",
+					"name": "orientation",
+					"kind": "string",
+					"target": "body",
+					"property": "orientation",
+					"required": false,
+					"variant": "location"
+				}
+			],
+			"allowedQuery": [],
+			"variant": "location",
+			"bodySchema": {
+				"description": "Location payload for update a `location`",
+				"type": "object",
+				"properties": {
+					"_type": {
+						"description": "Location type",
+						"type": "string",
+						"enum": ["location"],
+						"writeOnly": true
+					},
+					"name": { "type": "string", "examples": ["Room 101"] },
+					"code": {
+						"description": "Location code. Must be unique across its level.",
+						"type": "string",
+						"examples": ["R101"]
+					},
+					"observation": { "description": "Additional information", "type": ["string", "null"] },
+					"parent_id": {
+						"description": "ID of the folder parent (upper level folder or building)",
+						"type": "integer"
+					},
+					"location_type_id": {
+						"description": "ID of the location type (GET `/location-types`)",
+						"type": "integer"
+					},
+					"orientation": {
+						"description": "Solar orientation (North, South, West, East)",
+						"type": "string"
+					}
+				},
+				"required": ["_type"]
+			}
+		},
+		{
+			"resource": "location",
+			"operation": "delete",
+			"operationId": "deleteLocation",
+			"method": "DELETE",
+			"path": "/locations/{id}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "id",
+					"kind": "string",
+					"target": "path",
+					"property": "id",
+					"required": true
+				},
+				{
+					"container": "filters",
+					"name": "force",
+					"kind": "boolean",
+					"target": "query",
+					"property": "force",
+					"required": false
+				}
+			],
+			"allowedQuery": ["force"]
+		},
+		{
+			"resource": "location",
+			"operation": "getChildren",
+			"operationId": "getLocationChildren",
+			"method": "GET",
+			"path": "/locations/{id}/children",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "",
+					"name": "id",
+					"kind": "string",
+					"target": "path",
+					"property": "id",
+					"required": true
+				},
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "fullCode",
+					"kind": "string",
+					"target": "query",
+					"property": "full_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "isReal",
+					"kind": "boolean",
+					"target": "query",
+					"property": "is_real",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "locationId",
+					"kind": "locator",
+					"target": "query",
+					"property": "local_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "rootParentId",
+					"kind": "string",
+					"target": "query",
+					"property": "root_parent_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "withAssetsCount",
+					"kind": "boolean",
+					"target": "query",
+					"property": "with_assets_count",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"code",
+				"full_code",
+				"is_real",
+				"limit",
+				"local_id",
+				"page",
+				"root_parent_id",
+				"with_assets_count"
+			]
+		},
+		{
 			"resource": "operator",
 			"operation": "getAll",
 			"operationId": "getOperators",
@@ -3135,7 +4469,7 @@
 				{
 					"container": "additionalFields",
 					"name": "warehouseId",
-					"kind": "number",
+					"kind": "locator",
 					"target": "body",
 					"property": "warehouse_id",
 					"required": false
@@ -3924,6 +5258,401 @@
 			}
 		},
 		{
+			"resource": "stockStatus",
+			"operation": "getAll",
+			"operationId": "getStockStatus",
+			"method": "GET",
+			"path": "/stocks/stock-status",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "filters",
+					"name": "warehouseId",
+					"kind": "string",
+					"target": "query",
+					"property": "s_warehouse_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "materialId",
+					"kind": "string",
+					"target": "query",
+					"property": "s_material_id",
+					"required": false
+				}
+			],
+			"allowedQuery": ["limit", "page", "s_material_id", "s_warehouse_id"]
+		},
+		{
+			"resource": "stockStatus",
+			"operation": "update",
+			"operationId": "updateStockStatus",
+			"method": "PATCH",
+			"path": "/stocks/stock-status/{stockStatus}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "stockStatus",
+					"kind": "string",
+					"target": "path",
+					"property": "stockStatus",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "minimumQuantity",
+					"kind": "number",
+					"target": "body",
+					"property": "minimum_quantity",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "meanPrice",
+					"kind": "number",
+					"target": "body",
+					"property": "mean_price",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Stock status update payload",
+				"type": "object",
+				"properties": {
+					"minimum_quantity": {
+						"description": "Minimum quantity",
+						"type": "integer",
+						"examples": [10]
+					},
+					"mean_price": { "description": "Mean price", "type": "number", "examples": [10.5] },
+					"observations": {
+						"description": "Observations about the stock status update",
+						"type": "string",
+						"examples": ["Stock status updated to in stock"]
+					}
+				}
+			}
+		},
+		{
+			"resource": "stockStatus",
+			"operation": "delete",
+			"operationId": "deleteStockStatus",
+			"method": "DELETE",
+			"path": "/stocks/stock-status/{stockStatus}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "stockStatus",
+					"kind": "string",
+					"target": "path",
+					"property": "stockStatus",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "stockTransaction",
+			"operation": "getAll",
+			"operationId": "getAllStockTransactions",
+			"method": "GET",
+			"path": "/stocks/stock-transactions",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "string",
+					"target": "query",
+					"property": "sort",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "order",
+					"kind": "options",
+					"target": "query",
+					"property": "order",
+					"required": false,
+					"options": ["asc", "desc"]
+				},
+				{
+					"container": "filters",
+					"name": "expand",
+					"kind": "options",
+					"target": "query",
+					"property": "expand",
+					"required": false,
+					"options": ["operator"]
+				},
+				{
+					"container": "filters",
+					"name": "warehouseId",
+					"kind": "string",
+					"target": "query",
+					"property": "s_warehouse_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "materialId",
+					"kind": "string",
+					"target": "query",
+					"property": "s_material_id",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "createdAtAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_created_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "createdAtBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_created_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "operatorId",
+					"kind": "string",
+					"target": "query",
+					"property": "s_operator_id",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"date_max_created_at",
+				"date_max_updated_at",
+				"date_min_created_at",
+				"date_min_updated_at",
+				"expand",
+				"limit",
+				"order",
+				"page",
+				"s_material_id",
+				"s_operator_id",
+				"s_warehouse_id",
+				"sort"
+			]
+		},
+		{
+			"resource": "stockTransaction",
+			"operation": "transfer",
+			"operationId": "stockTransactionsTransfer",
+			"method": "POST",
+			"path": "/stocks/stock-transactions/transfer",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "warehouseFromId",
+					"kind": "number",
+					"target": "body",
+					"property": "warehouse_from_id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "warehouseToId",
+					"kind": "number",
+					"target": "body",
+					"property": "warehouse_to_id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "materialId",
+					"kind": "number",
+					"target": "body",
+					"property": "material_id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "quantity",
+					"kind": "number",
+					"target": "body",
+					"property": "quantity",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Transfer stock between warehouses payload",
+				"type": "object",
+				"properties": {
+					"warehouse_from_id": {
+						"description": "Warehouse id to transfer stock from",
+						"type": "integer",
+						"examples": [1]
+					},
+					"warehouse_to_id": {
+						"description": "Warehouse id to transfer stock to",
+						"type": "integer",
+						"examples": [2]
+					},
+					"material_id": {
+						"description": "Material id to transfer",
+						"type": "integer",
+						"examples": [1]
+					},
+					"quantity": {
+						"description": "Quantity to transfer",
+						"type": "integer",
+						"examples": [10]
+					},
+					"observations": {
+						"description": "Observations about the transfer",
+						"type": "string",
+						"examples": ["Transferring stock between warehouses"]
+					}
+				},
+				"required": ["warehouse_from_id", "warehouse_to_id", "material_id", "quantity"]
+			}
+		},
+		{
+			"resource": "stockTransaction",
+			"operation": "transferAll",
+			"operationId": "stockTransactionsTransferAll",
+			"method": "POST",
+			"path": "/stocks/stock-transactions/transfer-all",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "warehouseFromId",
+					"kind": "number",
+					"target": "body",
+					"property": "warehouse_from_id",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "warehouseToId",
+					"kind": "number",
+					"target": "body",
+					"property": "warehouse_to_id",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Transfer all stock between warehouses payload",
+				"type": "object",
+				"properties": {
+					"warehouse_from_id": {
+						"description": "Warehouse id to transfer stock from",
+						"type": "integer",
+						"examples": [1]
+					},
+					"warehouse_to_id": {
+						"description": "Warehouse id to transfer stock to",
+						"type": "integer",
+						"examples": [2]
+					},
+					"observations": {
+						"description": "Observations about the transfer",
+						"type": "string",
+						"examples": ["Transferring stock between warehouses"]
+					}
+				},
+				"required": ["warehouse_from_id", "warehouse_to_id"]
+			}
+		},
+		{
+			"resource": "stockTransaction",
+			"operation": "getManyBatches",
+			"operationId": "getAllStockTransactionBatches",
+			"method": "GET",
+			"path": "/stocks/stock-transactions-batches",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "filters",
+					"name": "sourceType",
+					"kind": "string",
+					"target": "query",
+					"property": "s_source_type",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "warehouseId",
+					"kind": "string",
+					"target": "query",
+					"property": "s_warehouse_id",
+					"required": false
+				},
+				{
+					"container": "options",
+					"name": "expanded",
+					"kind": "options",
+					"target": "query",
+					"property": "expanded",
+					"required": false,
+					"options": ["stock_transactions"]
+				}
+			],
+			"allowedQuery": ["expanded", "limit", "page", "s_source_type", "s_warehouse_id"]
+		},
+		{
 			"resource": "supplier",
 			"operation": "getAll",
 			"operationId": "getSuppliers",
@@ -4357,6 +6086,537 @@
 				}
 			],
 			"allowedQuery": []
+		},
+		{
+			"resource": "warehouse",
+			"operation": "getAll",
+			"operationId": "getStockWarehouses",
+			"method": "GET",
+			"path": "/stocks/warehouses",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "filters",
+					"name": "expand",
+					"kind": "options",
+					"target": "query",
+					"property": "expand",
+					"required": false,
+					"options": ["operators"]
+				},
+				{
+					"container": "options",
+					"name": "sort",
+					"kind": "options",
+					"target": "query",
+					"property": "sort",
+					"required": false,
+					"options": ["address", "code", "name", "warehouse_id"]
+				},
+				{
+					"container": "filters",
+					"name": "order",
+					"kind": "options",
+					"target": "query",
+					"property": "order",
+					"required": false,
+					"options": ["asc", "desc"]
+				},
+				{
+					"container": "filters",
+					"name": "searchText",
+					"kind": "string",
+					"target": "query",
+					"property": "searchText",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "updatedAtBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_updated_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "createdAtAfter",
+					"kind": "date",
+					"target": "query",
+					"property": "date_min_created_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "createdAtBefore",
+					"kind": "date",
+					"target": "query",
+					"property": "date_max_created_at",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "code",
+					"kind": "string",
+					"target": "query",
+					"property": "s_code",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "name",
+					"kind": "string",
+					"target": "query",
+					"property": "s_name",
+					"required": false
+				},
+				{
+					"container": "filters",
+					"name": "warehouseManagersIds",
+					"kind": "string",
+					"target": "query",
+					"property": "warehouse_managers_ids",
+					"required": false,
+					"arrayItems": "integer"
+				},
+				{
+					"container": "filters",
+					"name": "materialId",
+					"kind": "string",
+					"target": "query",
+					"property": "s_material_id",
+					"required": false
+				}
+			],
+			"allowedQuery": [
+				"date_max_created_at",
+				"date_max_updated_at",
+				"date_min_created_at",
+				"date_min_updated_at",
+				"expand",
+				"limit",
+				"order",
+				"page",
+				"s_code",
+				"s_material_id",
+				"s_name",
+				"searchText",
+				"sort",
+				"warehouse_managers_ids"
+			]
+		},
+		{
+			"resource": "warehouse",
+			"operation": "create",
+			"operationId": "createStockWarehouses",
+			"method": "POST",
+			"path": "/stocks/warehouses",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": true
+				},
+				{
+					"container": "additionalFields",
+					"name": "associatedOperators",
+					"kind": "json",
+					"target": "body",
+					"property": "associated_operators",
+					"required": false,
+					"schema": {
+						"description": "List of associated operators.",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"operator_id": { "description": "ID of the operator.", "type": "integer" },
+								"permission": {
+									"description": "Permission of the operator.",
+									"type": "string",
+									"enum": ["manager"]
+								}
+							},
+							"required": ["operator_id", "permission"]
+						}
+					}
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Create Warehouse payload",
+				"type": "object",
+				"properties": {
+					"code": { "description": "Code of the warehouse.", "type": "string" },
+					"name": { "description": "Name of the warehouse.", "type": "string" },
+					"associated_operators": {
+						"description": "List of associated operators.",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"operator_id": { "description": "ID of the operator.", "type": "integer" },
+								"permission": {
+									"description": "Permission of the operator.",
+									"type": "string",
+									"enum": ["manager"]
+								}
+							},
+							"required": ["operator_id", "permission"]
+						}
+					}
+				},
+				"required": ["code", "name"]
+			}
+		},
+		{
+			"resource": "warehouse",
+			"operation": "get",
+			"operationId": "getStockWarehouse",
+			"method": "GET",
+			"path": "/stocks/warehouses/{warehouseId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "warehouseId",
+					"kind": "locator",
+					"target": "path",
+					"property": "warehouseId",
+					"required": true
+				},
+				{
+					"container": "filters",
+					"name": "expand",
+					"kind": "options",
+					"target": "query",
+					"property": "expand",
+					"required": false,
+					"options": ["operators"]
+				}
+			],
+			"allowedQuery": ["expand"]
+		},
+		{
+			"resource": "warehouse",
+			"operation": "update",
+			"operationId": "updateStockWarehouse",
+			"method": "PATCH",
+			"path": "/stocks/warehouses/{warehouseId}",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "warehouseId",
+					"kind": "locator",
+					"target": "path",
+					"property": "warehouseId",
+					"required": true
+				},
+				{
+					"container": "updateFields",
+					"name": "code",
+					"kind": "string",
+					"target": "body",
+					"property": "code",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "name",
+					"kind": "string",
+					"target": "body",
+					"property": "name",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "address",
+					"kind": "string",
+					"target": "body",
+					"property": "address",
+					"required": false
+				},
+				{
+					"container": "updateFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Update Warehouse payload",
+				"type": "object",
+				"properties": {
+					"code": { "description": "Code of the warehouse.", "type": "string" },
+					"name": { "description": "Name of the warehouse.", "type": "string" },
+					"address": { "description": "Address of the warehouse.", "type": "string" },
+					"observations": { "description": "Observations of the warehouse.", "type": "string" }
+				}
+			}
+		},
+		{
+			"resource": "warehouse",
+			"operation": "delete",
+			"operationId": "deleteStockWarehouse",
+			"method": "DELETE",
+			"path": "/stocks/warehouses/{warehouseId}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "warehouseId",
+					"kind": "locator",
+					"target": "path",
+					"property": "warehouseId",
+					"required": true
+				},
+				{
+					"container": "filters",
+					"name": "associations",
+					"kind": "options",
+					"target": "query",
+					"property": "associations",
+					"required": false,
+					"options": ["operators", "purchases"]
+				},
+				{
+					"container": "filters",
+					"name": "destinationWarehouseId",
+					"kind": "number",
+					"target": "query",
+					"property": "destinationWarehouseId",
+					"required": false
+				}
+			],
+			"allowedQuery": ["associations", "destinationWarehouseId"]
+		},
+		{
+			"resource": "warehouse",
+			"operation": "removeOperator",
+			"operationId": "deleteWarehouseAssociatedOperator",
+			"method": "DELETE",
+			"path": "/stocks/warehouses/{warehouseId}/associated-operators/{operatorId}",
+			"output": "deleted",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "warehouseId",
+					"kind": "locator",
+					"target": "path",
+					"property": "warehouseId",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "operatorId",
+					"kind": "locator",
+					"target": "path",
+					"property": "operatorId",
+					"required": true
+				}
+			],
+			"allowedQuery": []
+		},
+		{
+			"resource": "warehouse",
+			"operation": "getRegistry",
+			"operationId": "getStockWarehousesRegistry",
+			"method": "GET",
+			"path": "/stocks/warehouses/{warehouseId}/registry",
+			"output": "records",
+			"list": true,
+			"fields": [
+				{
+					"container": "",
+					"name": "warehouseId",
+					"kind": "locator",
+					"target": "path",
+					"property": "warehouseId",
+					"required": true
+				},
+				{
+					"container": "filters",
+					"name": "expand",
+					"kind": "options",
+					"target": "query",
+					"property": "expand",
+					"required": false,
+					"options": ["operator"]
+				}
+			],
+			"allowedQuery": ["expand", "limit", "page"]
+		},
+		{
+			"resource": "warehouse",
+			"operation": "addStockTransaction",
+			"operationId": "postStockWarehousesStockTransactions",
+			"method": "POST",
+			"path": "/stocks/warehouses/{warehouseId}/stock-transactions",
+			"output": "records",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "warehouseId",
+					"kind": "locator",
+					"target": "path",
+					"property": "warehouseId",
+					"required": true
+				},
+				{
+					"container": "",
+					"name": "warehouseAction",
+					"kind": "options",
+					"target": "body",
+					"property": "action",
+					"required": true,
+					"options": ["WAREHOUSE_ADD", "WAREHOUSE_SUBTRACT"]
+				},
+				{
+					"container": "additionalFields",
+					"name": "observations",
+					"kind": "string",
+					"target": "body",
+					"property": "observations",
+					"required": false
+				},
+				{
+					"container": "",
+					"name": "transactions",
+					"kind": "json",
+					"target": "body",
+					"property": "transactions",
+					"required": true,
+					"schema": {
+						"description": "An array containing details for one or more individual stock transactions to be recorded.",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"material_id": {
+									"description": "The unique identifier of the specific material involved in this transaction.",
+									"type": "integer"
+								},
+								"quantity": {
+									"description": "The quantity of the material being transacted.",
+									"type": "integer"
+								},
+								"observations": {
+									"description": "Specific notes or details related to this individual material's transaction within the batch.",
+									"type": "string"
+								},
+								"cost_price": {
+									"description": "The cost price associated with this material at the time of the transaction. This is typically the purchase price or standard cost.",
+									"type": "integer"
+								}
+							},
+							"required": ["material_id", "quantity", "cost_price"]
+						}
+					}
+				}
+			],
+			"allowedQuery": [],
+			"bodySchema": {
+				"description": "Payload for recording a batch stock transaction for a specific warehouse.",
+				"type": "object",
+				"properties": {
+					"action": {
+						"description": "Specifies the type of stock transaction being performed as a batch.",
+						"type": "string",
+						"enum": ["WAREHOUSE_SUBTRACT", "WAREHOUSE_ADD"]
+					},
+					"observations": {
+						"description": "General notes or details applicable to the entire batch of stock transactions.",
+						"type": "string"
+					},
+					"transactions": {
+						"description": "An array containing details for one or more individual stock transactions to be recorded.",
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"material_id": {
+									"description": "The unique identifier of the specific material involved in this transaction.",
+									"type": "integer"
+								},
+								"quantity": {
+									"description": "The quantity of the material being transacted.",
+									"type": "integer"
+								},
+								"observations": {
+									"description": "Specific notes or details related to this individual material's transaction within the batch.",
+									"type": "string"
+								},
+								"cost_price": {
+									"description": "The cost price associated with this material at the time of the transaction. This is typically the purchase price or standard cost.",
+									"type": "integer"
+								}
+							},
+							"required": ["material_id", "quantity", "cost_price"]
+						}
+					}
+				},
+				"required": ["action", "transactions"]
+			}
+		},
+		{
+			"resource": "warehouse",
+			"operation": "checkAssociations",
+			"operationId": "getWarehousesAssociations",
+			"method": "GET",
+			"path": "/stocks/warehouses/{warehouseId}/check-associations",
+			"output": "success",
+			"list": false,
+			"fields": [
+				{
+					"container": "",
+					"name": "warehouseId",
+					"kind": "locator",
+					"target": "path",
+					"property": "warehouseId",
+					"required": true
+				},
+				{
+					"container": "filters",
+					"name": "associations",
+					"kind": "options",
+					"target": "query",
+					"property": "associations",
+					"required": false,
+					"options": ["operators", "purchases"]
+				}
+			],
+			"allowedQuery": ["associations"]
 		},
 		{
 			"resource": "work",

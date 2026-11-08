@@ -10,12 +10,16 @@ import { costCenterDescription } from './costCenter';
 import { elementDescription } from './element';
 import { failureDescription } from './failure';
 import { fileDescription } from './file';
+import { locationDescription } from './location';
 import { operatorDescription } from './operator';
 import { otherCostDescription } from './otherCost';
 import { problemDescription } from './problem';
 import { requestDescription } from './request';
 import { scheduledWorkDescription } from './scheduledWork';
+import { stockStatusDescription } from './stockStatus';
+import { stockTransactionDescription } from './stockTransaction';
 import { supplierDescription } from './supplier';
+import { warehouseDescription } from './warehouse';
 import { workDescription } from './work';
 
 export const resourceProperties: INodeProperties[] = [
@@ -32,12 +36,16 @@ export const resourceProperties: INodeProperties[] = [
 			{ name: 'Element (Asset)', value: 'element' },
 			{ name: 'Failure', value: 'failure' },
 			{ name: 'File', value: 'file' },
+			{ name: 'Location', value: 'location' },
 			{ name: 'Operator', value: 'operator' },
 			{ name: 'Other Cost', value: 'otherCost' },
 			{ name: 'Problem', value: 'problem' },
 			{ name: 'Request', value: 'request' },
 			{ name: 'Scheduled Work', value: 'scheduledWork' },
+			{ name: 'Stock Status', value: 'stockStatus' },
+			{ name: 'Stock Transaction', value: 'stockTransaction' },
 			{ name: 'Supplier', value: 'supplier' },
+			{ name: 'Warehouse', value: 'warehouse' },
 			{ name: 'Work', value: 'work' },
 		],
 		default: 'failure',
@@ -49,11 +57,15 @@ export const resourceProperties: INodeProperties[] = [
 	...elementDescription,
 	...failureDescription,
 	...fileDescription,
+	...locationDescription,
 	...operatorDescription,
 	...otherCostDescription,
 	...problemDescription,
 	...requestDescription,
 	...scheduledWorkDescription,
+	...stockStatusDescription,
+	...stockTransactionDescription,
 	...supplierDescription,
+	...warehouseDescription,
 	...workDescription,
 ];

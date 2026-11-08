@@ -180,6 +180,8 @@ interface ManifestField {
 	schema?: Schema;
 	/** Query arrays sent as typed text: the item type, so tests can send a valid sample. */
 	arrayItems?: string;
+	/** Body variant (oneOf) this field belongs to; absent for fields common to all. */
+	variant?: string;
 }
 
 interface ManifestOperation {
@@ -192,6 +194,8 @@ interface ManifestOperation {
 	output: 'records' | 'deleted' | 'success';
 	list: boolean;
 	selector?: { name: string; value: string };
+	/** oneOf body variant this entry exercises. */
+	variant?: string;
 	fields: ManifestField[];
 	allowedQuery: string[];
 	bodySchema?: Schema;
@@ -260,13 +264,15 @@ function jsonField(
 	routing: Record<string, unknown>,
 	manifest: (kind: ValueKind, extra?: Partial<ManifestField>) => ManifestField,
 ): { property: Record<string, unknown>; manifest: ManifestField } {
-	const description = base.description ? `${String(base.description)}. ` : '';
+	// n8n lint: one sentence takes no final period, several sentences take one.
+	const hint = 'JSON in the structure the Infraspeak API documents for this field';
+	const description = base.description ? `${String(base.description)}. ${hint}.` : hint;
 	return {
 		property: {
 			...base,
 			type: 'json',
 			default: defaultValue,
-			description: `${description}JSON in the structure the Infraspeak API documents for this field.`,
+			description,
 			routing,
 		},
 		manifest: manifest('json', { schema }),
@@ -343,13 +349,17 @@ function buildValueFields(
 
 	// `_type` and `type` can coexist in one body, so a leading underscore must survive in the name.
 	// `_type` and `type` can coexist in one body, so a leading underscore must survive in the name.
-	const name =
-		override.name ??
-		(target === 'query'
+	const plainName =
+		target === 'query'
 			? filterName(prop)
 			: prop.startsWith('_')
 				? camelCase(`object${prop}`)
-				: camelCase(prop));
+				: camelCase(prop);
+	// n8n treats these names specially (operation/resource selectors), so never reuse them.
+	const RESERVED = ['resource', 'operation', 'action'];
+	const name =
+		override.name ??
+		(RESERVED.includes(plainName) ? camelCase(`${ctx.resource.singular} ${plainName}`) : plainName);
 	const displayName =
 		override.displayName ??
 		(target === 'query'
@@ -628,9 +638,16 @@ function buildOperation(
 	const ctx: FieldContext = { resource, operation: meta.value, show };
 
 	const topLevel: Array<Record<string, unknown> | Raw> = [];
+	// Keyed by container plus body variant: a oneOf body gets one collection per variant.
 	const collections: Record<
 		string,
-		{ displayName: string; placeholder: string; items: Array<Record<string, unknown>> }
+		{
+			name: string;
+			displayName: string;
+			placeholder: string;
+			show: Record<string, unknown>;
+			items: Array<Record<string, unknown>>;
+		}
 	> = {};
 	const manifestFields: ManifestField[] = [];
 	const addToCollection = (
@@ -638,9 +655,17 @@ function buildOperation(
 		displayName: string,
 		placeholder: string,
 		property: Record<string, unknown>,
+		variant?: { key: string; show: Record<string, unknown> },
 	) => {
-		collections[container] ??= { displayName, placeholder, items: [] };
-		collections[container].items.push(property);
+		const key = `${container}|${variant?.key ?? ''}`;
+		collections[key] ??= {
+			name: container,
+			displayName,
+			placeholder,
+			show: variant?.show ?? show,
+			items: [],
+		};
+		collections[key].items.push(property);
 	};
 
 	// Selector for merged list variants (e.g. Failure Status Group)
@@ -742,14 +767,65 @@ function buildOperation(
 		}
 	}
 
-	// Body
+	// Body. A oneOf body whose variants are told apart by a single-value `_type` (e.g. a
+	// location is a building, folder or location) gets a Type selector, and each field
+	// is shown for the variants that have it.
+	const DISCRIMINATOR = '_type';
+	const discriminatorField = 'objectType';
+	const variants: Array<{ key?: string; schema: Schema; show: Record<string, unknown> }> = [];
+	const oneOf = primary.body?.oneOf;
 	if (primary.body?.properties) {
-		const required = new Set(primary.body.required ?? []);
-		const isUpdate = meta.value === 'update';
-		const container = isUpdate ? 'updateFields' : 'additionalFields';
-		const containerLabel = isUpdate ? 'Update Fields' : 'Additional Fields';
-		for (const [prop, schema] of Object.entries(primary.body.properties)) {
+		variants.push({ schema: primary.body, show });
+	} else if (oneOf?.length === 1) {
+		variants.push({ schema: oneOf[0], show });
+	} else if (oneOf?.length) {
+		const values = oneOf.map((v) => v.properties?.[DISCRIMINATOR]?.enum);
+		if (values.every((v) => v?.length === 1)) {
+			const options = values
+				.map((v) => String(v![0]))
+				.map((value) => ({ name: titleCase(value), value }))
+				.sort((a, b) => a.name.localeCompare(b.name));
+			topLevel.push({
+				displayName: 'Type',
+				name: discriminatorField,
+				type: 'options',
+				noDataExpression: true,
+				required: true,
+				options,
+				default: options[0].value,
+				description: `Kind of ${resource.singular}`,
+				routing: { send: { type: 'body', property: DISCRIMINATOR } },
+				displayOptions: { show },
+			});
+			oneOf.forEach((schema, i) => {
+				const key = String(values[i]![0]);
+				variants.push({ key, schema, show: { ...show, [discriminatorField]: [key] } });
+				manifestFields.push({
+					container: '',
+					name: discriminatorField,
+					kind: 'options',
+					target: 'body',
+					property: DISCRIMINATOR,
+					required: true,
+					options: [key],
+					variant: key,
+				});
+			});
+		} else {
+			problem(`${resource.tag} ${primary.operationId}: oneOf body without a single-value _type`);
+		}
+	} else if (primary.body && primary.method !== 'post') {
+		problem(`${resource.tag} ${primary.operationId}: body without properties isn't supported`);
+	}
+
+	const isUpdate = meta.value === 'update';
+	const container = isUpdate ? 'updateFields' : 'additionalFields';
+	const containerLabel = isUpdate ? 'Update Fields' : 'Additional Fields';
+	for (const variant of variants) {
+		const required = new Set(variant.schema.required ?? []);
+		for (const [prop, schema] of Object.entries(variant.schema.properties ?? {})) {
 			if (schema.readOnly) continue;
+			if (variant.key && prop === DISCRIMINATOR) continue;
 			const fo = fieldOverride(resource, override, prop);
 			if (fo.skip) continue;
 			// Constants (single-value enums) are always sent, so they never sit in a collection.
@@ -766,21 +842,25 @@ function buildOperation(
 				ctx,
 			);
 			for (const { property, manifest } of built) {
-				manifestFields.push(manifest);
+				manifestFields.push(variant.key ? { ...manifest, variant: variant.key } : manifest);
 				if (isRequired) {
 					const helper = manifest.target === 'none';
 					topLevel.push({
 						...property,
 						...(helper ? {} : { required: true }),
-						displayOptions: { show },
+						displayOptions: { show: variant.show },
 					});
 				} else {
-					addToCollection(container, containerLabel, 'Add Field', property);
+					addToCollection(
+						container,
+						containerLabel,
+						'Add Field',
+						property,
+						variant.key ? { key: variant.key, show: variant.show } : undefined,
+					);
 				}
 			}
 		}
-	} else if (primary.body && primary.method !== 'post') {
-		problem(`${resource.tag} ${primary.operationId}: body without properties isn't supported`);
 	}
 
 	// Query params (union across merged variants)
@@ -865,26 +945,26 @@ function buildOperation(
 	// Two spec properties mapping to one n8n name would silently overwrite each other.
 	const namesByContainer = new Map<string, string[]>();
 	for (const f of manifestFields) {
-		const list = namesByContainer.get(f.container) ?? [];
+		if (f.variant && f.name === discriminatorField) continue;
+		const scope = `${f.container}|${f.variant ?? ''}`;
+		const list = namesByContainer.get(scope) ?? [];
 		if (list.includes(f.name)) {
 			problem(
 				`${resource.value}.${meta.value}: two fields named "${f.name}" in ${f.container || 'top level'} (add a name override)`,
 			);
 		}
-		namesByContainer.set(f.container, [...list, f.name]);
+		namesByContainer.set(scope, [...list, f.name]);
 	}
 
 	// Collections
-	for (const [name, collection] of Object.entries(collections).sort(([a], [b]) =>
-		a.localeCompare(b),
-	)) {
+	for (const [, collection] of Object.entries(collections).sort(([a], [b]) => a.localeCompare(b))) {
 		topLevel.push({
 			displayName: collection.displayName,
-			name,
+			name: collection.name,
 			type: 'collection',
 			placeholder: collection.placeholder,
 			default: {},
-			displayOptions: { show },
+			displayOptions: { show: collection.show },
 			options: sortByDisplayName(collection.items),
 		});
 	}
@@ -926,7 +1006,7 @@ function buildOperation(
 		routing: { request: { method: primary.method.toUpperCase(), url }, output: { postReceive } },
 	};
 
-	const manifests: ManifestOperation[] = ops.map((op) => ({
+	const baseManifests: ManifestOperation[] = ops.map((op) => ({
 		resource: resource.value,
 		operation: meta.value,
 		operationId: op.operationId,
@@ -941,8 +1021,21 @@ function buildOperation(
 			(f) => !f.showFor || !selector || f.showFor.includes(selector.byOperationId[op.operationId]),
 		),
 		allowedQuery: [...allowedQuery].sort(),
-		...(primary.body?.properties ? { bodySchema: primary.body } : {}),
+		...(variants.length === 1 ? { bodySchema: variants[0].schema } : {}),
 	}));
+	// One manifest entry per body variant, each checked against its own schema.
+	const variantKeys = variants.map((v) => v.key).filter((k): k is string => Boolean(k));
+	const manifests: ManifestOperation[] =
+		variantKeys.length === 0
+			? baseManifests.map((m) => ({ ...m, fields: m.fields.filter((f) => !f.variant) }))
+			: baseManifests.flatMap((m) =>
+					variants.map((v) => ({
+						...m,
+						variant: v.key,
+						fields: m.fields.filter((f) => !f.variant || f.variant === v.key),
+						bodySchema: v.schema,
+					})),
+				);
 
 	if (output === 'records') {
 		topLevel.push({
