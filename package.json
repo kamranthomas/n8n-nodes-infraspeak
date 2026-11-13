@@ -1,37 +1,66 @@
 {
-  "name": "n8n-nodes-infraspeak",
-  "version": "0.1.0",
-  "description": "",
-  "license": "MIT",
-  "homepage": "",
-  "keywords": ["n8n-community-node-package"],
-  "author": { "name": "kamranthomas", "email": "kamran.alimagham@gmail.com" },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
-  },
-  "scripts": {
-    "build": "n8n-node build",
-    "build:watch": "tsc --watch",
-    "dev": "n8n-node dev",
-    "lint": "n8n-node lint",
-    "lint:fix": "n8n-node lint --fix",
-    "release": "n8n-node release",
-    "prepublishOnly": "n8n-node prerelease"
-  },
-  "files": ["dist"],
-  "n8n": {
-    "n8nNodesApiVersion": 1,
-    "strict": true,
-    "credentials": ["dist/credentials/InfraspeakApi.credentials.js"],
-    "nodes": ["dist/nodes/Infraspeak/Infraspeak.node.js"]
-  },
-  "devDependencies": {
-    "@n8n/node-cli": "*",
-    "eslint": "9.32.0",
-    "prettier": "3.6.2",
-    "release-it": "^21.1.0",
-    "typescript": "5.9.2"
-  },
-  "peerDependencies": { "n8n-workflow": "*" }
+	"name": "n8n-nodes-infraspeak",
+	"version": "0.1.0",
+	"description": "n8n community node for Infraspeak: failures, locations, clients, works, stock, orders and more",
+	"license": "MIT",
+	"homepage": "https://github.com/kamranthomas/n8n-nodes-infraspeak",
+	"keywords": [
+		"n8n-community-node-package"
+	],
+	"author": {
+		"name": "kamranthomas",
+		"email": "kamran.alimagham@gmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kamranthomas/n8n-nodes-infraspeak.git"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"release": "n8n-node release",
+		"prepublishOnly": "n8n-node prerelease",
+		"generate": "tsx scripts/generate/index.ts",
+		"test": "jest",
+		"mock": "prism mock -p 4010 docs/api/openapi-full.yaml",
+		"mock:random": "prism mock -d -p 4010 docs/api/openapi-full.yaml",
+		"test:mock": "INFRASPEAK_MOCK_URL=http://127.0.0.1:4010 jest test/mock.test.ts"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"credentials": [
+			"dist/credentials/InfraspeakApi.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/Infraspeak/Infraspeak.node.js"
+		]
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "^0.55.5",
+		"@stoplight/prism-cli": "5.16.0",
+		"@types/jest": "^29.5.14",
+		"ajv": "^8.20.0",
+		"ajv-formats": "^3.0.1",
+		"eslint": "9.32.0",
+		"jest": "^29.7.0",
+		"n8n-core": "2.46.5",
+		"n8n-workflow": "2.46.5",
+		"nock": "^14.0.17",
+		"prettier": "3.6.2",
+		"release-it": "^21.1.0",
+		"ts-jest": "^29.4.15",
+		"tsx": "^4.23.15",
+		"typescript": "5.9.2",
+		"yaml": "^2.9.1"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
 }

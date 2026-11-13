@@ -1,16 +1,18 @@
 import { NodeConnectionTypes, type INodeType, type INodeTypeDescription } from 'n8n-workflow';
-import { userDescription } from './resources/user';
-import { companyDescription } from './resources/company';
+import { listSearch } from './listSearch';
+import { resourceProperties } from './resources';
+import { INFRASPEAK_BASE_URL_EXPRESSION } from './shared/transport';
 
 export class Infraspeak implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Infraspeak',
 		name: 'infraspeak',
-		icon: { light: 'file:infraspeak.svg', dark: 'file:infraspeak.dark.svg' },
+		// The logo is a solid badge that reads on both themes, so one file serves both.
+		icon: { light: 'file:infraspeak.svg', dark: 'file:infraspeak.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Interact with the Infraspeak API',
+		description: 'Consume the Infraspeak API',
 		defaults: {
 			name: 'Infraspeak',
 		},
@@ -19,32 +21,16 @@ export class Infraspeak implements INodeType {
 		outputs: [NodeConnectionTypes.Main],
 		credentials: [{ name: 'infraspeakApi', required: true }],
 		requestDefaults: {
-			baseURL: 'https://api.infraspeak.com/v3',
+			baseURL: INFRASPEAK_BASE_URL_EXPRESSION,
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
 			},
 		},
-		properties: [
-			{
-				displayName: 'Resource',
-				name: 'resource',
-				type: 'options',
-				noDataExpression: true,
-				options: [
-					{
-						name: 'User',
-						value: 'user',
-					},
-					{
-						name: 'Company',
-						value: 'company',
-					},
-				],
-				default: 'user',
-			},
-			...userDescription,
-			...companyDescription,
-		],
+		properties: resourceProperties,
+	};
+
+	methods = {
+		listSearch,
 	};
 }
