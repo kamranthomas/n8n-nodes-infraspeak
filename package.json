@@ -28,7 +28,8 @@
 		"mock": "prism mock -p 4010 docs/api/openapi-full.yaml",
 		"mock:random": "prism mock -d -p 4010 docs/api/openapi-full.yaml",
 		"test:mock": "INFRASPEAK_MOCK_URL=http://127.0.0.1:4010 jest test/mock.test.ts",
-		"webhook:send": "tsx scripts/send-webhook.ts"
+		"webhook:send": "tsx scripts/send-webhook.ts",
+		"verify": "tsx scripts/verify/index.ts"
 	},
 	"files": [
 		"dist"
