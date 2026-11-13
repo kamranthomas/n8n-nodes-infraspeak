@@ -158,6 +158,23 @@ Prism's terminal flags any request that doesn't match the spec with a red `Viola
 
 The mock agrees with the spec by construction. It can't show where the live API differs, for example in the filter prefix or the date format. That still needs a real account.
 
+### Verifying against the live API
+
+Several API details the node relies on aren't settled by the spec: filter names, date format, how multi-value filters are sent, the dropdown searches and `is_real`. Once you have a token, one read-only run checks them all:
+
+```bash
+INFRASPEAK_TOKEN=<your token> npm run verify
+#   -- --only filters,dates   run some sections only (lists always runs: it supplies the sample data)
+```
+
+- Sends **GET requests only** and never prints the token. It waits 1.1 s between requests (the API allows 60 per minute), so a full run takes about 5 minutes.
+- For each filter it picks a real value from your data, sends it the way the node does and the alternative way, and checks whether results actually narrowed.
+- Ends with a **Decisions** block saying what to change, e.g. `apiRules.filterPrefix` in `scripts/generate/overrides.ts`. After changing it, run `npm run generate` and the tests.
+- Writes `verify-report.json` with every probe. It's gitignored because it holds values from your account.
+- Things it can't check without writing data are listed at the end: fields Update requires, Create/Update/Delete payloads, and the trigger's signature encoding.
+
+Against the mock (`INFRASPEAK_TOKEN=x INFRASPEAK_BASE_URL=http://127.0.0.1:4010 npm run verify`), most filter probes are inconclusive, because each example list has a single record. Four lists and gets also fail there because of placeholder values in the spec's examples. That run only shows the script works.
+
 ### Testing the trigger without Infraspeak
 
 `npm run webhook:send` posts a sample delivery with Infraspeak's headers to a trigger URL:
