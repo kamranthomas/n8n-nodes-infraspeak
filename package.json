@@ -1,7 +1,7 @@
 {
 	"name": "n8n-nodes-infraspeak",
 	"version": "0.1.0",
-	"description": "n8n community node for Infraspeak: create, get, list and update failures (work orders)",
+	"description": "n8n community node for Infraspeak: failures, locations, clients, works, stock, orders and more",
 	"license": "MIT",
 	"homepage": "https://github.com/kamranthomas/n8n-nodes-infraspeak",
 	"keywords": [
@@ -43,7 +43,7 @@
 		]
 	},
 	"devDependencies": {
-		"@n8n/node-cli": "*",
+		"@n8n/node-cli": "^0.55.5",
 		"@stoplight/prism-cli": "5.16.0",
 		"@types/jest": "^29.5.14",
 		"ajv": "^8.20.0",
