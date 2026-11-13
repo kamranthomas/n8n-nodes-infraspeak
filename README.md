@@ -9,6 +9,7 @@ Infraspeak is a maintenance management platform (CMMS). This node covers correct
 [Installation](#installation)
 [Operations](#operations)
 [Credentials](#credentials)
+[Trigger](#trigger)
 [Usage](#usage)
 [Resources](#resources)
 [Development](#development)
@@ -91,6 +92,26 @@ Leave **Base URL** at its default (`https://api.infraspeak.com/v3`) unless you'r
 
 The credential test calls `GET /locations?limit=1`.
 
+## Trigger
+
+**Infraspeak Trigger** starts a workflow when Infraspeak sends a webhook (a failure created, a buy order received, a scheduled work completed, and so on: 47 events).
+
+Infraspeak has no API for creating webhooks, so you set them up by hand:
+
+1. Add **Infraspeak Trigger** to a workflow and copy its **Production URL**.
+2. In Infraspeak, go to **Settings → Integrations → Webhooks** and click **Create Webhook**. Paste the URL, pick the event, and leave the method as POST (PUT also works).
+3. Optional but recommended: set a **secret** there (6–255 characters). Then create an **Infraspeak Webhook API** credential in n8n with the same secret and select it on the trigger. The trigger then rejects any delivery whose `X-Hook-Secret` signature doesn't match, with a 401. Without a secret, it accepts every request to the URL.
+4. Activate the workflow.
+
+One Infraspeak webhook sends one event. To cover several events, create several webhooks pointing at the same URL, and use the trigger's **Events** field to choose which of them start the workflow. Leave it empty to accept all.
+
+**Good to know**
+- **Output:** with **Simplify** on, you get the record as `{ id, type, ...attributes }` plus `event` (the `X-Is-Topic` header) and `deliveryId` (`X-Request-Uuid`). The body carries only the record's attributes; use the Infraspeak node to fetch related records.
+- **Duplicates:** Infraspeak delivers at least once, and retries keep the same `deliveryId`. Dedupe on it if a duplicate would cause harm.
+- **Two runs for one change:** subscribing to a *State Changed* event and a specific one (e.g. *Failure Closed*) sends two deliveries for one change.
+- **Webhooks can switch off:** Infraspeak retries failed deliveries for about 5.5 days, then sets the webhook to inactive and emails your admins. The trigger replies straight away, but if n8n is down or the URL changes (for example a new workflow), re-enable the webhook in Infraspeak.
+- **Unverified:** the docs don't say whether the signature is hex or base64, so the trigger accepts both. Infraspeak's webhook logs (**Settings → Integrations → Webhook logs**) show the real header.
+
 ## Usage
 
 - **Simplify** (on by default) flattens each JSON:API record to `{ id, ...attributes }`. Turn it off to get the raw record, including `type` and `relationships`.
@@ -136,3 +157,14 @@ Responses come from the spec's examples, so each list usually has a single recor
 Prism's terminal flags any request that doesn't match the spec with a red `Violation` line.
 
 The mock agrees with the spec by construction. It can't show where the live API differs, for example in the filter prefix or the date format. That still needs a real account.
+
+### Testing the trigger without Infraspeak
+
+`npm run webhook:send` posts a sample delivery with Infraspeak's headers to a trigger URL:
+
+```bash
+npm run webhook:send -- http://localhost:5678/webhook-test/<id>/webhook --secret abcdef123
+#   --event FAILURE_CLOSED   event header (default FAILURE_CREATED)
+#   --method PUT             send as PUT
+#   --bad-signature          sign with the wrong secret (expect 401)
+```

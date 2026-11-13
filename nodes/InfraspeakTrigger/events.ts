@@ -1,0 +1,69 @@
+import type { INodePropertyOptions } from 'n8n-workflow';
+
+/**
+ * Webhook events, from developer.infraspeak.com/documentation/webhooks/subscribing.
+ * The OpenAPI spec doesn't list them, so this list is maintained by hand.
+ */
+export const INFRASPEAK_EVENTS = [
+	'BUY_ORDER_CONFIRMED',
+	'BUY_ORDER_CREATED',
+	'BUY_ORDER_RECEIVED',
+	'BUY_ORDER_STARTED',
+	'BUY_ORDER_STATE_CHANGED',
+	'BUY_ORDER_UPDATED',
+	'ELEMENT_CHARACTERISTICS_UPDATED',
+	'ELEMENT_CREATED',
+	'ELEMENT_UPDATED',
+	'FAILURE_APPROVED',
+	'FAILURE_CLOSED',
+	'FAILURE_COMPLETED_CONFIRMED',
+	'FAILURE_CREATED',
+	'FAILURE_MESSAGE_CREATED',
+	'FAILURE_NOT_APPROVED',
+	'FAILURE_PAUSED',
+	'FAILURE_PAUSE_REASON_UPDATED',
+	'FAILURE_RESUMED',
+	'FAILURE_STARTED',
+	'FAILURE_STATE_CHANGED',
+	'FAILURE_UNDO_APPROVED',
+	'FAILURE_UPDATED',
+	'FILE_CREATED',
+	'FILE_DELETED',
+	'FILE_UPDATED',
+	'FILE_UPLOADED',
+	'HOUSEKEEPER_ASSET_STATUS_CHANGED',
+	'MANUAL_METERING_CREATED',
+	'PLANNED_EVENT_DELETED',
+	'PLANNED_EVENT_FROM_SCHEDULED_WORK',
+	'PLANNED_EVENT_STATE_CHANGE',
+	'PLANNED_EVENT_UPDATED',
+	'QUOTE_ACCEPTED',
+	'QUOTE_READY',
+	'QUOTE_REQUEST_CREATED',
+	'QUOTE_REQUEST_STATE_CHANGED',
+	'SCHEDULED_WORK_COMPLETED',
+	'SCHEDULED_WORK_COMPLETED_CONFIRMED',
+	'SCHEDULED_WORK_CREATED_BY_FAILURE',
+	'SCHEDULED_WORK_PAUSED',
+	'SCHEDULED_WORK_STATE_CHANGED',
+	'SCHEDULED_WORK_UPDATED',
+	'SELL_ORDER_COMPLETED',
+	'SELL_ORDER_CONFIRMED',
+	'SELL_ORDER_UNCONFIRMED',
+	'SELL_ORDER_UPDATED',
+	'WORK_LOCATIONS_UPDATED',
+] as const;
+
+/** `FAILURE_STATE_CHANGED` → "Failure State Changed". */
+export function eventLabel(event: string): string {
+	return event
+		.toLowerCase()
+		.split('_')
+		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+		.join(' ');
+}
+
+export const eventOptions: INodePropertyOptions[] = INFRASPEAK_EVENTS.map((event) => ({
+	name: eventLabel(event),
+	value: event,
+})).sort((a, b) => a.name.localeCompare(b.name));
