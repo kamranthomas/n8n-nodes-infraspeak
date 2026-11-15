@@ -4,6 +4,8 @@ This is an n8n community node. It lets you use [Infraspeak](https://infraspeak.c
 
 Infraspeak is a maintenance management platform (CMMS). This node covers corrective maintenance (**failures**, Infraspeak's work orders), preventive maintenance (**works** and **scheduled works**), and the records around them: clients, locations, assets, problems, categories, suppliers, operators, cost centers, other costs, contacts, requests, files, warehouses, stock and materials, and sales (quotes, buy and sell orders).
 
+> **Beta.** This node is built from Infraspeak's OpenAPI spec and tested against it, but it hasn't been verified against the live Infraspeak API yet. Some filters, date formats or required fields may not behave as expected. Please [open an issue](https://github.com/kamranthomas/n8n-nodes-infraspeak/issues) if something doesn't work.
+
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
 [Installation](#installation)
@@ -17,6 +19,8 @@ Infraspeak is a maintenance management platform (CMMS). This node covers correct
 ## Installation
 
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
+
+While the node is in beta, install it by version: enter `n8n-nodes-infraspeak@beta` (or `n8n-nodes-infraspeak@0.1.0-beta.0`) as the package name.
 
 ## Operations
 

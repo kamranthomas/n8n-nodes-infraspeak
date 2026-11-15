@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-infraspeak",
-	"version": "0.1.0",
+	"version": "0.1.0-beta.0",
 	"description": "n8n community node for Infraspeak: failures, locations, clients, works, stock, orders and more, plus a webhook trigger",
 	"license": "MIT",
 	"homepage": "https://github.com/kamranthomas/n8n-nodes-infraspeak",
@@ -9,7 +9,7 @@
 	],
 	"author": {
 		"name": "kamranthomas",
-		"email": "kamran.alimagham@gmail.com"
+		"email": "23330607+kamranthomas@users.noreply.github.com"
 	},
 	"repository": {
 		"type": "git",
